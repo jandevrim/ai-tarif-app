@@ -1,6 +1,4 @@
-// ✅ pages/custom.tsx – Kart yapısı ile adım adım tarif (2025-04-10)
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import IngredientSelector, { Ingredient } from "../components/IngredientSelector";
 
 export default function CustomRecipePage() {
@@ -10,6 +8,11 @@ export default function CustomRecipePage() {
   const [recipe, setRecipe] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
+
+  // Log recipe state changes for debugging
+  useEffect(() => {
+    console.log("Recipe state updated:", recipe);
+  }, [recipe]);
 
   const handleSelectIngredient = (ingredient: Ingredient) => {
     if (!selectedIngredients.find((i) => i.id === ingredient.id)) {
@@ -31,9 +34,11 @@ export default function CustomRecipePage() {
       });
 
       const data = await response.json();
+      console.log("API Response:", data); // Log raw API response
 
       if (!response.ok) throw new Error(data.error || "Sunucu hatası");
 
+      if (!data.result) throw new Error("Tarif verisi bulunamadı");
       setRecipe(data.result);
     } catch (err: any) {
       setError(err.message || "Tarif oluşturulamadı.");
@@ -46,10 +51,22 @@ export default function CustomRecipePage() {
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900">
       <h1 className="text-2xl font-bold mb-4">Kendi Tarifini Oluştur</h1>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      {/* Selected Ingredients */}
+      <div className="flex flex-wrap gap-2 mb-4 max-h-24 overflow-y-auto">
         {selectedIngredients.map((i) => (
-          <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm">
+          <span
+            key={i.id}
+            className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center"
+          >
             {i.emoji} {i.name.tr}
+            <button
+              onClick={() =>
+                setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))
+              }
+              className="ml-2 text-red-600"
+            >
+              ✕
+            </button>
           </span>
         ))}
       </div>
@@ -72,25 +89,34 @@ export default function CustomRecipePage() {
       <button
         onClick={handleGenerateRecipe}
         disabled={isLoading || selectedIngredients.length === 0}
-        className="bg-green-600 text-white px-6 py-2 rounded shadow"
+        className="bg-green-600 text-white px-6 py-2 rounded shadow disabled:bg-gray-400"
       >
         {isLoading ? "Oluşturuluyor..." : "Tarif Oluştur"}
       </button>
 
-      {error && <p className="text-red-600 mt-4">{error}</p>}
+      {error && <p className="text-red-600 mt-4">Hata: {error}</p>}
 
+      {/* Recipe Display */}
       {recipe && (
         <div className="mt-6 bg-white p-6 rounded shadow">
           {currentStep === 0 ? (
             <>
-              <h2 className="text-xl font-bold mb-2">📋 {recipe.title}</h2>
-              <p className="italic text-sm mb-2">{recipe.summary}</p>
-              <p><strong>Süre:</strong> {recipe.duration}</p>
+              <h2 className="text-xl font-bold mb-2">
+                📋 {recipe.title || "Başlık yok"}
+              </h2>
+              <p className="italic text-sm mb-2">{recipe.summary || "Özet yok"}</p>
+              <p>
+                <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"}
+              </p>
               <h3 className="font-semibold mt-4">Malzemeler:</h3>
-              <ul className="list-disc list-inside mb-4">
-                {recipe.ingredients.map((ing: string, idx: number) => (
-                  <li key={idx}>{ing}</li>
-                ))}
+              <ul className="list-disc list-inside mb-4 max-h-32 overflow-y-auto">
+                {recipe.ingredients && recipe.ingredients.length > 0 ? (
+                  recipe.ingredients.map((ing: string, idx: number) => (
+                    <li key={idx}>{ing}</li>
+                  ))
+                ) : (
+                  <li>Malzeme yok</li>
+                )}
               </ul>
               <button
                 onClick={() => setCurrentStep(1)}
@@ -102,9 +128,13 @@ export default function CustomRecipePage() {
           ) : (
             <>
               <h2 className="text-xl font-bold mb-4">
-                🍳 Hazırlık Adımı {currentStep} / {recipe.steps.length}
+                🍳 Hazırlık Adımı {currentStep} / {recipe.steps?.length || 0}
               </h2>
-              <p className="mb-4">{recipe.steps[currentStep - 1]}</p>
+              <p className="mb-4">
+                {recipe.steps && recipe.steps[currentStep - 1]
+                  ? recipe.steps[currentStep - 1]
+                  : "Adım yok"}
+              </p>
               <div className="flex gap-4">
                 {currentStep > 1 && (
                   <button
@@ -114,7 +144,7 @@ export default function CustomRecipePage() {
                     Geri
                   </button>
                 )}
-                {currentStep < recipe.steps.length ? (
+                {currentStep < (recipe.steps?.length || 0) ? (
                   <button
                     onClick={() => setCurrentStep((prev) => prev + 1)}
                     className="bg-green-600 text-white px-4 py-2 rounded"
