@@ -1,11 +1,21 @@
+// ✅ pages/custom.tsx – Malzeme seçimi + AI tarif oluşturma (2025-04-10)
+
 import React, { useState } from "react";
 import IngredientSelector, { Ingredient } from "../components/IngredientSelector";
+
+interface Recipe {
+  title: string;
+  summary: string;
+  duration: string;
+  ingredients: string[];
+  steps: string[];
+}
 
 export default function CustomRecipePage() {
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
   const [showSelector, setShowSelector] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [recipe, setRecipe] = useState<any>(null);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
 
@@ -32,7 +42,9 @@ export default function CustomRecipePage() {
 
       if (!response.ok) throw new Error(data.error || "Sunucu hatası");
 
-      setRecipe(data.result);
+      const parsed = typeof data.result === "string" ? JSON.parse(data.result) : data.result;
+
+      setRecipe(parsed);
     } catch (err: any) {
       setError(err.message || "Tarif oluşturulamadı.");
     } finally {
@@ -40,31 +52,8 @@ export default function CustomRecipePage() {
     }
   };
 
-  const renderCard = () => {
-    if (!recipe) return null;
-
-    if (stepIndex === 0) {
-      return (
-        <div className="bg-white p-4 rounded shadow whitespace-pre-wrap">
-          <h2 className="text-xl font-bold mb-2">📋 {recipe.title}</h2>
-          <p className="italic text-sm mb-2">{recipe.summary}</p>
-          <p><strong>⏱️ Süre:</strong> {recipe.duration}</p>
-          <h3 className="font-semibold mt-4">🧂 Malzemeler:</h3>
-          <ul className="list-disc list-inside">
-            {recipe.ingredients.map((ing: string, idx: number) => (
-              <li key={idx}>{ing}</li>
-            ))}
-          </ul>
-        </div>
-      );
-    } else {
-      return (
-        <div className="bg-white p-4 rounded shadow whitespace-pre-wrap">
-          <h2 className="text-lg font-bold mb-2">🧑‍🍳 Adım {stepIndex}</h2>
-          <p>{recipe.steps[stepIndex - 1]}</p>
-        </div>
-      );
-    }
+  const handleNextStep = () => {
+    setStepIndex((prev) => prev + 1);
   };
 
   return (
@@ -79,54 +68,63 @@ export default function CustomRecipePage() {
         ))}
       </div>
 
-      {!recipe && (
-        <>
-          <button
-            onClick={() => setShowSelector(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
-          >
-            Malzeme Ekle
-          </button>
+      <button
+        onClick={() => setShowSelector(true)}
+        className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
+      >
+        Malzeme Ekle
+      </button>
 
-          {showSelector && (
-            <IngredientSelector
-              selected={selectedIngredients}
-              onSelect={handleSelectIngredient}
-              onClose={() => setShowSelector(false)}
-            />
-          )}
-
-          <button
-            onClick={handleGenerateRecipe}
-            disabled={isLoading || selectedIngredients.length === 0}
-            className="bg-green-600 text-white px-6 py-2 rounded shadow"
-          >
-            {isLoading ? "Oluşturuluyor..." : "Tarif Oluştur"}
-          </button>
-        </>
+      {showSelector && (
+        <IngredientSelector
+          selected={selectedIngredients}
+          onSelect={handleSelectIngredient}
+          onClose={() => setShowSelector(false)}
+        />
       )}
+
+      <button
+        onClick={handleGenerateRecipe}
+        disabled={isLoading || selectedIngredients.length === 0}
+        className="bg-green-600 text-white px-6 py-2 rounded shadow"
+      >
+        {isLoading ? "Oluşturuluyor..." : "Tarif Oluştur"}
+      </button>
 
       {error && <p className="text-red-600 mt-4">{error}</p>}
 
+      {/* ✅ Kartlar */}
       {recipe && (
-        <div className="mt-6">
-          {renderCard()}
-          <div className="flex justify-between mt-4">
+        <div className="mt-6 bg-white p-4 rounded shadow max-w-xl mx-auto">
+          {stepIndex === 0 && (
+            <div>
+              <h2 className="text-xl font-bold mb-2">📋 {recipe.title}</h2>
+              <p className="italic text-sm mb-2">{recipe.summary}</p>
+              <p><strong>Süre:</strong> {recipe.duration}</p>
+              <h3 className="font-semibold mt-4">Malzemeler:</h3>
+              <ul className="list-disc list-inside">
+                {recipe.ingredients.map((ing, idx) => (
+                  <li key={idx}>{ing}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {stepIndex > 0 && stepIndex <= recipe.steps.length && (
+            <div>
+              <h2 className="text-xl font-bold mb-2">🔪 Adım {stepIndex}</h2>
+              <p>{recipe.steps[stepIndex - 1]}</p>
+            </div>
+          )}
+
+          {stepIndex <= recipe.steps.length && (
             <button
-              disabled={stepIndex === 0}
-              onClick={() => setStepIndex((prev) => prev - 1)}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded disabled:opacity-50"
+              onClick={handleNextStep}
+              className="mt-4 bg-purple-600 text-white px-4 py-2 rounded"
             >
-              ⬅️ Geri
+              {stepIndex === 0 ? "Adımlara Geç" : stepIndex === recipe.steps.length ? "Bitir" : "Sonraki Adım"}
             </button>
-            <button
-              disabled={stepIndex === recipe.steps.length}
-              onClick={() => setStepIndex((prev) => prev + 1)}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
-            >
-              İleri ➡️
-            </button>
-          </div>
+          )}
         </div>
       )}
     </div>
