@@ -25,7 +25,7 @@ export default function CustomRecipePage() {
       const response = await fetch("/api/generate-recipe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredients: selectedIngredients }),
+        body: JSON.stringify({ ingredients: selectedIngredients.map((i) => i.name.tr) }),
       });
 
       const data = await response.json();
