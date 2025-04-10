@@ -38,8 +38,8 @@ export default function CustomRecipePage() {
 
       if (!response.ok) throw new Error(data.error || "Sunucu hatası");
 
-      if (!data.result) throw new Error("Tarif verisi bulunamadı");
-      setRecipe(data.result);
+      if (!data || !data.steps || !data.ingredients) throw new Error("Tarif verisi eksik");
+      setRecipe(data);
     } catch (err: any) {
       setError(err.message || "Tarif oluşturulamadı.");
     } finally {
