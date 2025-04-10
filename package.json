@@ -4,8 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
     "next": "^15.2.5",
@@ -13,7 +12,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "use-debounce": "^10.0.4",
-    "framer-motion": "^11.0.0"  // Removed the trailing comma
+    "framer-motion": "^11.0.0"
   },
   "devDependencies": {
     "@types/node": "18.14.0",
