@@ -1,6 +1,6 @@
-// ✅ generate-recipe.ts – Environment üzerinden systemPrompt kullanımı
+// ✅ pages/api/generate-recipe.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { OpenAI } from "openai";
+import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -10,37 +10,41 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const ingredients = req.body.ingredients;
-  const systemPrompt = process.env.SYSTEM_PROMPT;
-
-  if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
-    return res.status(400).json({ error: "Eksik veya hatalı veri gönderildi." });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Only POST allowed" });
   }
 
-  if (!systemPrompt) {
-    return res.status(500).json({ error: "System prompt tanımlı değil." });
+  const { ingredients, systemPrompt } = req.body;
+
+  if (!ingredients || ingredients.length === 0) {
+    return res.status(400).json({ error: "Malzeme listesi boş olamaz." });
   }
 
-  const userPrompt = `Lütfen şu malzemeleri içeren bir tarif öner: ${ingredients
-    .map((i: string) => `"${i}"`)
-    .join(", ")}.`;
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: "OpenAI API anahtarı eksik." });
+  }
+
+  const fullPrompt = `${systemPrompt ?? process.env.SYSTEM_PROMPT}
+
+Seçilen malzemeler: ${ingredients.map((i: any) => i.name.tr).join(", ")}
+
+Lütfen TM6 uyumlu, aşamalı bir tarif öner.`;
 
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      temperature: 0.7,
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { role: "system", content: fullPrompt },
+        { role: "user", content: "Tarifi oluştur" },
       ],
+      temperature: 0.7,
     });
 
-    const rawText = completion.choices[0].message.content;
-    const recipe = JSON.parse(rawText || "{}");
+    const result = completion.choices[0]?.message?.content;
 
-    return res.status(200).json(recipe);
-  } catch (error) {
-    console.error("Tarif oluşturulamadı:", error);
+    return res.status(200).json({ result });
+  } catch (error: any) {
+    console.error("OpenAI API Hatası:", error.message || error);
     return res.status(500).json({ error: "Tarif oluşturulurken hata oluştu." });
   }
 }
