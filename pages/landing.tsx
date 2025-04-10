@@ -10,29 +10,38 @@ export default function LandingPage() {
   // Animation variants for fade-in effect
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+  };
+
+  // Animation for button hover
+  const buttonHover = {
+    hover: { scale: 1.05, transition: { duration: 0.3 } },
   };
 
   return (
-    <div className="min-h-screen bg-[#A7D7C5] flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#F4A261] via-[#A7D7C5] to-[#84C7AE] flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
       {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-20">
         <div className="w-full h-full bg-[url('/kitchen-pattern.png')] bg-repeat"></div>
       </div>
+
+      {/* Decorative Elements */}
+      <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 bg-[url('/spoon-fork.png')] bg-contain bg-no-repeat opacity-30"></div>
+      <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 bg-[url('/chef-hat.png')] bg-contain bg-no-repeat opacity-30"></div>
 
       {/* Logo */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="mb-8"
+        className="mb-10"
       >
         <Image
           src="/logo.png"
           alt="ThermoChefAI Logo"
-          width={200}
-          height={200}
-          className="mx-auto"
+          width={250}
+          height={250}
+          className="mx-auto drop-shadow-lg"
         />
       </motion.div>
 
@@ -41,7 +50,7 @@ export default function LandingPage() {
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="text-4xl md:text-5xl font-extrabold text-[#1A3C34] mb-4 font-['Nunito'] tracking-wide"
+        className="text-5xl md:text-6xl font-extrabold text-[#1A3C34] mb-6 font-['Nunito'] tracking-wide drop-shadow-md"
       >
         Hoş Geldiniz, ThermoChefAI! 👨‍🍳
       </motion.h1>
@@ -51,7 +60,7 @@ export default function LandingPage() {
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="text-lg md:text-xl text-gray-800 max-w-2xl mb-6 font-['Inter']"
+        className="text-xl md:text-2xl text-[#2D5A4E] max-w-3xl mb-8 font-['Inter'] leading-relaxed"
       >
         AI destekli, Thermomix ve ThermoGusto uyumlu yaratıcı tarifler oluşturun. Malzemelerinizi seçin, AI sizin için tarifi oluştursun! 🍳
       </motion.p>
@@ -63,19 +72,39 @@ export default function LandingPage() {
         variants={fadeIn}
         className="flex flex-col sm:flex-row gap-4"
       >
-        <button
+        <motion.button
           onClick={() => router.push("/custom")}
-          className="bg-[#F4A261] hover:bg-[#E48F45] text-white px-6 py-3 rounded-full text-lg shadow-lg transition-all transform hover:scale-105"
+          className="bg-[#F4A261] hover:bg-[#E48F45] text-white px-8 py-4 rounded-full text-xl font-semibold shadow-lg transition-all"
+          whileHover="hover"
+          variants={buttonHover}
         >
           Kendi Tarifini Oluştur
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
           onClick={() => alert("Bu özellik yakında eklenecek 🚧")}
-          className="bg-white border border-[#1A3C34] hover:bg-[#1A3C34] hover:text-white text-[#1A3C34] px-6 py-3 rounded-full text-lg shadow-sm transition-all transform hover:scale-105"
+          className="bg-[#1A3C34] hover:bg-[#2D5A4E] text-white px-8 py-4 rounded-full text-xl font-semibold shadow-lg transition-all"
+          whileHover="hover"
+          variants={buttonHover}
         >
           Mevcut Tarifleri Kullan
-        </button>
+        </motion.button>
+      </motion.div>
+
+      {/* Additional Fun Element: Floating Ingredients */}
+      <motion.div
+        className="absolute bottom-10 left-10 hidden md:block"
+        animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+        transition={{ repeat: Infinity, duration: 3 }}
+      >
+        <Image src="/carrot.png" alt="Carrot" width={50} height={50} />
+      </motion.div>
+      <motion.div
+        className="absolute bottom-10 right-10 hidden md:block"
+        animate={{ y: [0, -10, 0], rotate: [0, -5, 5, 0] }}
+        transition={{ repeat: Infinity, duration: 3, delay: 0.5 }}
+      >
+        <Image src="/tomato.png" alt="Tomato" width={50} height={50} />
       </motion.div>
     </div>
   );
