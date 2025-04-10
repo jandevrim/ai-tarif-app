@@ -13,7 +13,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "use-debounce": "^10.0.4",
-	framer-motion": "^11.0.0",
+    "framer-motion": "^11.0.0"  // Removed the trailing comma
   },
   "devDependencies": {
     "@types/node": "18.14.0",
