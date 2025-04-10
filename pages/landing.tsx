@@ -1,52 +1,62 @@
-// ✅ app/landing/page.tsx – ThermoChefAI Landing Page
+// ✅ pages/landing.tsx – Modern Landing Page
+
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100 text-gray-800">
-      <header className="flex items-center justify-between p-6">
+    <div className="min-h-screen bg-gradient-to-b from-green-100 via-white to-yellow-100 text-gray-800 flex flex-col">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 shadow">
         <div className="flex items-center space-x-2">
-          <Image src="/logo.png" alt="ThermoChefAI" width={40} height={40} />
-          <h1 className="text-2xl font-bold">ThermoChefAI</h1>
+          <Image src="/logo.png" alt="ThermoChefAI Logo" width={50} height={50} />
+          <span className="text-xl font-bold">ThermoChefAI</span>
         </div>
         <button
-          onClick={() => router.push("/index")}
-          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+          onClick={() => router.push("/custom")}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
         >
           Uygulamaya Başla
         </button>
       </header>
 
-      <main className="flex flex-col md:flex-row items-center justify-between px-6 md:px-20 py-12">
-        <div className="max-w-xl">
-          <h2 className="text-4xl font-bold mb-4">Yemekleri Yapay Zeka ile Keşfedin 🍳</h2>
-          <p className="text-lg text-gray-700 mb-6">
-            ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir. Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta!
+      {/* Hero Section */}
+      <main className="flex flex-col-reverse md:flex-row flex-1 items-center justify-between px-8 md:px-20 py-10">
+        {/* Text Content */}
+        <div className="md:w-1/2 text-center md:text-left space-y-6">
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+            Yemekleri Yapay Zeka ile Keşfedin 🍳
+          </h1>
+          <p className="text-lg md:text-xl text-gray-700">
+            ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir.
+            Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta!
           </p>
           <button
-            onClick={() => router.push("/index")}
-            className="bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700"
+            onClick={() => router.push("/custom")}
+            className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-3 rounded-full shadow-md"
           >
             Tarif Oluştur 🚀
           </button>
         </div>
-        <div className="mt-10 md:mt-0">
+
+        {/* Hero Image */}
+        <div className="md:w-1/2 mb-10 md:mb-0">
           <Image
             src="/hero.png"
-            alt="ThermoChefAI Illustration"
-            width={500}
+            alt="ThermoChefAI Hero"
+            width={600}
             height={400}
-            className="rounded-lg shadow-lg"
+            className="rounded-xl shadow-xl"
           />
         </div>
       </main>
 
-      <footer className="text-center py-6 text-sm text-gray-500">
-        © {new Date().getFullYear()} ThermoChefAI. Tüm hakları saklıdır.
+      {/* Footer */}
+      <footer className="text-center py-4 text-sm text-gray-600">
+        © 2025 ThermoChefAI. Tüm hakları saklıdır.
       </footer>
     </div>
   );

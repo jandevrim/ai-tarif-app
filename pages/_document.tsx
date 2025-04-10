@@ -10,6 +10,7 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Inter:wght@400&display=swap"
             rel="stylesheet"
           />
+		  <link rel="stylesheet" href="/theme.css" /> 
         </Head>
         <body>
           <Main />

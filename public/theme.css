@@ -1,0 +1,59 @@
+/* public/theme.css */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom right, #fef9f4, #e4f4ef);
+  color: #1a202c;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: #1a202c;
+}
+
+a:hover {
+  color: #2f855a;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 1rem;
+  text-align: center;
+  background-color: #ffffffc7;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hero img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+button.cta {
+  background-color: #38a169;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+button.cta:hover {
+  background-color: #2f855a;
+}
+
+.footer {
+  margin-top: 4rem;
+  font-size: 0.875rem;
+  color: #718096;
+  text-align: center;
+}
