@@ -1,0 +1,51 @@
+/* styles/theme.css */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.text-green-600 {
+  color: #16a34a; /* Matching the green from the FoodMood app */
+}
+
+.bg-green-600 {
+  background-color: #16a34a;
+}
+
+.bg-green-700 {
+  background-color: #15803d;
+}
+
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
+.category-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f9f4;
+  border-radius: 1rem;
+  padding: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.category-btn:hover {
+  background-color: #e0f0e9;
+}
+
+.category-btn span {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  .category-btn {
+    padding: 1.5rem;
+  }
+
+  .category-btn span {
+    font-size: 1rem;
+  }
+}

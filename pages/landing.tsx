@@ -1,56 +1,81 @@
-// ✅ pages/landing.tsx – Modern Landing Page
-
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import "../styles/theme.css"; // Import the theme CSS
 
 export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-100 via-white to-yellow-100 text-gray-800 flex flex-col">
+    <div className="min-h-screen bg-white text-gray-800 flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 shadow">
+      <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center space-x-2">
-          <Image src="/logo.png" alt="ThermoChefAI Logo" width={50} height={50} />
-          <span className="text-xl font-bold">ThermoChefAI</span>
+          <Image src="/logo.png" alt="ThermoChefAI Logo" width={40} height={40} />
+          <span className="text-xl font-bold text-green-600">ThermoChefAI</span>
         </div>
         <button
           onClick={() => router.push("/custom")}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow"
         >
           Uygulamaya Başla
         </button>
       </header>
 
       {/* Hero Section */}
-      <main className="flex flex-col-reverse md:flex-row flex-1 items-center justify-between px-8 md:px-20 py-10">
-        {/* Text Content */}
-        <div className="md:w-1/2 text-center md:text-left space-y-6">
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-            Yemekleri Yapay Zeka ile Keşfedin 🍳
-          </h1>
-          <p className="text-lg md:text-xl text-gray-700">
-            ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir.
-            Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta!
-          </p>
-          <button
-            onClick={() => router.push("/custom")}
-            className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-3 rounded-full shadow-md"
-          >
-            Tarif Oluştur 🚀
-          </button>
-        </div>
-
+      <main className="flex flex-col items-center px-6 py-10 flex-1">
         {/* Hero Image */}
-        <div className="md:w-1/2 mb-10 md:mb-0">
+        <div className="relative w-full max-w-md mb-6">
           <Image
             src="/hero.png"
             alt="ThermoChefAI Hero"
             width={600}
             height={400}
-            className="rounded-xl shadow-xl"
+            className="rounded-2xl shadow-lg"
+            priority
           />
+          <div className="absolute -top-4 -left-4 bg-white p-2 rounded-full shadow">
+            <Image src="/emoji1.png" alt="Emoji 1" width={30} height={30} />
+          </div>
+          <div className="absolute -top-4 -right-4 bg-white p-2 rounded-full shadow">
+            <Image src="/emoji2.png" alt="Emoji 2" width={30} height={30} />
+          </div>
+        </div>
+
+        {/* Text Content */}
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight">
+            Yemekleri Yapay Zeka ile Keşfedin 🍳
+          </h1>
+          <p className="text-base sm:text-lg text-gray-600">
+            ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir.
+            Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta!
+          </p>
+          <button
+            onClick={() => router.push("/custom")}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-md w-full sm:w-auto"
+          >
+            Tarif Oluştur 🚀
+          </button>
+        </div>
+
+        {/* Category Buttons */}
+        <div className="grid grid-cols-3 gap-4 mt-8 w-full max-w-md">
+          <button className="category-btn">
+            <Image src="/food-icon.png" alt="Food Icon" width={40} height={40} />
+            <span>Food</span>
+            <span className="text-sm text-gray-500">15+</span>
+          </button>
+          <button className="category-btn">
+            <Image src="/drink-icon.png" alt="Drink Icon" width={40} height={40} />
+            <span>Drink</span>
+            <span className="text-sm text-gray-500">21+</span>
+          </button>
+          <button className="category-btn">
+            <Image src="/dessert-icon.png" alt="Dessert Icon" width={40} height={40} />
+            <span>Dessert</span>
+            <span className="text-sm text-gray-500">19+</span>
+          </button>
         </div>
       </main>
 
