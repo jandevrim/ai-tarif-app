@@ -1,4 +1,5 @@
-// ✅ pages/api/generate-recipe.ts
+
+// ✅ pages/api/generate-recipe.ts – Güncellenmiş: OpenAI çağrısı ve loglama ile
 import type { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
 
@@ -11,7 +12,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
+    return res.status(405).json({ error: "Only POST method is allowed." });
   }
 
   const { ingredients, systemPrompt } = req.body;
@@ -24,11 +25,24 @@ export default async function handler(
     return res.status(500).json({ error: "OpenAI API anahtarı eksik." });
   }
 
-  const fullPrompt = `${systemPrompt ?? process.env.SYSTEM_PROMPT}
+  const selectedNames = ingredients.map((i: any) =>
+    typeof i === "string" ? i : i?.name?.tr || i?.name
+  );
 
-Seçilen malzemeler: ${ingredients.map((i: any) => i.name.tr).join(", ")}
+  const fullPrompt = `${systemPrompt || process.env.SYSTEM_PROMPT}
 
-Lütfen TM6 uyumlu, aşamalı bir tarif öner.`;
+Seçilen malzemeler: ${selectedNames.join(", ")}
+
+Lütfen Thermomix TM6 cihazına uygun, adım adım detaylı bir yemek tarifi oluştur. Tarifi aşağıdaki formatta döndür:
+
+{
+  "title": "...",
+  "summary": "...",
+  "duration": "...",
+  "ingredients": ["...", "..."],
+  "steps": ["...", "..."]
+}
+`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -40,11 +54,18 @@ Lütfen TM6 uyumlu, aşamalı bir tarif öner.`;
       temperature: 0.7,
     });
 
-    const result = completion.choices[0]?.message?.content;
+    const rawText = completion.choices?.[0]?.message?.content;
 
-    return res.status(200).json({ result });
+    console.log("OpenAI yanıtı:", rawText);
+
+    if (!rawText) {
+      throw new Error("OpenAI yanıtı boş geldi.");
+    }
+
+    const recipe = JSON.parse(rawText);
+    res.status(200).json(recipe);
   } catch (error: any) {
-    console.error("OpenAI API Hatası:", error.message || error);
-    return res.status(500).json({ error: "Tarif oluşturulurken hata oluştu." });
+    console.error("Tarif oluşturulamadı:", error.message || error);
+    res.status(500).json({ error: "Tarif oluşturulurken hata oluştu." });
   }
 }
