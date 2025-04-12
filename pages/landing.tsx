@@ -4,7 +4,8 @@ import React from 'react';
 export default function App() {
   // In a real Next.js app, you'd use the actual router.
   // Here, we simulate navigation clicks with console logs.
-  const handleNavigate = (path) => {
+  // Added 'string' type annotation to 'path' parameter to fix TypeScript error.
+  const handleNavigate = (path: string) => {
     console.log(`Navigating to ${path}...`);
     // In a real app: router.push(path);
   };
@@ -13,7 +14,8 @@ export default function App() {
 }
 
 // LandingPage component definition
-function LandingPage({ onNavigate }) {
+// Added type annotation for the 'onNavigate' prop
+function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   return (
     // Main container with min height, white background, and gray text
     <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans">
@@ -32,9 +34,10 @@ function LandingPage({ onNavigate }) {
             className="rounded-2xl shadow-lg object-contain mx-auto"
             // Add error handling for local image loading if needed
             onError={(e) => {
-              e.target.onerror = null; // Prevent infinite loop
+              const target = e.target as HTMLImageElement; // Type assertion for target
+              target.onerror = null; // Prevent infinite loop
               // Optionally display a placeholder or hide the image on error
-              e.target.src="https://placehold.co/300x300/e0f2fe/334155?text=Logo+Bulunamadı";
+              target.src="https://placehold.co/300x300/e0f2fe/334155?text=Logo+Bulunamadı";
               console.error("Logo yüklenemedi: /logo.png");
             }}
           />
