@@ -13,7 +13,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
 }
 
 // --- Environment Variable Simulation ---
-const IS_DEMO_MODE = true; // Hardcoded for preview. In real app, check process.env.NEXT_PUBLIC_DEMO_MODE !== 'no'
+const IS_DEMO_MODE = false; // Hardcoded for preview. In real app, check process.env.NEXT_PUBLIC_DEMO_MODE !== 'no'
 console.log(`Demo mode active: ${IS_DEMO_MODE} (Preview Mode)`);
 
 // --- Data Definition ---
