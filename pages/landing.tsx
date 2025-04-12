@@ -1,44 +1,87 @@
 import React, { useState, useEffect } from 'react';
 
-// --- Type Definitions ---
+// --- Error Boundary Component ---
+// Catches rendering errors in its children and displays a fallback UI.
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true, error: error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // You can also log the error to an error reporting service
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return (
+        <div style={{ padding: '20px', margin: '20px', border: '2px dashed red', borderRadius: '8px', backgroundColor: '#fff0f0' }}>
+          <h1 style={{ color: 'red', marginBottom: '10px' }}>Oops! Bir Hata Oluştu.</h1>
+          <p>Uygulamanın bu bölümü görüntülenirken bir sorun yaşandı.</p>
+          <p>Lütfen tarayıcı konsolunu kontrol edin veya daha sonra tekrar deneyin.</p>
+          {/* Optionally display error details for debugging */}
+          {this.state.error && (
+              <details style={{ marginTop: '10px', whiteSpace: 'pre-wrap', background: '#ffe0e0', padding: '5px', borderRadius: '4px' }}>
+                  <summary>Hata Detayları</summary>
+                  {this.state.error.toString()}
+              </details>
+          )}
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+
+// --- Environment Variable Simulation ---
+// Check for a hypothetical NEXT_PUBLIC_DEMO_MODE environment variable.
+// In a real Next.js app, set this in your .env file (e.g., NEXT_PUBLIC_DEMO_MODE=no)
+// and access via process.env.NEXT_PUBLIC_DEMO_MODE.
+// Prefix with NEXT_PUBLIC_ is required to expose it to the browser.
+// The 'process' object is not reliably available in all browser/preview environments.
+// Therefore, for this preview, we hardcode IS_DEMO_MODE to true.
+const IS_DEMO_MODE = true; // Hardcoded for preview - FIX for ReferenceError: process is not defined
+console.log(`Demo mode active: ${IS_DEMO_MODE} (Preview Mode)`);
+
+// --- Data Loading Logic ---
+// (Data loading logic based on IS_DEMO_MODE would go here in a real app)
+
+// --- Simulated Import / Demo Data ---
 type Ingredient = {
   id: string;
-  name: { tr: string };
-  emoji: string;
-  category: string; // Added category property
+  name: { tr: string; en: string };
+  category: string;
+  tags: string[];
+  emoji?: string;
 };
 
-// --- Mock Data ---
-// Updated dummy ingredients with categories
-const categorizedIngredients: { [key: string]: Ingredient[] } = {
-  'Sebzeler': [
-    { id: '1', name: { tr: 'Domates' }, emoji: '🍅', category: 'Sebzeler' },
-    { id: '2', name: { tr: 'Soğan' }, emoji: '🧅', category: 'Sebzeler' },
-    { id: '3', name: { tr: 'Sarımsak' }, emoji: '🧄', category: 'Sebzeler' },
-    { id: '4', name: { tr: 'Biber' }, emoji: '🌶️', category: 'Sebzeler' },
-    { id: '5', name: { tr: 'Patates' }, emoji: '🥔', category: 'Sebzeler' },
-    { id: '10', name: { tr: 'Havuç' }, emoji: '🥕', category: 'Sebzeler' },
-    { id: '11', name: { tr: 'Brokoli' }, emoji: '🥦', category: 'Sebzeler' },
-  ],
-  'Meyveler': [
-     { id: '12', name: { tr: 'Elma' }, emoji: '🍎', category: 'Meyveler' },
-     { id: '13', name: { tr: 'Muz' }, emoji: '🍌', category: 'Meyveler' },
-     { id: '14', name: { tr: 'Limon' }, emoji: '🍋', category: 'Meyveler' },
-  ],
-  'Baharatlar': [
-    { id: '6', name: { tr: 'Tuz' }, emoji: '🧂', category: 'Baharatlar' },
-    { id: '7', name: { tr: 'Karabiber' }, emoji: '⚫', category: 'Baharatlar' },
-    { id: '8', name: { tr: 'Pul Biber' }, emoji: '🌶️', category: 'Baharatlar' },
-    { id: '9', name: { tr: 'Kekik' }, emoji: '🌿', category: 'Baharatlar' },
-  ],
-   'Diğer': [
-     { id: '15', name: { tr: 'Yumurta' }, emoji: '🥚', category: 'Diğer' },
-     { id: '16', name: { tr: 'Zeytinyağı' }, emoji: '🫒', category: 'Diğer' },
-   ]
-};
+// --- DEBUG: Shortened ingredients array to test for data size issues ---
+const ingredients: Ingredient[] = [
+  { id: "domates", name: { tr: "domates", en: "Tomato" }, category: "sebze", tags: ['sebze', 'taze', 'kırmızı'], emoji: "🍅" },
+  { id: "soğan", name: { tr: "soğan", en: "Onion" }, category: "sebze", tags: ['sebze', 'keskin', 'aromatik'], emoji: "🧅" },
+  { id: "sarımsak", name: { tr: "sarımsak", en: "Garlic" }, category: "sebze", tags: ['sebze', 'aromatik', 'küçük'], emoji: "🧄" },
+  { id: "tavuk_göğsü", name: { tr: "tavuk göğsü", en: "Chicken Breast" }, category: "et ürünleri", tags: ['et', 'beyaz', 'yağsız'] },
+  { id: "süt", name: { tr: "süt", en: "Milk" }, category: "süt ürünleri", tags: ['süt', 'beyaz', 'sıvı'], emoji: "🥛" },
+  { id: "peynir", name: { tr: "peynir", en: "Cheese" }, category: "süt ürünleri", tags: ['süt', 'katı', 'fermente'], emoji: "🧀" },
+  { id: "nohut", name: { tr: "nohut", en: "Chickpeas" }, category: "bakliyat", tags: ['bakliyat', 'yuvarlak', 'protein'] },
+  { id: "mercimek", name: { tr: "mercimek", en: "Lentils" }, category: "bakliyat", tags: ['bakliyat', 'küçük', 'protein'] },
+  { id: "karabiber_b", name: { tr: "karabiber", en: "Black Pepper" }, category: "baharatlar", tags: ['baharat', 'keskin', 'toz'] },
+  { id: "zeytinyağı_s", name: { tr: "zeytinyağı", en: "Olive Oil" }, category: "sıvılar", tags: ['sıvı', 'yağ', 'soğuk'], emoji: "🫒" },
+  { id: "elma", name: { tr: "Elma" , en: "Apple"}, category: "meyveler", tags: ['meyve', 'tatlı', 'kırmızı'], emoji: "🍎" }, // Added a fruit example
+];
+// --- End of Shortened Data ---
 
 // --- Mock Components ---
-// Updated MockIngredientSelector with Categories and corrected styling
+// Updated MockIngredientSelector to use the new 'ingredients' array
 function MockIngredientSelector({
   selected,
   onSelect,
@@ -48,11 +91,39 @@ function MockIngredientSelector({
   onSelect: (ingredient: Ingredient) => void;
   onClose: () => void;
 }) {
-  const [activeCategory, setActiveCategory] = useState<string>('Sebzeler');
-  const categories = Object.keys(categorizedIngredients);
+  // Get unique categories dynamically from the imported ingredients
+  const categories = React.useMemo(() => {
+      // Ensure ingredients is an array before processing
+      if (!Array.isArray(ingredients)) {
+          console.error("Ingredients data is not an array!", ingredients);
+          return [];
+      }
+      const uniqueCategories = new Set(ingredients.map(ing => ing.category));
+      const categoryOrder = ['sebze', 'meyveler', 'et ürünleri', 'süt ürünleri', 'bakliyat', 'baharatlar', 'sıvılar', 'diğer'];
+      return Array.from(uniqueCategories).sort((a, b) => {
+          const indexA = categoryOrder.indexOf(a.toLowerCase());
+          const indexB = categoryOrder.indexOf(b.toLowerCase());
+          if (indexA === -1 && indexB === -1) return a.localeCompare(b, 'tr');
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          return indexA - indexB;
+      });
+  }, []); // Recalculate if ingredients array reference changes (it won't here)
+
+  // Set initial active category safely
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0] || '');
+
+  // Effect to reset active category if categories change and current active is no longer valid
+  useEffect(() => {
+      if (categories.length > 0 && !categories.includes(activeCategory)) {
+          setActiveCategory(categories[0]);
+      } else if (categories.length === 0) {
+          setActiveCategory('');
+      }
+  }, [categories, activeCategory]);
+
 
   return (
-    // Improved styling for the selector container
     <div className="p-4 border rounded-lg bg-white shadow-md mb-4">
       {/* Category Selection Tabs */}
       <div className="flex flex-wrap gap-2 border-b pb-3 mb-3">
@@ -60,41 +131,51 @@ function MockIngredientSelector({
           <button
             key={category}
             onClick={() => setActiveCategory(category)}
-            // Active Category button style is Green and rounded-full
             className={`px-3 py-1 rounded-full text-sm transition duration-200 ease-in-out shadow-sm ${
               activeCategory === category
-                ? 'bg-green-600 hover:bg-green-700 text-white' // Active style is green
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-700' // Inactive style
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
             }`}
           >
-            {category}
+            {category.charAt(0).toUpperCase() + category.slice(1)}
           </button>
         ))}
       </div>
 
       {/* Ingredient List for Active Category */}
-      <h3 className="font-semibold mb-2 text-gray-600">{activeCategory} Listesi:</h3>
+      <h3 className="font-semibold mb-2 text-gray-600">
+          {activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'Malzeme'} Listesi:
+      </h3>
       <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto mb-4 pr-2">
-        {categorizedIngredients[activeCategory]?.map((ing) => {
-           const isSelected = selected.some(sel => sel.id === ing.id);
-           return (
-              <button
-                key={ing.id}
-                onClick={() => onSelect(ing)}
-                disabled={isSelected}
-                // Ingredient buttons are rounded-full
-                className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition duration-200 ease-in-out shadow-sm ${
-                   isSelected
-                     ? 'bg-gray-400 text-white cursor-not-allowed'
-                     : 'bg-gray-100 hover:bg-green-100 text-gray-800'
-                }`}
-              >
-                <span>{ing.emoji}</span>
-                <span>{ing.name.tr}</span>
-              </button>
-           );
-        })}
-         {!categorizedIngredients[activeCategory] || categorizedIngredients[activeCategory].length === 0 && (
+        {/* Filter ingredients based on the active category */}
+        {ingredients
+            .filter(ing => ing.category === activeCategory)
+            .map((ing) => {
+               // Ensure ingredient has a valid id for the key
+               if (!ing || typeof ing.id !== 'string') {
+                   console.warn("Skipping ingredient with invalid id:", ing);
+                   return null;
+               }
+               const isSelected = selected.some(sel => sel.id === ing.id);
+               return (
+                  <button
+                    key={ing.id} // Use ingredient id as key
+                    onClick={() => onSelect(ing)}
+                    disabled={isSelected}
+                    className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition duration-200 ease-in-out shadow-sm ${
+                       isSelected
+                         ? 'bg-gray-400 text-white cursor-not-allowed'
+                         : 'bg-gray-100 hover:bg-green-100 text-gray-800'
+                    }`}
+                  >
+                    {/* Conditionally render emoji if it exists */}
+                    {ing.emoji && <span className="mr-1">{ing.emoji}</span>}
+                    <span>{ing.name?.tr || 'İsimsiz'}</span> {/* Added fallback for name */}
+                  </button>
+               );
+            })}
+         {/* Update empty category message logic */}
+         {ingredients.filter(ing => ing.category === activeCategory).length === 0 && activeCategory && (
             <p className="text-sm text-gray-500 italic">Bu kategoride malzeme bulunamadı.</p>
          )}
       </div>
@@ -112,8 +193,8 @@ function MockIngredientSelector({
   );
 }
 
-// --- Helper Components ---
-// Loading Indicator Component
+
+// --- Helper Components --- (LoadingIndicator remains the same)
 function LoadingIndicator() {
   const loadingEmojis = ['🍳', '🥕', '🍅', '🧅', '🌶️', '🍲', '🥣', '🔪'];
   const [currentEmojiIndex, setCurrentEmojiIndex] = useState(0);
@@ -136,7 +217,9 @@ function LoadingIndicator() {
 
 // --- Page Components ---
 
-// LandingPage component definition
+// #####################################################################
+// ### LandingPage Component Definition                              ###
+// #####################################################################
 function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
     return (
     <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans">
@@ -166,7 +249,7 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
           </p>
           {/* Landing page button - Reference style */}
           <button
-            onClick={() => onNavigate('/custom')}
+            onClick={() => onNavigate('/custom')} // Triggers navigation via prop
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
           >
             Tarif Oluştur 🚀
@@ -198,6 +281,10 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
     </div>
   );
 }
+// #####################################################################
+// ### End of LandingPage Component Definition                     ###
+// #####################################################################
+
 
 // CustomRecipePage component definition
 function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }) {
@@ -216,7 +303,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     }
   };
 
-  // Mock API call function to generate recipe
+  // Updated function to call the backend API
   const handleGenerateRecipe = async () => {
     setIsLoading(true);
     setError(null);
@@ -224,32 +311,49 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     setCurrentStep(0);
     setShowSelector(false); // Close selector
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2500));
+    // Prepare data to send to the backend
+    const payload = {
+        ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr }))
+    };
 
-    // Create mock recipe data
-     const mockRecipe = {
-       title: `Lezzetli ${selectedIngredients.map(i => i.name.tr).join(', ')} Tarifi`,
-       summary: `Seçtiğiniz ${selectedIngredients.map(i => i.emoji).join('')} malzemeleriyle hazırlanan harika bir tarif.`,
-       duration: `${Math.floor(Math.random() * 30) + 15} dakika`,
-       ingredients: selectedIngredients.map(i => `${i.emoji} ${i.name.tr}`),
-       steps: [
-         `Malzemeleri hazırlayın: ${selectedIngredients.map(i => i.name.tr).join(', ')} yıkayın/doğrayın.`,
-         "Bir tencerede yağı ısıtın.",
-         `${selectedIngredients.length > 1 ? selectedIngredients[1]?.name.tr || 'İkinci malzemeyi' : 'Soğanı'} kavurun.`,
-         `${selectedIngredients[0]?.name.tr || 'İlk malzemeyi'} ekleyin ve pişirin.`,
-         "Baharatları ekleyin ve karıştırın.",
-         "Sıcak servis yapın.",
-       ],
-     };
+    try {
+      // Make the API call to the backend endpoint
+      const response = await fetch("/api/generate-recipe", { // Ensure this path is correct
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    setRecipe(mockRecipe);
-    setIsLoading(false); // Finish loading
+      // Check if the response is successful
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: `Sunucu hatası: ${response.statusText}` }));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      // Parse the JSON response from the backend
+      const data = await response.json();
+
+      // Validate the received data structure
+      if (!data || typeof data !== 'object' || !data.steps || !data.ingredients || typeof data.title !== 'string') {
+          console.error("Invalid recipe data structure received from API:", data);
+          throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
+      }
+
+      console.log("Received recipe data from API:", data);
+      setRecipe(data); // Set the recipe state with data from the API
+
+    } catch (err: any) {
+      console.error("API call failed:", err);
+      setError(err.message || "Tarif oluşturulurken bir hata oluştu.");
+      setRecipe(null); // Clear any previous recipe on error
+    } finally {
+      setIsLoading(false); // Stop loading indicator
+    }
   };
 
   // Function to render the current recipe card (summary or step)
   const renderCurrentCard = () => {
-     if (!recipe) return null; // Should not happen if called correctly
+     if (!recipe) return null;
 
     // Render Summary Card (Step 0)
     if (currentStep === 0) {
@@ -390,7 +494,9 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
                <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
                  {selectedIngredients.map((i) => (
                    <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center shadow-sm">
-                     {i.emoji} {i.name.tr}
+                     {/* Conditionally render emoji */}
+                     {i.emoji && <span className="mr-1">{i.emoji}</span>}
+                     <span>{i.name.tr}</span>
                      {/* Remove ingredient button */}
                      <button onClick={() => setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))} className="ml-2 text-red-500 hover:text-red-700 font-bold" aria-label={`Remove ${i.name.tr}`}>✕</button>
                    </span>
@@ -465,13 +571,15 @@ export default function App() {
 
   // Render the component corresponding to the current page state
   return (
-    <div>
-      {currentPage === 'landing' && <LandingPage onNavigate={handleNavigate} />}
-      {currentPage === 'custom' && <CustomRecipePage onNavigate={handleNavigate} />}
+    <ErrorBoundary> { /* Wrap main content in Error Boundary */ }
+      <div>
+        {currentPage === 'landing' && <LandingPage onNavigate={handleNavigate} />}
+        {currentPage === 'custom' && <CustomRecipePage onNavigate={handleNavigate} />}
 
-      {/* Include Tailwind CSS - Necessary for standalone preview */}
-      {/* Remove or comment out if Tailwind is configured via build process in your project */}
-      <script src="https://cdn.tailwindcss.com"></script>
-    </div>
+        {/* Include Tailwind CSS - Necessary for standalone preview */}
+        {/* Remove or comment out if Tailwind is configured via build process in your project */}
+        <script src="https://cdn.tailwindcss.com"></script>
+      </div>
+    </ErrorBoundary>
   );
 }
