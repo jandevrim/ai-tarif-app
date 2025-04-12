@@ -27,9 +27,8 @@ type Ingredient = {
 
 // --- Data Loading Logic ---
 
-// 1. Demo ingredients data (used when IS_DEMO_MODE is true)
+// 1. Demo ingredients data (shortened for preview stability)
 const demoIngredients: Ingredient[] = [
-  // Using shortened data for preview stability
   { id: "domates", name: { tr: "domates", en: "Tomato" }, category: "sebze", tags: ['sebze', 'taze', 'kırmızı'], emoji: "🍅" },
   { id: "soğan", name: { tr: "soğan", en: "Onion" }, category: "sebze", tags: ['sebze', 'keskin', 'aromatik'], emoji: "🧅" },
   { id: "sarımsak", name: { tr: "sarımsak", en: "Garlic" }, category: "sebze", tags: ['sebze', 'aromatik', 'küçük'], emoji: "🧄" },
@@ -43,18 +42,17 @@ const demoIngredients: Ingredient[] = [
   { id: "elma", name: { tr: "Elma" , en: "Apple"}, category: "meyveler", tags: ['meyve', 'tatlı', 'kırmızı'], emoji: "🍎" },
 ];
 
-// 2. Real ingredients data placeholder
-// In a real Next.js project, you would uncomment and use the following line.
-// Ensure you have the file 'data/ingredients.ts' exporting the 'ingredients' array.
-// import { ingredients as realIngredientsData } from '../data/ingredients'; // Adjust path if needed
+// 2. Full ingredients data (represents data from 'data/ingredients.ts')
+// In a real Next.js project, this would be imported:
 
-// For the preview environment, realIngredients will be empty because we cannot import.
-const realIngredients: Ingredient[] = [];
+import { ingredients as fullIngredientsData } from '../data/ingredients'; 
+
 
 // --- Select Data Source Based on Mode ---
 // This line determines which data source to use.
 // In the preview, IS_DEMO_MODE is always true, so demoIngredients will be used.
-const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : realIngredients;
+// In a real app, if IS_DEMO_MODE is false, fullIngredientsData would be used (loaded via import).
+const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData; // Use full data if not demo
 console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
 
 
