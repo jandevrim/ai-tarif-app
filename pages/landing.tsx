@@ -49,7 +49,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
 // Prefix with NEXT_PUBLIC_ is required to expose it to the browser.
 // The 'process' object is not reliably available in all browser/preview environments.
 // Therefore, for this preview, we hardcode IS_DEMO_MODE to true.
-const IS_DEMO_MODE = true; // Hardcoded for preview - FIX for ReferenceError: process is not defined
+const IS_DEMO_MODE = false; // Hardcoded for preview - FIX for ReferenceError: process is not defined
 console.log(`Demo mode active: ${IS_DEMO_MODE} (Preview Mode)`);
 
 // --- Data Loading Logic ---
