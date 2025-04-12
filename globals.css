@@ -1,0 +1,9 @@
+/* Tailwind CSS direktifleri */
+@tailwind base;      /* Temel stilleri sıfırlar ve uygular */
+@tailwind components; /* Bileşen sınıflarını ekler */
+@tailwind utilities;  /* Yardımcı sınıfları (text-xl, bg-green-600 vb.) ekler */
+
+/* İsteğe bağlı: Buraya kendi global stillerinizi ekleyebilirsiniz */
+/* body {
+  @apply bg-gray-50;
+} */
