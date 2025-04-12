@@ -1,87 +1,98 @@
-import React from "react";
-import Image from "next/image";
-import { useRouter } from "next/router";
+import React from 'react';
 
-export default function LandingPage() {
-  const router = useRouter();
+// Main App component that renders the LandingPage
+export default function App() {
+  // In a real Next.js app, you'd use the actual router.
+  // Here, we simulate navigation clicks with console logs.
+  const handleNavigate = (path) => {
+    console.log(`Navigating to ${path}...`);
+    // In a real app: router.push(path);
+  };
 
+  return <LandingPage onNavigate={handleNavigate} />;
+}
+
+// LandingPage component definition
+function LandingPage({ onNavigate }) {
   return (
-    <div className="min-h-screen bg-white text-gray-800 flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4">
-        <div className="flex items-center space-x-2">
-          <Image src="/logo.png" alt="ThermoChefAI Logo" width={40} height={40} />
-          <span className="text-xl font-bold text-green-600">ThermoChefAI</span>
-        </div>
-        <button
-          onClick={() => router.push("/custom")}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow"
-        >
-          Uygulamaya Başla
-        </button>
-      </header>
+    // Main container with min height, white background, and gray text
+    <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans">
+      {/* Header Section - Removed */}
 
-      {/* Hero Section */}
-      <main className="flex flex-col items-center px-6 py-10 flex-1">
-        {/* Hero Image */}
-        <div className="relative w-full max-w-md mb-6">
-          <Image
-            src="/hero.png"
-            alt="ThermoChefAI Hero"
-            width={600}
-            height={400}
-            className="rounded-2xl shadow-lg"
-            priority
+      {/* Main Content Area - Added padding top as header is removed */}
+      <main className="flex flex-col items-center px-6 py-10 pt-16 flex-1">
+        {/* Hero Image Section - Replaced with Logo */}
+        <div className="relative w-full max-w-xs mb-8">
+          {/* Main Logo Display - Path updated for local use */}
+          <img
+            src="/logo.png" // Yerel kullanım için /logo.png olarak güncellendi
+            alt="ThermoChefAI Ana Logo"
+            width={300}
+            height={300}
+            className="rounded-2xl shadow-lg object-contain mx-auto"
+            // Add error handling for local image loading if needed
+            onError={(e) => {
+              e.target.onerror = null; // Prevent infinite loop
+              // Optionally display a placeholder or hide the image on error
+              e.target.src="https://placehold.co/300x300/e0f2fe/334155?text=Logo+Bulunamadı";
+              console.error("Logo yüklenemedi: /logo.png");
+            }}
           />
-          <div className="absolute -top-4 -left-4 bg-white p-2 rounded-full shadow">
-            <Image src="/emoji1.png" alt="Emoji 1" width={30} height={30} />
-          </div>
-          <div className="absolute -top-4 -right-4 bg-white p-2 rounded-full shadow">
-            <Image src="/emoji2.png" alt="Emoji 2" width={30} height={30} />
-          </div>
         </div>
 
-        {/* Text Content */}
-        <div className="text-center space-y-4">
-          <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight">
+        {/* Text Content Section */}
+        <div className="text-center space-y-5">
+          {/* Main Heading */}
+          <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900">
             Yemekleri Yapay Zeka ile Keşfedin 🍳
           </h1>
-          <p className="text-base sm:text-lg text-gray-600">
+          {/* Subtitle/Description */}
+          <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto">
             ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir.
             Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta!
           </p>
+          {/* Call to Action Button */}
           <button
-            onClick={() => router.push("/custom")}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-md w-full sm:w-auto"
+            onClick={() => onNavigate('/custom')}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
           >
             Tarif Oluştur 🚀
           </button>
         </div>
 
-        {/* Category Buttons */}
-        <div className="grid grid-cols-3 gap-4 mt-8 w-full max-w-md">
-          <button className="category-btn">
-            <Image src="/food-icon.png" alt="Food Icon" width={40} height={40} />
-            <span>Food</span>
-            <span className="text-sm text-gray-500">15+</span>
+        {/* Category Buttons Section - Updated with large Emojis */}
+        <div className="grid grid-cols-3 gap-4 mt-10 w-full max-w-md">
+          {/* Category Button: Food */}
+          <button className="category-btn flex flex-col items-center justify-center p-4 bg-gray-100 hover:bg-gray-200 rounded-lg shadow text-center space-y-1 transition duration-300 ease-in-out">
+            {/* Large Emoji Food Icon */}
+            <span className="text-4xl mb-1">🍲</span> {/* SVG replaced with Emoji */}
+            <span className="font-medium text-gray-700">Food</span>
+            <span className="text-xs text-gray-500">15+</span>
           </button>
-          <button className="category-btn">
-            <Image src="/drink-icon.png" alt="Drink Icon" width={40} height={40} />
-            <span>Drink</span>
-            <span className="text-sm text-gray-500">21+</span>
+          {/* Category Button: Drink */}
+          <button className="category-btn flex flex-col items-center justify-center p-4 bg-gray-100 hover:bg-gray-200 rounded-lg shadow text-center space-y-1 transition duration-300 ease-in-out">
+             {/* Large Emoji Drink Icon */}
+             <span className="text-4xl mb-1">🍹</span> {/* SVG replaced with Emoji */}
+            <span className="font-medium text-gray-700">Drink</span>
+            <span className="text-xs text-gray-500">21+</span>
           </button>
-          <button className="category-btn">
-            <Image src="/dessert-icon.png" alt="Dessert Icon" width={40} height={40} />
-            <span>Dessert</span>
-            <span className="text-sm text-gray-500">19+</span>
+          {/* Category Button: Dessert */}
+          <button className="category-btn flex flex-col items-center justify-center p-4 bg-gray-100 hover:bg-gray-200 rounded-lg shadow text-center space-y-1 transition duration-300 ease-in-out">
+             {/* Large Emoji Dessert Icon */}
+             <span className="text-4xl mb-1">🍰</span> {/* SVG replaced with Emoji */}
+            <span className="font-medium text-gray-700">Dessert</span>
+            <span className="text-xs text-gray-500">19+</span>
           </button>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="text-center py-4 text-sm text-gray-600">
+      {/* Footer Section */}
+      <footer className="text-center py-5 text-sm text-gray-500 border-t border-gray-200 mt-10">
         © 2025 ThermoChefAI. Tüm hakları saklıdır.
       </footer>
+
+      {/* Include Tailwind CSS - Necessary for standalone preview */}
+      <script src="https://cdn.tailwindcss.com"></script>
     </div>
   );
 }
