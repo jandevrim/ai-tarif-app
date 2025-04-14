@@ -18,28 +18,29 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({ title, recipeText }) =>
       await navigator.clipboard.writeText(`${title}\n\n${recipeText}`);
       alert("Tarif panoya kopyalandı ✅");
     } catch (err) {
-      alert("Kopyalama başarısız ❌");
+      alert("Kopyalama işlemi başarısız ❌");
     }
   };
 
- export const RecipeFeedback = ({ recipe }: { recipe: any }) => {
   const handleLike = () => {
-    saveLikedRecipe(recipe);
-    alert("Tarif beğenildi ve kaydedildi!");
-  };
-  
-  const handleDislike = () => {
-    alert("Bu geri bildirim için teşekkürler 👋");
+    saveLikedRecipe({ title, recipeText });
+    alert("Tarif beğenilenlere eklendi 💚");
   };
 
   return (
-    <div className="flex flex-col items-center gap-3 mt-6">
-      <p className="text-sm text-gray-600">Bu tarifi beğendiniz mi?</p>
-      <div className="flex gap-4">
-        <button onClick={handleLike} className="text-green-600 text-xl hover:scale-110 transition">👍</button>
-        <button onClick={handleDislike} className="text-red-600 text-xl hover:scale-110 transition">👎</button>
-        <button onClick={handleCopy} className="text-gray-700 text-xl hover:scale-110 transition">📋</button>
-      </div>
+    <div className="mt-6 flex gap-4 justify-center">
+      <button
+        onClick={handleCopy}
+        className="bg-gray-200 text-gray-800 px-4 py-2 rounded shadow hover:bg-gray-300"
+      >
+        📋 Kopyala
+      </button>
+      <button
+        onClick={handleLike}
+        className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+      >
+        👍 Beğendim
+      </button>
     </div>
   );
 };
