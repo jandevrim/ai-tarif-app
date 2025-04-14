@@ -1,69 +1,82 @@
-// ✅ pages/liked-recipes.tsx
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+// ✅ 1. localStorage'a beğeni kaydetmek için yardımcı fonksiyonlar
+export const saveLikedRecipe = (recipe: any) => {
+  const saved = localStorage.getItem("likedRecipes");
+  const existing = saved ? JSON.parse(saved) : [];
+  const updated = [...existing, recipe];
+  localStorage.setItem("likedRecipes", JSON.stringify(updated));
+};
 
-interface Recipe {
-  title: string;
-  summary: string;
-  duration: string;
-  ingredients: string[];
-  steps: string[];
-}
+export const getLikedRecipes = (): any[] => {
+  const saved = localStorage.getItem("likedRecipes");
+  return saved ? JSON.parse(saved) : [];
+};
 
-export default function LikedRecipesPage() {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const router = useRouter();
+// ✅ 2. Beğeni bileşeni (Tarif son adımında gösterilecek)
+import React from "react";
+
+export const RecipeFeedback = ({ recipe }: { recipe: any }) => {
+  const handleLike = () => {
+    saveLikedRecipe(recipe);
+    alert("Tarif beğenildi ve kaydedildi!");
+  };
+
+  return (
+    <div className="text-center mt-6">
+      <p className="text-sm text-gray-600 mb-2">Tarifi beğendiniz mi?</p>
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={handleLike}
+          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+        >
+          👍 Beğendim
+        </button>
+        <button
+          onClick={() => alert("Bir dahakine daha iyisini sunacağız!")}
+          className="bg-gray-300 text-gray-800 px-4 py-2 rounded shadow hover:bg-gray-400"
+        >
+          👎 Beğenmedim
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ✅ 3. /pages/liked-recipes.tsx bileşeni (Listeleme sayfası)
+import React, { useEffect, useState } from "react";
+import { getLikedRecipes } from "../utils/likedRecipes";
+
+const LikedRecipesPage = () => {
+  const [recipes, setRecipes] = useState<any[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('likedRecipes');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setRecipes(parsed);
-        }
-      } catch (err) {
-        console.error("Veri okunurken hata:", err);
-      }
-    }
+    const liked = getLikedRecipes();
+    setRecipes(liked);
   }, []);
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <button
-        onClick={() => router.push('/landing')}
-        className="mb-4 bg-gray-300 px-4 py-2 rounded-full text-sm"
-      >
-        ← Ana Sayfa
-      </button>
-
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">💚 Beğenilen Tarifler</h1>
-
       {recipes.length === 0 ? (
-        <p>Henüz beğenilen bir tarif yok.</p>
+        <p className="text-gray-500">Henüz beğenilen tarif bulunamadı.</p>
       ) : (
-        <div className="space-y-6">
-          {recipes.map((recipe, index) => (
-            <div key={index} className="border p-4 rounded bg-gray-50 shadow">
-              <h2 className="text-xl font-semibold mb-1">{recipe.title}</h2>
-              <p className="italic text-sm mb-2">{recipe.summary}</p>
+        <ul className="space-y-4">
+          {recipes.map((recipe, idx) => (
+            <li key={idx} className="bg-white p-4 rounded shadow">
+              <h2 className="font-bold text-lg mb-1">{recipe.title}</h2>
+              <p className="text-sm italic mb-2">{recipe.summary}</p>
               <p><strong>Süre:</strong> {recipe.duration}</p>
-              <h3 className="font-medium mt-2">Malzemeler:</h3>
+              <p className="mt-2 font-semibold">Malzemeler:</p>
               <ul className="list-disc list-inside text-sm">
-                {recipe.ingredients.map((item, i) => (
-                  <li key={i}>{item}</li>
+                {recipe.ingredients.map((ing: string, i: number) => (
+                  <li key={i}>{ing}</li>
                 ))}
               </ul>
-              <h3 className="font-medium mt-2">Adımlar:</h3>
-              <ol className="list-decimal list-inside text-sm">
-                {recipe.steps.map((step, i) => (
-                  <li key={i}>{step}</li>
-                ))}
-              </ol>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
-}
+};
+
+export default LikedRecipesPage;
