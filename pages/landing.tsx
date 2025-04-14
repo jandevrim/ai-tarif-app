@@ -53,18 +53,42 @@ function MockIngredientSelector({ selected, onSelect, onClose }: { selected: Ing
       <div className="flex flex-wrap gap-2 border-b pb-3 mb-3">
          {categories.map((category) => ( <button key={category} onClick={() => setActiveCategory(category)} className={`px-3 py-1 rounded-full text-sm transition duration-200 ease-in-out shadow-sm ${ activeCategory === category ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700' }`} > {category.charAt(0).toUpperCase() + category.slice(1)} </button> ))}
       </div>
-      {/* Ingredient List */}
-      <h3 className="font-semibold mb-2 text-gray-600"> {activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'Malzeme'} Listesi: </h3>
-      <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto mb-4 pr-2">
-        {ingredientsToUse
-            .filter(ing => ing.category === activeCategory) // Filtering happens here
+      {/* Ingredient List for Active Category */}
+      <h3 className="font-semibold mb-2 text-gray-600">
+          {activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'Malzeme'} Listesi:
+      </h3>
+      {/* Added key={activeCategory} to the container div below */}
+      <div key={activeCategory} className="flex flex-wrap gap-2 max-h-40 overflow-y-auto mb-4 pr-2">
+        {/* Filter ingredients based on the active category using ingredientsToUse */}
+        {(ingredientsToUse || [])
+            .filter(ing => ing.category === activeCategory)
             .map((ing) => {
                if (!ing || typeof ing.id !== 'string') { console.warn("Skipping ingredient with invalid id:", ing); return null; }
                const isSelected = selected.some(sel => sel.id === ing.id);
-               return ( <button key={ing.id} onClick={() => onSelect(ing)} disabled={isSelected} className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition duration-200 ease-in-out shadow-sm ${ isSelected ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-gray-100 hover:bg-green-100 text-gray-800' }`} > {ing.emoji && <span className="mr-1">{ing.emoji}</span>} <span>{ing.name?.tr || 'İsimsiz'}</span> </button> );
+               return (
+                  <button
+                    key={ing.id} // Use ingredient id as key
+                    onClick={() => onSelect(ing)}
+                    disabled={isSelected}
+                    className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition duration-200 ease-in-out shadow-sm ${
+                       isSelected
+                         ? 'bg-gray-400 text-white cursor-not-allowed'
+                         : 'bg-gray-100 hover:bg-green-100 text-gray-800'
+                    }`}
+                  >
+                    {/* Conditionally render emoji if it exists */}
+                    {ing.emoji && <span className="mr-1">{ing.emoji}</span>}
+                    <span>{ing.name?.tr || 'İsimsiz'}</span>
+                  </button>
+               );
             })}
-         {ingredientsToUse.filter(ing => ing.category === activeCategory).length === 0 && activeCategory && ( <p className="text-sm text-gray-500 italic">Bu kategoride malzeme bulunamadı.</p> )}
+         {/* Update empty category message logic */}
+         {(ingredientsToUse || []).filter(ing => ing.category === activeCategory).length === 0 && activeCategory && (
+            <p className="text-sm text-gray-500 italic">Bu kategoride malzeme bulunamadı.</p>
+         )}
       </div>
+	  
+	  
       {/* Close Button */}
       <div className="text-right"> <button onClick={onClose} className="bg-gray-400 hover:bg-gray-500 text-gray-800 px-3 py-1 rounded-full text-sm shadow-sm transition duration-200 ease-in-out" > Kapat </button> </div>
     </div>
