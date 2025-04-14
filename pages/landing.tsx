@@ -27,7 +27,38 @@ const realIngredients: Ingredient[] = fullIngredientsData; // Assign full data i
 
 const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData; // Use full data if not demo
 console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
+const getStepWithEmoji = (step: string): string => {
+  const mappings: { [key: string]: string } = {
+    karıştır: "🌀",
+    doğra: "🔪",
+    kıy: "🔪",
+    buhar: "♨️",
+    sote: "🍳",
+    kavur: "🍳",
+    ısıt: "🔥",
+    soğut: "🧊",
+    hız: "💨",
+    dakika: "⏱️",
+    saniye: "⏱️",
+    derece: "🌡️",
+    yoğur: "🥖",
+    tart: "⚖️",
+    turbo: "🚀",
+    smoothie: "🥤",
+  };
 
+  let result = step;
+
+  for (const keyword in mappings) {
+    const regex = new RegExp(`\\b${keyword}\\b`, "i");
+    if (regex.test(step)) {
+      result = `${mappings[keyword]} ${step}`;
+      break; // sadece ilk eşleşen emoji eklensin
+    }
+  }
+
+  return result;
+};
 function extractDeviceCommand(text: string): string | null {
   const regex = /(yoğurma modu|turbo.*|ters dönüş|[\d\s]+(sn|saniye|dk|dakika).*(\d+°C)?.*(hız\s*\d+))/i;
   const match = text.match(regex);
@@ -199,9 +230,9 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
           </div>
         )}
 
-        <p className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded min-h-[6rem]">
-          {stepText}
-        </p>
+       <p className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded min-h-[6rem]">
+		  {getStepWithEmoji(recipe.steps[stepIndex])}
+		</p>
 
         <div className="flex justify-between items-center gap-4">
           <button
