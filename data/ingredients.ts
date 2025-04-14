@@ -1,3 +1,14 @@
+// ✅ ingredients.ts – Düzeltilmiş: Tekrarlar kaldırıldı, ID'ler benzersiz yapıldı.
+
+// Ingredient tip tanımı (Projende merkezi bir yerde veya burada olabilir)
+export type Ingredient = {
+  id: string;
+  name: { tr: string; en: string };
+  category: string;
+  tags: string[];
+  emoji?: string; // Emoji opsiyonel
+};
+
 export const ingredients: Ingredient[] = [
   // Sebzeler
   { id: "domates", name: { tr: "domates", en: "Tomato" }, category: "sebze", tags: ['sebze', 'taze', 'kırmızı'], emoji: "🍅" },
@@ -136,3 +147,4 @@ export const ingredients: Ingredient[] = [
   { id: "karpuz", name: { tr: "Karpuz", en: "Watermelon" }, category: "meyveler", tags: ["meyve", "sulu", "yaz"], emoji: "🍉" },
   { id: "kiraz", name: { tr: "Kiraz", en: "Cherry" }, category: "meyveler", tags: ["meyve", "kırmızı", "küçük"], emoji: "🍒" },
 ];
+
