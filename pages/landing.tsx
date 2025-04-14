@@ -22,7 +22,7 @@ const demoIngredients: Ingredient[] = [ { id: "domates", name: { tr: "domates", 
 import { ingredients as fullIngredientsData } from '../data/ingredients'; 
 // const fullIngredientsData: Ingredient[] = [ /* ... Full data would be here in real app ... */ ]; // Keep empty for preview
 const realIngredients: Ingredient[] = fullIngredientsData; // Assign full data if not demo
-const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : realIngredients;
+//const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : realIngredients;
 // console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`); // Log'u azaltalım
 
 const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData; // Use full data if not demo
