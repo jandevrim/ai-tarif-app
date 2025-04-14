@@ -801,5 +801,160 @@ export const ingredients = [
   name: { tr: "acılı sos", en: "Hot Sauce" },
   category: "sıvılar",
   tags: ['sıvı', 'baharatlı', 'kırmızı']
+},
+// 🍰 Tatlılar kategorisi
+{
+  id: "toz_seker",
+  name: { tr: "Toz Şeker", en: "Sugar" },
+  category: "tatlılar",
+  tags: ["tatlı", "beyaz", "kristal"],
+  emoji: "🍚"
+},
+{
+  id: "un",
+  name: { tr: "Un", en: "Flour" },
+  category: "tatlılar",
+  tags: ["toz", "temel", "hamur"],
+  emoji: "🌾"
+},
+{
+  id: "yumurta",
+  name: { tr: "Yumurta", en: "Egg" },
+  category: "tatlılar",
+  tags: ["protein", "sarısı", "beyazı"],
+  emoji: "🥚"
+},
+{
+  id: "süt",
+  name: { tr: "Süt", en: "Milk" },
+  category: "tatlılar",
+  tags: ["sıvı", "süt ürünleri"],
+  emoji: "🥛"
+},
+{
+  id: "kabartma_tozu",
+  name: { tr: "Kabartma Tozu", en: "Baking Powder" },
+  category: "tatlılar",
+  tags: ["hamur", "kabartıcı", "toz"],
+  emoji: "🎈"
+},
+{
+  id: "vanilin",
+  name: { tr: "Vanilin", en: "Vanillin" },
+  category: "tatlılar",
+  tags: ["aroma", "tatlı", "toz"],
+  emoji: "🌼"
+},
+{
+  id: "kakao",
+  name: { tr: "Kakao", en: "Cocoa Powder" },
+  category: "tatlılar",
+  tags: ["çikolata", "toz", "bitter"],
+  emoji: "🍫"
+},
+{
+  id: "çikolata",
+  name: { tr: "Çikolata", en: "Chocolate" },
+  category: "tatlılar",
+  tags: ["tatlı", "bitter", "sütlü"],
+  emoji: "🍬"
+},
+{
+  id: "tereyağı",
+  name: { tr: "Tereyağı", en: "Butter" },
+  category: "tatlılar",
+  tags: ["yağ", "katı", "süt ürünleri"],
+  emoji: "🧈"
+},
+{
+  id: "muz",
+  name: { tr: "Muz", en: "Banana" },
+  category: "tatlılar",
+  tags: ["meyve", "tatlı", "yumuşak"],
+  emoji: "🍌"
+},
+{
+  id: "irmik",
+  name: { tr: "İrmik", en: "Semolina" },
+  category: "tatlılar",
+  tags: ["geleneksel", "un", "şerbetli"],
+  emoji: "🌾"
+},
+{
+  id: "nişasta",
+  name: { tr: "Nişasta", en: "Starch" },
+  category: "tatlılar",
+  tags: ["yoğunlaştırıcı", "şeffaf", "toz"],
+  emoji: "🥄"
+},
+{
+  id: "bal",
+  name: { tr: "Bal", en: "Honey" },
+  category: "tatlılar",
+  tags: ["doğal", "tatlandırıcı", "sıvı"],
+  emoji: "🍯"
+},
+{
+  id: "pekmez",
+  name: { tr: "Pekmez", en: "Molasses" },
+  category: "tatlılar",
+  tags: ["doğal", "üzüm", "besleyici"],
+  emoji: "🟤"
+},
+{
+  id: "gülsuyu",
+  name: { tr: "Gülsuyu", en: "Rose Water" },
+  category: "tatlılar",
+  tags: ["aromatik", "osmanlı", "likit"],
+  emoji: "🌹"
+},
+{
+  id: "fındık",
+  name: { tr: "Fındık", en: "Hazelnut" },
+  category: "tatlılar",
+  tags: ["kuruyemiş", "yağlı", "kavrulmuş"],
+  emoji: "🌰"
+},
+{
+  id: "ceviz",
+  name: { tr: "Ceviz", en: "Walnut" },
+  category: "tatlılar",
+  tags: ["kuruyemiş", "kıtır", "geleneksel"],
+  emoji: "🥥"
+},
+{
+  id: "badem",
+  name: { tr: "Badem", en: "Almond" },
+  category: "tatlılar",
+  tags: ["kuruyemiş", "rafine", "beyaz"],
+  emoji: "🌰"
+},
+{
+  id: "hindistan_cevizi",
+  name: { tr: "Hindistan Cevizi", en: "Coconut" },
+  category: "tatlılar",
+  tags: ["aromalı", "kıyılmış", "beyaz"],
+  emoji: "🥥"
+},
+{
+  id: "krem_santi",
+  name: { tr: "Krem Şanti", en: "Whipped Cream" },
+  category: "tatlılar",
+  tags: ["süsleme", "hafif", "kremalı"],
+  emoji: "🍦"
+},
+{
+  id: "puding_tozu",
+  name: { tr: "Puding Tozu", en: "Pudding Mix" },
+  category: "tatlılar",
+  tags: ["hazır", "kıvamlı", "çocuklar"],
+  emoji: "🍮"
+},
+{
+  id: "dondurma",
+  name: { tr: "Dondurma", en: "Ice Cream" },
+  category: "tatlılar",
+  tags: ["soğuk", "tatlı", "yaz"],
+  emoji: "🍨"
 }
 ];
