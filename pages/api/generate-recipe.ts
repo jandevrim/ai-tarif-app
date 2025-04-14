@@ -33,7 +33,16 @@ export default async function handler(
 
 Seçilen malzemeler: ${selectedNames.join(", ")}
 
-Lütfen Thermomix TM6 cihazına uygun, adım adım detaylı bir yemek tarifi oluştur. Tarifi aşağıdaki formatta döndür:
+Lütfen Thermomix TM6 veya Arzum Thermogusto cihazına uygun tarif oluştur. Aşağıdaki jargonu kullan:
+
+- 5 saniye / hız 5
+- Ölçüm kabını çıkarın
+- Yoğurma modu
+- Varoma ile buharda pişirme
+- Ters dönüş
+- 100°C’de 10 dakika
+- Karıştırıcı modu
+- Buhar fonksiyonu
 
 {
   "title": "...",
@@ -69,3 +78,4 @@ Lütfen Thermomix TM6 cihazına uygun, adım adım detaylı bir yemek tarifi olu
     res.status(500).json({ error: "Tarif oluşturulurken hata oluştu." });
   }
 }
+

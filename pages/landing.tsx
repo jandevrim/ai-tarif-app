@@ -28,6 +28,11 @@ const realIngredients: Ingredient[] = fullIngredientsData; // Assign full data i
 const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData; // Use full data if not demo
 console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
 
+function extractDeviceCommand(text: string): string | null {
+  const regex = /(yoğurma modu|turbo.*|ters dönüş|[\d\s]+(sn|saniye|dk|dakika).*(\d+°C)?.*(hız\s*\d+))/i;
+  const match = text.match(regex);
+  return match ? match[0].trim() : null;
+}
 
 // --- Mock Components ---
 function MockIngredientSelector({ selected, onSelect, onClose }: { selected: Ingredient[]; onSelect: (ingredient: Ingredient) => void; onClose: () => void; }) {
@@ -125,9 +130,105 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
   const handleGenerateRecipe = async () => { /* ... handleGenerateRecipe code ... */
     setIsLoading(true); setError(null); setRecipe(null); setCurrentStep(0); setShowSelector(false); const payload = { ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })) }; try { const response = await fetch("/api/generate-recipe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), }); if (!response.ok) { const errorData = await response.json().catch(() => ({ error: `Sunucu hatası: ${response.statusText}` })); throw new Error(errorData.error || `HTTP error! status: ${response.status}`); } const data = await response.json(); if (!data || typeof data !== 'object' || !data.steps || !data.ingredients || typeof data.title !== 'string') { console.error("Invalid recipe data structure received from API:", data); throw new Error("API'den geçersiz veya eksik tarif verisi alındı."); } console.log("Received recipe data from API:", data); setRecipe(data); } catch (err: any) { console.error("API call failed:", err); setError(err.message || "Tarif oluşturulurken bir hata oluştu."); setRecipe(null); } finally { setIsLoading(false); }
   };
-  const renderCurrentCard = () => { /* ... renderCurrentCard code ... */
-     if (!recipe) return null; if (currentStep === 0) { return ( <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in"> <h2 className="text-xl font-bold mb-2 text-center"> 📋 {recipe.title || "Başlık yok"} </h2> <p className="italic text-sm mb-2 text-gray-600 text-center">{recipe.summary || "Özet yok"}</p> <p className="text-center mb-4"> <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"} </p> <div className="mb-4 p-3 border rounded bg-gray-50 max-h-32 overflow-y-auto"> <h3 className="font-semibold mb-1">Gereken Malzemeler:</h3> <ul className="list-disc list-inside text-sm"> {recipe.ingredients && recipe.ingredients.length > 0 ? ( recipe.ingredients.map((ing: string, idx: number) => ( <li key={idx}>{ing}</li> )) ) : ( <li>Malzeme yok</li> )} </ul> </div> <div className="text-center mt-4"> {recipe.steps && recipe.steps.length > 0 && ( <button onClick={() => setCurrentStep(1)} className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105" > Hazırlanışa Başla &rarr; </button> )} </div> </div> ); } const stepIndex = currentStep - 1; if (recipe.steps && stepIndex >= 0 && stepIndex < recipe.steps.length) { return ( <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in"> <h2 className="text-xl font-bold mb-4 text-center"> 🍳 Hazırlık Adımı {currentStep} / {recipe.steps.length} </h2> <p className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded min-h-[6rem]"> {recipe.steps[stepIndex]} </p> <div className="flex justify-between items-center gap-4"> <button onClick={() => setCurrentStep((prev) => prev - 1)} className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-full shadow-md transition duration-300" > &larr; {currentStep === 1 ? 'Özet' : 'Geri'} </button> {currentStep < recipe.steps.length ? ( <button onClick={() => setCurrentStep((prev) => prev + 1)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105" > Sonraki &rarr; </button> ) : ( <span className="px-4 py-2 text-gray-500 font-semibold">Afiyet Olsun!</span> )} </div> </div> ); } return <p>Tarif adımı bulunamadı.</p>;
+  const renderCurrentCard = () => {
+  if (!recipe) return null;
+
+  // Cihaz komutu varsa yakalayalım (örneğin: 5 sn / 100°C / hız 1)
+  const extractDeviceCommand = (text: string): string | null => {
+    const regex =
+      /(yoğurma modu|turbo|ters dönüş|[\d\s]*(sn|saniye|dk|dakika).*(\d+°C)?[^a-z]*(hız\s*\d+)?)/i;
+    const match = text.match(regex);
+    return match ? match[0].trim() : null;
   };
+
+  // Başlangıç kartı (özet + malzeme listesi)
+  if (currentStep === 0) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
+        <h2 className="text-xl font-bold mb-2 text-center">
+          📋 {recipe.title || "Başlık yok"}
+        </h2>
+        <p className="italic text-sm mb-2 text-gray-600 text-center">
+          {recipe.summary || "Özet yok"}
+        </p>
+        <p className="text-center mb-4">
+          <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"}
+        </p>
+        <div className="mb-4 p-3 border rounded bg-gray-50 max-h-32 overflow-y-auto">
+          <h3 className="font-semibold mb-1">Gereken Malzemeler:</h3>
+          <ul className="list-disc list-inside text-sm">
+            {recipe.ingredients && recipe.ingredients.length > 0 ? (
+              recipe.ingredients.map((ing: string, idx: number) => (
+                <li key={idx}>{ing}</li>
+              ))
+            ) : (
+              <li>Malzeme yok</li>
+            )}
+          </ul>
+        </div>
+        <div className="text-center mt-4">
+          {recipe.steps && recipe.steps.length > 0 && (
+            <button
+              onClick={() => setCurrentStep(1)}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+            >
+              Hazırlanışa Başla &rarr;
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Adım kartları
+  const stepIndex = currentStep - 1;
+  if (recipe.steps && stepIndex >= 0 && stepIndex < recipe.steps.length) {
+    const stepText = recipe.steps[stepIndex];
+    const command = extractDeviceCommand(stepText);
+
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
+        <h2 className="text-xl font-bold mb-4 text-center">
+          🍳 Hazırlık Adımı {currentStep} / {recipe.steps.length}
+        </h2>
+
+        {/* Komut varsa göster */}
+        {command && (
+          <div className="text-center text-lg font-bold text-green-700 mb-2">
+            {command}
+          </div>
+        )}
+
+        <p className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded min-h-[6rem]">
+          {stepText}
+        </p>
+
+        <div className="flex justify-between items-center gap-4">
+          <button
+            onClick={() => setCurrentStep((prev) => prev - 1)}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-full shadow-md transition duration-300"
+          >
+            &larr; {currentStep === 1 ? "Özet" : "Geri"}
+          </button>
+          {currentStep < recipe.steps.length ? (
+            <button
+              onClick={() => setCurrentStep((prev) => prev + 1)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+            >
+              Sonraki &rarr;
+            </button>
+          ) : (
+            <span className="px-4 py-2 text-gray-500 font-semibold">
+              Afiyet Olsun!
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return <p>Tarif adımı bulunamadı.</p>;
+};
   const handleStartOver = () => { setSelectedIngredients([]); setShowSelector(false); setIsLoading(false); setRecipe(null); setError(null); setCurrentStep(0); }
   return ( <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans relative"> {!isLoading && ( <button onClick={() => onNavigate('/landing')} className="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow z-10" > &larr; Geri </button> )} <h1 className="text-2xl font-bold mb-4 text-center pt-8">Kendi Tarifini Oluştur</h1> {isLoading ? ( <LoadingIndicator /> ) : recipe ? ( <> <div className="mt-6"> {renderCurrentCard()} </div> <div className="text-center mt-6"> <button onClick={handleStartOver} className="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105" > Yeni Tarif Oluştur </button> </div> </> ) : ( <> <div className="mb-4 p-3 border rounded bg-white/50 min-h-[5rem]"> <h2 className="text-sm font-semibold mb-2">Seçilen Malzemeler:</h2> {selectedIngredients.length === 0 ? ( <p className="text-sm text-gray-500 italic">Başlamak için malzeme ekleyin.</p> ) : ( <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto"> {selectedIngredients.map((i) => ( <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center shadow-sm"> {i.emoji && <span className="mr-1">{i.emoji}</span>} <span>{i.name.tr}</span> <button onClick={() => setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))} className="ml-2 text-red-500 hover:text-red-700 font-bold" aria-label={`Remove ${i.name.tr}`}>✕</button> </span> ))} </div> )} </div> <button onClick={() => setShowSelector(!showSelector)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full mb-4 shadow-md transition duration-300 transform hover:scale-105"> {showSelector ? 'Malzeme Seçiciyi Gizle' : 'Malzeme Ekle/Göster'} </button> {showSelector && ( <MockIngredientSelector selected={selectedIngredients} onSelect={handleSelectIngredient} onClose={() => setShowSelector(false)} /> )} <div className="text-center mt-4"> <button onClick={handleGenerateRecipe} disabled={selectedIngredients.length === 0} className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105" > Tarif Oluştur </button> </div> </> )} {!isLoading && error && ( <p className="text-red-600 mt-4 p-3 bg-red-100 border border-red-400 rounded text-center">Hata: {error}</p> )} <style jsx global>{` @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } } .animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; } `}</style> </div> );
 }
