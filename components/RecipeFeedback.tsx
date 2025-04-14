@@ -2,13 +2,6 @@
 import React from "react";
 import { saveLikedRecipe } from "../utils/storage";
 
-export const saveLikedRecipe = (recipe: any) => {
-  const saved = localStorage.getItem("likedRecipes");
-  const existing = saved ? JSON.parse(saved) : [];
-  const updated = [...existing, recipe];
-  localStorage.setItem("likedRecipes", JSON.stringify(updated));
-};
-
 export const getLikedRecipes = (): any[] => {
   const saved = localStorage.getItem("likedRecipes");
   return saved ? JSON.parse(saved) : [];
