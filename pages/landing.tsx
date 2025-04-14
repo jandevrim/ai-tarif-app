@@ -190,5 +190,5 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
   const handleNavigate = (path: string) => { console.log(`Simulating navigation to: ${path}`); if (path === '/custom') { setCurrentPage('custom'); } else { setCurrentPage('landing'); } };
-  return ( <ErrorBoundary> <div> {currentPage === 'landing' && <LandingPage onNavigate={handleNavigate} />} {currentPage === 'custom' && <CustomRecipePage onNavigate={handleNavigate} />} <script src="https://cdn.tailwindcss.com"></script> </div> </ErrorBoundary> );
+  return ( <ErrorBoundary> <div> {currentPage === 'landing' && <LandingPage onNavigate={handleNavigate} />} {currentPage === 'custom' && <CustomRecipePage onNavigate={handleNavigate} />} </div> </ErrorBoundary> );
 }

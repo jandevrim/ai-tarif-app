@@ -1,10 +1,17 @@
 /* styles/theme.css */
+
+/* Tailwind core direktifleri */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Özel tema ayarların */
 body {
   font-family: 'Inter', sans-serif;
 }
 
 .text-green-600 {
-  color: #16a34a; /* Matching the green from the FoodMood app */
+  color: #16a34a;
 }
 
 .bg-green-600 {
