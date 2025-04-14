@@ -802,7 +802,6 @@ export const ingredients = [
   category: "sıvılar",
   tags: ['sıvı', 'baharatlı', 'kırmızı']
 },
-// 🍰 Tatlılar kategorisi
 {
   id: "toz_seker",
   name: { tr: "Toz Şeker", en: "Sugar" },
