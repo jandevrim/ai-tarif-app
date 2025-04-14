@@ -116,7 +116,7 @@ const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
   );
 };
 
-export default ShareButtons;
+
 
 // --- Mock Components ---
 function MockIngredientSelector({ selected, onSelect, onClose }: { selected: Ingredient[]; onSelect: (ingredient: Ingredient) => void; onClose: () => void; }) {
