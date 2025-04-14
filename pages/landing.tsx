@@ -34,10 +34,8 @@ const getStepWithEmoji = (step: string): string => {
 };
 
 const extractDeviceCommand = (text: string): string | null => {
-  // Improved regex to capture variations more reliably
   const regex = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
   const match = text.match(regex);
-  // Return the first captured group which should be the command itself
   return match ? match[0].replace(/\s+/g, ' ').trim() : null;
 };
 
@@ -45,36 +43,20 @@ const extractDeviceCommand = (text: string): string | null => {
 interface ShareButtonsProps { title: string; recipeText: string; }
 const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(`${title}\n\n${recipeText}`);
-      console.log("Tarif panoya kopyalandı ✅"); // Replaced alert
-      // Optionally show a temporary success message on the UI
-    } catch (err) {
-      console.error("Kopyalama işlemi başarısız:", err); // Replaced alert
-      // Optionally show an error message on the UI
-    }
+    try { await navigator.clipboard.writeText(`${title}\n\n${recipeText}`); console.log("Tarif panoya kopyalandı ✅"); } catch (err) { console.error("Kopyalama işlemi başarısız:", err); }
   };
-
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: `Tarif: ${title}`, text: recipeText });
-        console.log("Paylaşım başarılı.");
-      } catch (err) {
-        console.warn("Paylaşım iptal edildi veya başarısız:", err); // Replaced alert
-      }
-    } else {
-      console.warn("Cihazınız paylaşım desteği sunmuyor."); // Replaced alert
-      // Optionally trigger copy function as fallback or show message
-      handleCopy(); // Example: Fallback to copy
-    }
+    // Check for support using 'in' operator before calling
+    if ('share' in navigator) {
+      try { await navigator.share({ title: `Tarif: ${title}`, text: recipeText }); console.log("Paylaşım başarılı."); } catch (err) { console.warn("Paylaşım iptal edildi veya başarısız:", err); }
+    } else { console.warn("Cihazınız paylaşım desteği sunmuyor."); handleCopy(); } // Fallback to copy
   };
 
   return (
     <div className="mt-6 flex gap-4 justify-center">
-      {/* Using gray and blue buttons, rounded-full for consistency */}
       <button onClick={handleCopy} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-full shadow-md transition duration-300" > 📋 Kopyala </button>
-      {navigator.share && ( // Only show share button if supported
+      {/* Corrected condition to check for share API support */}
+      {'share' in navigator && ( // Use 'in' operator to check for method existence
         <button onClick={handleShare} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-full shadow-md transition duration-300" > 📤 Paylaş </button>
       )}
     </div>
@@ -149,8 +131,6 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
 
   const renderCurrentCard = () => {
      if (!recipe) return null;
-     // Moved extractDeviceCommand inside render function or define it outside but pass recipe/step info
-     // Let's define it here for simplicity as it uses stepText
      const extractDeviceCommandLocal = (text: string): string | null => {
          const regex = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
          const match = text.match(regex);
