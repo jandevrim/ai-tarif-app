@@ -1,5 +1,6 @@
 // ✅ pages/liked-recipes.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface Recipe {
   title: string;
@@ -9,39 +10,51 @@ interface Recipe {
   steps: string[];
 }
 
-const LikedRecipesPage = () => {
+export default function LikedRecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
-    const stored = localStorage.getItem("likedRecipes");
-    if (stored) {
+    const saved = localStorage.getItem('likedRecipes');
+    if (saved) {
       try {
-        setRecipes(JSON.parse(stored));
-      } catch (e) {
-        console.error("Liked recipe parse error:", e);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setRecipes(parsed);
+        }
+      } catch (err) {
+        console.error("Veri okunurken hata:", err);
       }
     }
   }, []);
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-green-50 to-blue-100 text-gray-800">
-      <h1 className="text-2xl font-bold mb-6">💚 Beğenilen Tarifler</h1>
+    <div className="min-h-screen bg-white p-6">
+      <button
+        onClick={() => router.push('/landing')}
+        className="mb-4 bg-gray-300 px-4 py-2 rounded-full text-sm"
+      >
+        ← Ana Sayfa
+      </button>
+
+      <h1 className="text-2xl font-bold mb-4">💚 Beğenilen Tarifler</h1>
+
       {recipes.length === 0 ? (
-        <p className="text-gray-600">Henüz beğenilen tarif yok.</p>
+        <p>Henüz beğenilen bir tarif yok.</p>
       ) : (
         <div className="space-y-6">
-          {recipes.map((recipe, idx) => (
-            <div key={idx} className="bg-white rounded shadow p-4">
-              <h2 className="text-xl font-semibold">{recipe.title}</h2>
-              <p className="italic text-sm text-gray-500">{recipe.summary}</p>
-              <p className="text-sm mt-2">⏱️ <strong>{recipe.duration}</strong></p>
-              <h3 className="mt-3 font-semibold">Malzemeler:</h3>
+          {recipes.map((recipe, index) => (
+            <div key={index} className="border p-4 rounded bg-gray-50 shadow">
+              <h2 className="text-xl font-semibold mb-1">{recipe.title}</h2>
+              <p className="italic text-sm mb-2">{recipe.summary}</p>
+              <p><strong>Süre:</strong> {recipe.duration}</p>
+              <h3 className="font-medium mt-2">Malzemeler:</h3>
               <ul className="list-disc list-inside text-sm">
-                {recipe.ingredients.map((ing, i) => (
-                  <li key={i}>{ing}</li>
+                {recipe.ingredients.map((item, i) => (
+                  <li key={i}>{item}</li>
                 ))}
               </ul>
-              <h3 className="mt-3 font-semibold">Adımlar:</h3>
+              <h3 className="font-medium mt-2">Adımlar:</h3>
               <ol className="list-decimal list-inside text-sm">
                 {recipe.steps.map((step, i) => (
                   <li key={i}>{step}</li>
@@ -53,6 +66,4 @@ const LikedRecipesPage = () => {
       )}
     </div>
   );
-};
-
-export default LikedRecipesPage;
+}
