@@ -1,5 +1,18 @@
 // ✅ components/RecipeFeedback.tsx
 import React from "react";
+import { saveLikedRecipe } from "../utils/storage";
+
+export const saveLikedRecipe = (recipe: any) => {
+  const saved = localStorage.getItem("likedRecipes");
+  const existing = saved ? JSON.parse(saved) : [];
+  const updated = [...existing, recipe];
+  localStorage.setItem("likedRecipes", JSON.stringify(updated));
+};
+
+export const getLikedRecipes = (): any[] => {
+  const saved = localStorage.getItem("likedRecipes");
+  return saved ? JSON.parse(saved) : [];
+};
 
 interface RecipeFeedbackProps {
   title: string;
@@ -16,10 +29,12 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({ title, recipeText }) =>
     }
   };
 
+ export const RecipeFeedback = ({ recipe }: { recipe: any }) => {
   const handleLike = () => {
-    alert("Tarif beğenildi! Yakında favorilere eklenecek 💚");
+    saveLikedRecipe(recipe);
+    alert("Tarif beğenildi ve kaydedildi!");
   };
-
+  
   const handleDislike = () => {
     alert("Bu geri bildirim için teşekkürler 👋");
   };
