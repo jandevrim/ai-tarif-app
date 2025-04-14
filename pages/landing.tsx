@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import RecipeFeedback from "../components/RecipeFeedback";
+import LikedRecipesPage from './pages/liked-recipes';
 // --- Error Boundary Component ---
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) { super(props); this.state = { hasError: false, error: null }; }
@@ -225,6 +226,22 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
 // --- Main App Component (Handles Routing) ---
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const handleNavigate = (path: string) => { console.log(`Simulating navigation to: ${path}`); if (path === '/custom') { setCurrentPage('custom'); } else { setCurrentPage('landing'); } };
-  return ( <ErrorBoundary> <div> {currentPage === 'landing' && <LandingPage onNavigate={handleNavigate} />} {currentPage === 'custom' && <CustomRecipePage onNavigate={handleNavigate} />} </div> </ErrorBoundary> );
+  const handleNavigate = (path: string) => {
+	  if (path === '/custom') {
+    setCurrentPage('custom');
+  } else if (path === '/liked-recipes') {
+    setCurrentPage('liked');
+  } else {
+    setCurrentPage('landing');
+  }
+};
+  return (
+  <ErrorBoundary>
+    <div>
+      {currentPage === 'landing' && <LandingPage onNavigate={handleNavigate} />}
+      {currentPage === 'custom' && <CustomRecipePage onNavigate={handleNavigate} />}
+      {currentPage === 'liked' && <LikedRecipesPage />}
+    </div>
+  </ErrorBoundary>
+);;
 }
