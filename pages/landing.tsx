@@ -22,8 +22,8 @@ const demoIngredients: Ingredient[] = [ { id: "domates", name: { tr: "domates", 
 // In a real app, load full data when IS_DEMO_MODE is false
 import { ingredients as fullIngredientsData } from '../data/ingredients';
 const realIngredients: Ingredient[] = []; // Keep empty for preview
-const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : realIngredients;
-// console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
+const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData;
+console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
 
 // --- Helper Functions (defined globally or could be moved) ---
 const getStepWithEmoji = (step: string): string => {
