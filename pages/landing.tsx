@@ -64,6 +64,59 @@ function extractDeviceCommand(text: string): string | null {
   const match = text.match(regex);
   return match ? match[0].trim() : null;
 }
+// ✅ Feature: Tarif Paylaşma (2025-04-10)
+
+
+
+interface ShareButtonsProps {
+  title: string;
+  recipeText: string;
+}
+
+const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(`${title}\n\n${recipeText}`);
+      alert("Tarif panoya kopyalandı ✅");
+    } catch (err) {
+      alert("Kopyalama işlemi başarısız ❌");
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Tarif: ${title}`,
+          text: recipeText,
+        });
+      } catch (err) {
+        alert("Paylaşım iptal edildi ❌");
+      }
+    } else {
+      alert("Cihazınız paylaşım desteği sunmuyor.");
+    }
+  };
+
+  return (
+    <div className="mt-6 flex gap-4 justify-center">
+      <button
+        onClick={handleCopy}
+        className="bg-gray-200 text-gray-800 px-4 py-2 rounded shadow hover:bg-gray-300"
+      >
+        📋 Kopyala
+      </button>
+      <button
+        onClick={handleShare}
+        className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
+      >
+        📤 Paylaş
+      </button>
+    </div>
+  );
+};
+
+export default ShareButtons;
 
 // --- Mock Components ---
 function MockIngredientSelector({ selected, onSelect, onClose }: { selected: Ingredient[]; onSelect: (ingredient: Ingredient) => void; onClose: () => void; }) {
@@ -164,34 +217,23 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
   const renderCurrentCard = () => {
   if (!recipe) return null;
 
-  // Cihaz komutu varsa yakalayalım (örneğin: 5 sn / 100°C / hız 1)
   const extractDeviceCommand = (text: string): string | null => {
-    const regex =
-      /(yoğurma modu|turbo|ters dönüş|[\d\s]*(sn|saniye|dk|dakika).*(\d+°C)?[^a-z]*(hız\s*\d+)?)/i;
+    const regex = /(yoğurma modu|turbo|ters dönüş|[\d\s]*(sn|saniye|dk|dakika).*(\d+°C)?[^a-z]*(hız\s*\d+)?)/i;
     const match = text.match(regex);
     return match ? match[0].trim() : null;
   };
 
-  // Başlangıç kartı (özet + malzeme listesi)
   if (currentStep === 0) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
-        <h2 className="text-xl font-bold mb-2 text-center">
-          📋 {recipe.title || "Başlık yok"}
-        </h2>
-        <p className="italic text-sm mb-2 text-gray-600 text-center">
-          {recipe.summary || "Özet yok"}
-        </p>
-        <p className="text-center mb-4">
-          <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"}
-        </p>
+        <h2 className="text-xl font-bold mb-2 text-center">📋 {recipe.title || "Başlık yok"}</h2>
+        <p className="italic text-sm mb-2 text-gray-600 text-center">{recipe.summary || "Özet yok"}</p>
+        <p className="text-center mb-4"><strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"}</p>
         <div className="mb-4 p-3 border rounded bg-gray-50 max-h-32 overflow-y-auto">
           <h3 className="font-semibold mb-1">Gereken Malzemeler:</h3>
           <ul className="list-disc list-inside text-sm">
             {recipe.ingredients && recipe.ingredients.length > 0 ? (
-              recipe.ingredients.map((ing: string, idx: number) => (
-                <li key={idx}>{ing}</li>
-              ))
+              recipe.ingredients.map((ing: string, idx: number) => <li key={idx}>{ing}</li>)
             ) : (
               <li>Malzeme yok</li>
             )}
@@ -211,6 +253,47 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     );
   }
 
+  const stepIndex = currentStep - 1;
+  if (recipe.steps && stepIndex >= 0 && stepIndex < recipe.steps.length) {
+    const stepText = recipe.steps[stepIndex];
+    const command = extractDeviceCommand(stepText);
+
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
+        <h2 className="text-xl font-bold mb-4 text-center">🍳 Hazırlık Adımı {currentStep} / {recipe.steps.length}</h2>
+        {command && <div className="text-center text-lg font-bold text-green-700 mb-2">{command}</div>}
+        <p className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded min-h-[6rem]">
+          {getStepWithEmoji(stepText)}
+        </p>
+        <div className="flex justify-between items-center gap-4">
+          <button
+            onClick={() => setCurrentStep((prev) => prev - 1)}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-full shadow-md transition duration-300"
+          >
+            &larr; {currentStep === 1 ? "Özet" : "Geri"}
+          </button>
+          {currentStep < recipe.steps.length ? (
+            <button
+              onClick={() => setCurrentStep((prev) => prev + 1)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+            >
+              Sonraki &rarr;
+            </button>
+          ) : (
+            <span className="px-4 py-2 text-gray-500 font-semibold">Afiyet Olsun!</span>
+          )}
+        </div>
+
+        {/* 👇 Tarifin tamamı gösterildiyse paylaşım butonlarını göster */}
+        {currentStep === recipe.steps.length && (
+          <ShareButtons title={recipe.title} recipeText={[recipe.summary, '', 'Malzemeler:', ...recipe.ingredients, '', 'Hazırlık Adımları:', ...recipe.steps].join('\n')} />
+        )}
+      </div>
+    );
+  }
+
+  return <p>Tarif adımı bulunamadı.</p>;
+};
   // Adım kartları
   const stepIndex = currentStep - 1;
   if (recipe.steps && stepIndex >= 0 && stepIndex < recipe.steps.length) {
