@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getLikedRecipes } from "../utils/storage";
 
-const liked = getLikedRecipes();
-
-const LikedRecipesPage = () => {
+const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
   const [recipes, setRecipes] = useState<any[]>([]);
 
   useEffect(() => {
@@ -12,8 +10,17 @@ const LikedRecipesPage = () => {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
+      {/* Geri Dön Butonu */}
+      <button
+        onClick={() => onNavigate("/landing")}
+        className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow"
+      >
+        &larr; Geri Dön
+      </button>
+
       <h1 className="text-2xl font-bold mb-4">💚 Beğenilen Tarifler</h1>
+
       {recipes.length === 0 ? (
         <p className="text-gray-500">Henüz beğenilen tarif bulunamadı.</p>
       ) : (
@@ -25,9 +32,13 @@ const LikedRecipesPage = () => {
               <p><strong>Süre:</strong> {recipe.duration}</p>
               <p className="mt-2 font-semibold">Malzemeler:</p>
               <ul className="list-disc list-inside text-sm">
-                {recipe.ingredients.map((ing: string, i: number) => (
-                  <li key={i}>{ing}</li>
-                ))}
+                {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 ? (
+                  recipe.ingredients.map((ing: string, i: number) => (
+                    <li key={i}>{ing}</li>
+                  ))
+                ) : (
+                  <li className="italic text-gray-400">Malzeme listesi bulunamadı.</li>
+                )}
               </ul>
             </li>
           ))}
