@@ -1,10 +1,6 @@
 import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore";
-import { app } from "../utils/firebaseconfig";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-
-const db = getFirestore(app);
 interface RecipeFeedbackProps {
   title: string;
   recipeText: string;
@@ -35,6 +31,7 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
       });
       alert("Tarif beğenildi ve kaydedildi! 💚");
     } catch (err) {
+      console.error(err);
       alert("Kaydetme sırasında hata oluştu.");
     }
   };
