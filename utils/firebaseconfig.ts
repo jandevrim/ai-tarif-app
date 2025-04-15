@@ -1,21 +1,26 @@
-// Import the functions you need from the SDKs you need
+// utils/firebaseConfig.ts
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAnalytics, isSupported } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Env değişkenlerinden config oluşturuluyor
 const firebaseConfig = {
-  apiKey: "AIzaSyB8rThu4ryzECrclhzmdRLqAKQsQbdZg2k",
-  authDomain: "thermochefai.firebaseapp.com",
-  projectId: "thermochefai",
-  storageBucket: "thermochefai.firebasestorage.app",
-  messagingSenderId: "341786502303",
-  appId: "1:341786502303:web:55f2bc04ded268d15eeeaa",
-  measurementId: "G-FK1QL4HS5V"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
-// Initialize Firebase
+// Uygulamayı başlat
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Analytics'i destekliyorsa başlat
+if (typeof window !== "undefined") {
+  isSupported().then((supported) => {
+    if (supported) getAnalytics(app);
+  });
+}
+
+export { app };

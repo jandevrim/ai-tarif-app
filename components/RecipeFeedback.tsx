@@ -1,6 +1,9 @@
 import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore";
+import { app } from "../utils/firebaseConfig";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 
+const db = getFirestore(app);
 interface RecipeFeedbackProps {
   title: string;
   recipeText: string;

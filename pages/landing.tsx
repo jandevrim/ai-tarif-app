@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import RecipeFeedback from "../components/RecipeFeedback";
 import LikedRecipesPage from './liked-recipes';
+import { app } from "../utils/firebaseConfig";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+
+const db = getFirestore(app);
 // --- Error Boundary Component ---
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) { super(props); this.state = { hasError: false, error: null }; }
