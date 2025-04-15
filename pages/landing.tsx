@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RecipeFeedback from "../components/RecipeFeedback";
 import LikedRecipesPage from './liked-recipes';
-import { app } from "../utils/firebaseConfig";
+import { app } from "../utils/firebaseconfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 const db = getFirestore(app);

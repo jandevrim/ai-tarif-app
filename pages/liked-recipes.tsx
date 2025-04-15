@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { app } from "../utils/firebaseConfig"; // firebaseConfig.ts içinde `export const app = initializeApp(...)` olmalı
+import { app } from "../utils/firebaseconfig"; // firebaseConfig.ts içinde `export const app = initializeApp(...)` olmalı
 
 const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
   const [recipes, setRecipes] = useState<any[]>([]);
