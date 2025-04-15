@@ -9,7 +9,7 @@ interface LikedRecipe {
   duration?: string;
   ingredients: string[];
   steps?: string[];
-  cihazMarkasi?: "thermomix" | "thermogusto";
+  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
   begeniSayisi?: number;
@@ -21,7 +21,7 @@ export async function saveLikedRecipeToServer(recipe: LikedRecipe): Promise<stri
     const docRef = await addDoc(collection(db, "likedRecipes"), {
       ...recipe,
       createdAt: new Date(),
-      cihazMarkasi: recipe.cihazMarkasi || "thermomix",
+      cihazMarkasi: recipe.cihazMarkasi || "tumu",
       tarifDili: recipe.tarifDili || "tr",
       kullaniciTarifi: recipe.kullaniciTarifi ?? false,
       begeniSayisi: recipe.begeniSayisi ?? 1
