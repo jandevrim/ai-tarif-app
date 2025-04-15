@@ -1,5 +1,5 @@
-// utils/firebaseconfig.ts
-import { initializeApp } from "firebase/app";
+// utils/firebaseConfig.ts
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
@@ -12,8 +12,10 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
-const app = initializeApp(firebaseConfig);
+// Aynı app daha önce initialize edilmişse tekrar etmiyoruz
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
+// Analytics (opsiyonel)
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
     if (supported) getAnalytics(app);
