@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { getLikedRecipes } from "../utils/storage";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { app } from "../utils/firebaseConfig"; // firebaseConfig.ts içinde `export const app = initializeApp(...)` olmalı
 
 const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
   const [recipes, setRecipes] = useState<any[]>([]);
+  const db = getFirestore(app);
+
+  // Firebase'den beğenilen tarifleri al
+  const getLikedRecipesFromFirebase = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "likedRecipes"));
+      const data = snapshot.docs.map(doc => doc.data());
+      setRecipes(data);
+    } catch (err) {
+      console.error("Tarifler alınırken hata:", err);
+    }
+  };
 
   useEffect(() => {
-    const liked = getLikedRecipes();
-    setRecipes(liked);
+    getLikedRecipesFromFirebase();
   }, []);
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
-      {/* Geri Dön Butonu */}
       <button
         onClick={() => onNavigate("/landing")}
         className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow"
