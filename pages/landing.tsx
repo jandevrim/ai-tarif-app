@@ -185,22 +185,26 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     Sonraki &rarr;
   </button>
 ) : (
-  <div className="w-full flex flex-col items-center mt-4">
-    <span className="px-4 py-2 text-gray-500 font-semibold mb-4">
-      Afiyet Olsun!
-    </span>
-    <RecipeFeedback
-      title={recipe.title}
-      recipeText={[
-        recipe.summary,
-        `Süre: ${recipe.duration}`,
-        "Malzemeler:",
-        ...recipe.ingredients,
-        "Hazırlık Adımları:",
-        ...recipe.steps,
-      ].join("\n")}
-    />
-  </div>
+<div className="w-full flex flex-col items-center mt-4">
+  <span className="px-4 py-2 text-gray-500 font-semibold mb-4">
+    Afiyet Olsun!
+  </span>
+  <RecipeFeedback
+    title={recipe.title}
+    recipeText={[
+      recipe.summary,
+      `Süre: ${recipe.duration}`,
+      "Malzemeler:",
+      ...recipe.ingredients,
+      "Hazırlık Adımları:",
+      ...recipe.steps,
+    ].join("\n")}
+    ingredients={recipe.ingredients}
+    cihazMarkasi="tumu" // ya da "thermogusto"
+    tarifDili="tr"
+    kullaniciTarifi={false}
+  />
+</div>
 )}
           </div>
           {/* Show ShareButtons only on the last step */}
