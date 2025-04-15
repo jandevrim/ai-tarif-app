@@ -240,7 +240,7 @@ export default function App() {
     <div>
       {currentPage === 'landing' && <LandingPage onNavigate={handleNavigate} />}
       {currentPage === 'custom' && <CustomRecipePage onNavigate={handleNavigate} />}
-      {currentPage === 'liked' && <LikedRecipesPage />}
+      {currentPage === 'liked' && <LikedRecipesPage onNavigate={handleNavigate} />}
     </div>
   </ErrorBoundary>
 );;
