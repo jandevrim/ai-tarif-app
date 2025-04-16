@@ -222,20 +222,22 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     Afiyet Olsun!
   </span>
   <RecipeFeedback
-    title={recipe.title}
-    recipeText={[
-      recipe.summary,
-      `Süre: ${recipe.duration}`,
-      "Malzemeler:",
-      ...recipe.ingredients,
-      "Hazırlık Adımları:",
-      ...recipe.steps,
-    ].join("\n")}
-    ingredients={recipe.ingredients}
-    cihazMarkasi="tumu" // ya da "thermogusto"
-    tarifDili="tr"
-    kullaniciTarifi={false}
-  />
+  title={recipe.title}
+  recipeText={[
+    recipe.summary,
+    `Süre: ${recipe.duration}`,
+    "Malzemeler:",
+    ...recipe.ingredients,
+    "Hazırlık Adımları:",
+    ...recipe.steps,
+  ].join("\n")}
+  ingredients={recipe.ingredients}
+  steps={recipe.steps} // ← Bunu ekledik
+  cihazMarkasi="tumu"
+  tarifDili="tr"
+  kullaniciTarifi={false}
+/>
+  
 </div>
 )}
           </div>
