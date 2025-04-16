@@ -1,15 +1,9 @@
-// utils/firestore.ts
-
-import { db } from "./firebase";
-import { collection, addDoc } from "firebase/firestore";
-
-// Tarifi temsil eden TypeScript arayüzü
 interface LikedRecipe {
   title: string;
   summary?: string;
   duration?: string;
   ingredients: string[];
-  steps?: string[];
+  steps?: string[]; // ✅ Ekli olmalı
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
@@ -22,14 +16,12 @@ export async function saveLikedRecipeToServer(recipe: LikedRecipe): Promise<stri
     const docRef = await addDoc(collection(db, "likedRecipes"), {
       ...recipe,
       createdAt: new Date(),
-      steps: recipe.steps || [], // ✅ steps alanını da ekle
+      steps: recipe.steps || [], // ✅ ÖZELLİKLE BUNU EKLE
       cihazMarkasi: recipe.cihazMarkasi || "tumu",
       tarifDili: recipe.tarifDili || "tr",
       kullaniciTarifi: recipe.kullaniciTarifi ?? false,
       begeniSayisi: recipe.begeniSayisi ?? 1,
     });
-
-    console.log("Tarif Firestore'a kaydedildi. ID:", docRef.id);
     return docRef.id;
   } catch (error) {
     console.error("Tarif kaydedilirken hata oluştu:", error);

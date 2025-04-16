@@ -2,12 +2,12 @@ import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore";
 
 interface RecipeFeedbackProps {
-  title: string;
-  recipeText: string;
-  ingredients: string[];
-  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
-  tarifDili?: string;
-  kullaniciTarifi?: boolean;
+ title={recipe.title}
+  recipeText={recipe.summary}
+  ingredients={recipe.ingredients}
+  steps={recipe.steps} // ✅ EKSİKSE BU YÜZDEN KAYIT BOŞ KALIYOR
+  cihazMarkasi={cihazMarkasi}
+  kullaniciTarifi={true}
 }
 
 const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
