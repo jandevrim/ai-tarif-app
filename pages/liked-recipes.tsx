@@ -1,6 +1,11 @@
-// ✅ pages/liked-recipes.tsx
 import React, { useEffect, useState } from "react";
-import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { app } from "../utils/firebaseconfig";
 
 const db = getFirestore(app);
@@ -11,28 +16,45 @@ interface Recipe {
   summary?: string;
   duration?: string;
   ingredients: string[];
-  steps?: string[] | string;
+  steps?: string[];
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
   begeniSayisi?: number;
 }
 
-const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
+const LikedRecipesPage = ({
+  onNavigate,
+}: {
+  onNavigate: (path: string) => void;
+}) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [expanded, setExpanded] = useState<{ [id: string]: boolean }>({});
-  const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
+  const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">(
+    "tumu"
+  );
 
   const fetchRecipes = async () => {
     const snapshot = await getDocs(collection(db, "likedRecipes"));
     const data = snapshot.docs.map((docSnap) => {
-      const d = docSnap.data();
-      console.log("🔎 TARİF VERİSİ:", d.title, d.steps);
+      const raw = docSnap.data();
       return {
         id: docSnap.id,
-        ...d,
+        title: raw.title,
+        summary: raw.summary,
+        duration: raw.duration,
+        ingredients: raw.ingredients || [],
+        steps: Array.isArray(raw.steps)
+          ? raw.steps
+          : typeof raw.steps === "string"
+          ? raw.steps.split(/\d+\.\s/).filter(Boolean).map((s: string) => s.trim())
+          : [],
+        cihazMarkasi: raw.cihazMarkasi,
+        tarifDili: raw.tarifDili,
+        kullaniciTarifi: raw.kullaniciTarifi,
+        begeniSayisi: raw.begeniSayisi,
       };
-    }) as Recipe[];
+    });
     setRecipes(data);
   };
 
@@ -100,7 +122,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                 <button
                   onClick={() => {
                     setExpanded((prev) => ({ ...prev, [recipe.id]: !prev[recipe.id] }));
-                    console.log("Tarif adımları:", recipe.steps);
                   }}
                   className="text-sm text-blue-600 hover:underline"
                 >
@@ -118,22 +139,11 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                 <div className="mt-4">
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
                   <ul className="list-decimal list-inside text-sm">
-                    {(() => {
-                      let stepsArray: string[] = [];
-                      if (Array.isArray(recipe.steps)) {
-                        stepsArray = recipe.steps.filter((s) => typeof s === "string" && s.trim() !== "");
-                      } else if (typeof recipe.steps === "string") {
-                        stepsArray = recipe.steps
-                          .split(/\d+\.\s+/)
-                          .map((s) => s.trim())
-                          .filter(Boolean);
-                      }
-                      return stepsArray.length > 0 ? (
-                        stepsArray.map((step, i) => <li key={i}>{step}</li>)
-                      ) : (
-                        <li className="italic text-gray-400">Adım verisi yok</li>
-                      );
-                    })()}
+                    {recipe.steps && recipe.steps.length > 0 ? (
+                      recipe.steps.map((step, i) => <li key={i}>{step}</li>)
+                    ) : (
+                      <li className="italic text-gray-400">Adım verisi yok</li>
+                    )}
                   </ul>
                 </div>
               )}
