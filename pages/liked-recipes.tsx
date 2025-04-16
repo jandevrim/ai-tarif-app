@@ -10,7 +10,7 @@ interface Recipe {
   summary?: string;
   duration?: string;
   ingredients: string[];
-  steps?: string[];
+  steps?: string[] | string;
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
@@ -116,13 +116,19 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                 <div className="mt-4">
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
                   <ul className="list-decimal list-inside text-sm">
-                    {Array.isArray(recipe.steps) && recipe.steps.filter(Boolean).length > 0 ? (
-                      recipe.steps.filter(Boolean).map((step, i) => (
-                        <li key={i}>{step}</li>
-                      ))
-                    ) : (
-                      <li className="italic text-gray-400">Adım verisi yok</li>
-                    )}
+                    {(() => {
+                      const stepsArray = Array.isArray(recipe.steps)
+                        ? recipe.steps
+                        : typeof recipe.steps === "string"
+                        ? recipe.steps.split("\n").filter(Boolean)
+                        : [];
+
+                      return stepsArray.length > 0 ? (
+                        stepsArray.map((step, i) => <li key={i}>{step}</li>)
+                      ) : (
+                        <li className="italic text-gray-400">Adım verisi yok</li>
+                      );
+                    })()}
                   </ul>
                 </div>
               )}
