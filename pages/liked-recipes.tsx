@@ -205,7 +205,11 @@ const LikedRecipesPage = ({
                   {/* Adımlar Başlığı */}
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
                     {/* ---- DEBUG: Render anındaki recipe.steps kontrol log'u - || null ile DÜZELTİLDİ ---- */}
-                    {console.log(`Render anındaki recipe.steps (${recipe.id}):`, recipe.steps) || null}
+// Önceki Hatalı Hali:
+// {console.log(`Render anındaki recipe.steps (${recipe.id}):`, recipe.steps) || null}
+
+// Düzeltilmiş Hali (IIFE):
+{(() => { console.log(`Render anındaki recipe.steps (${recipe.id}):`, recipe.steps); return null; })()}
                   {/* Adım Listesi */}
                   <ul className="list-decimal list-inside text-sm">
                     {/* Adımlar varsa ve boş değilse map ile listele */}
