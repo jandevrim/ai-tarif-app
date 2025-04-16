@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const selectedNames = ingredients.map((i: any) =>
       typeof i === "string" ? i : i?.name?.tr || i?.name
     );
-
+    console.log("GPT model set to 3.5");
     const fullPrompt = `${
       systemPrompt || process.env.SYSTEM_PROMPT
     }
