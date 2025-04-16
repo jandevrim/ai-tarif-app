@@ -96,6 +96,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               <div className="flex justify-between items-center mt-4">
                 <button
                   onClick={() =>
+	   			 console.log("Tarif adımları:", recipe.steps);
                     setExpanded((prev) => ({ ...prev, [recipe.id]: !prev[recipe.id] }))
                   }
                   className="text-sm text-blue-600 hover:underline"
