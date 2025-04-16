@@ -18,7 +18,18 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
 // --- Environment Variable Simulation ---
 const IS_DEMO_MODE = false; // Hardcoded true for preview to work
 // console.log(`Demo mode active: ${IS_DEMO_MODE} (Preview Mode)`);
+  const handleDeviceSelect = (device: 'thermomix' | 'thermogusto') => {
+    setSelectedDevice(device);
+  };
 
+  const handleStart = () => {
+    if (!selectedDevice) {
+      alert("Lütfen bir cihaz seçin: Thermomix veya ThermoGusto");
+      return;
+    }
+    localStorage.setItem("cihazMarkasi", selectedDevice);
+    onNavigate('/custom');
+  };
 // --- Data Definition ---
 type Ingredient = { id: string; name: { tr: string; en: string }; category: string; tags: string[]; emoji?: string; };
 
@@ -102,7 +113,32 @@ function LoadingIndicator() { /* ... LoadingIndicator code ... */
 
 // LandingPage component definition (Unchanged)
 function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) { /* ... LandingPage code ... */
-    return ( <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans"> <main className="flex flex-col items-center px-6 py-10 pt-16 flex-1"> <div className="relative w-full max-w-xs mb-8"> <img src="/logo.png" alt="ThermoChefAI Ana Logo" width={300} height={300} className="rounded-2xl shadow-lg object-contain mx-auto" onError={(e) => { const target = e.target as HTMLImageElement; target.onerror = null; target.src="https://placehold.co/300x300/e0f2fe/334155?text=Logo+Bulunamadı"; console.error("Logo yüklenemedi: /logo.png"); }} /> </div> <div className="text-center space-y-5"> <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900"> Yemekleri Yapay Zeka ile Keşfedin 🍳 </h1> <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto"> ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir. Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta! </p> <button onClick={() => onNavigate('/custom')} className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105" > Tarif Oluştur 🚀 </button>
+    return ( <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans"> <main className="flex flex-col items-center px-6 py-10 pt-16 flex-1"> <div className="relative w-full max-w-xs mb-8"> <img src="/logo.png" alt="ThermoChefAI Ana Logo" width={300} height={300} className="rounded-2xl shadow-lg object-contain mx-auto" onError={(e) => { const target = e.target as HTMLImageElement; target.onerror = null; target.src="https://placehold.co/300x300/e0f2fe/334155?text=Logo+Bulunamadı"; console.error("Logo yüklenemedi: /logo.png"); }} /> </div> <div className="text-center space-y-5"> <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900"> Yemekleri Yapay Zeka ile Keşfedin 🍳 </h1> <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto"> ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir. Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta! </p> 
+	<div className="flex gap-4 justify-center mt-4">
+            <button
+              onClick={() => handleDeviceSelect('thermomix')}
+              className={`px-6 py-2 rounded-full shadow-sm border font-medium transition duration-200 ${
+                selectedDevice === 'thermomix'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white text-gray-800 border-gray-300'
+              }`}
+            >
+              Thermomix
+            </button>
+            <button
+              onClick={() => handleDeviceSelect('thermogusto')}
+              className={`px-6 py-2 rounded-full shadow-sm border font-medium transition duration-200 ${
+                selectedDevice === 'thermogusto'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white text-gray-800 border-gray-300'
+              }`}
+            >
+              ThermoGusto
+            </button>
+          </div>
+	
+	<button onClick={() => onNavigate('/custom')} className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105" > Tarif Oluştur 🚀 </button>
+	
 {/* 👇 Beğenilen tariflere yönlendirme butonu */}
 <button
   onClick={() => onNavigate('/liked-recipes')}

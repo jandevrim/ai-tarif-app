@@ -2,18 +2,20 @@ import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore";
 
 interface RecipeFeedbackProps {
- title={recipe.title}
-  recipeText={recipe.summary}
-  ingredients={recipe.ingredients}
-  steps={recipe.steps} // ✅ EKSİKSE BU YÜZDEN KAYIT BOŞ KALIYOR
-  cihazMarkasi={cihazMarkasi}
-  kullaniciTarifi={true}
+  title: string;
+  recipeText: string;
+  ingredients: string[];
+  steps: string[]; // 🔧 Eksik olan eklendi!
+  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
+  tarifDili?: string;
+  kullaniciTarifi?: boolean;
 }
 
 const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
   title,
   recipeText,
   ingredients,
+  steps,
   cihazMarkasi = "tumu",
   tarifDili = "tr",
   kullaniciTarifi = false,
@@ -24,6 +26,7 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
         title,
         summary: recipeText,
         ingredients,
+        steps, // ✅ steps artık gönderiliyor
         cihazMarkasi,
         tarifDili,
         kullaniciTarifi,

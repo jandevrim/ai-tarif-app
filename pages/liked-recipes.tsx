@@ -33,14 +33,15 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
       const snapshot = await getDocs(collection(db, "likedRecipes"));
       const data = snapshot.docs.map((docSnap) => {
         const raw = docSnap.data();
-        const processedSteps = Array.isArray(raw.steps)
-          ? raw.steps
-          : typeof raw.steps === "string"
-          ? raw.steps
-              .split(/\d+\.\s/)
-              .filter(Boolean)
-              .map((s: string) => s.trim())
-          : [];
+        const processedSteps =
+          Array.isArray(raw.steps) && raw.steps.every((s: any) => typeof s === "string")
+            ? raw.steps
+            : typeof raw.steps === "string"
+            ? raw.steps
+                .split(/\d+\.\s/)
+                .filter(Boolean)
+                .map((s: string) => s.trim())
+            : [];
 
         return {
           id: docSnap.id,
@@ -141,10 +142,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               {expanded[recipe.id] && (
                 <div className="mt-4">
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
-                  {(() => {
-                    console.log(`Render anındaki recipe.steps (${recipe.id}):`, recipe.steps);
-                    return null;
-                  })()}
                   <ul className="list-decimal list-inside text-sm">
                     {recipe.steps && recipe.steps.length > 0 ? (
                       recipe.steps.map((step, i) => <li key={i}>{step}</li>)
