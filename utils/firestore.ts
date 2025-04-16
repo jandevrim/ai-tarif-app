@@ -1,3 +1,5 @@
+import { db } from "./firebase";
+import { collection, addDoc } from "firebase/firestore";
 interface LikedRecipe {
   title: string;
   summary?: string;
