@@ -1,3 +1,4 @@
+// ✅ pages/liked-recipes.tsx
 import React, { useEffect, useState } from "react";
 import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { app } from "../utils/firebaseconfig";
@@ -24,10 +25,14 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
 
   const fetchRecipes = async () => {
     const snapshot = await getDocs(collection(db, "likedRecipes"));
-    const data = snapshot.docs.map((docSnap) => ({
-      id: docSnap.id,
-      ...docSnap.data(),
-    })) as Recipe[];
+    const data = snapshot.docs.map((docSnap) => {
+      const d = docSnap.data();
+      console.log("🔎 TARİF VERİSİ:", d.title, d.steps);
+      return {
+        id: docSnap.id,
+        ...d,
+      };
+    }) as Recipe[];
     setRecipes(data);
   };
 
@@ -35,7 +40,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     const ref = doc(db, "likedRecipes", id);
     try {
       await updateDoc(ref, { begeniSayisi: (currentCount ?? 0) + 1 });
-      fetchRecipes(); // Refresh list after like
+      fetchRecipes();
     } catch (err) {
       console.error("Beğeni güncellenemedi", err);
     }
@@ -60,7 +65,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
 
       <h1 className="text-2xl font-bold mb-4">💚 Beğenilen Tarifler</h1>
 
-      {/* Filtre */}
       <div className="mb-4 flex gap-2">
         {["tumu", "thermomix", "thermogusto"].map((c) => (
           <button
@@ -92,7 +96,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                 ))}
               </ul>
 
-              {/* Like ve Tarifi Göster/Gizle */}
               <div className="flex justify-between items-center mt-4">
                 <button
                   onClick={() => {
@@ -111,18 +114,20 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                 </button>
               </div>
 
-              {/* Tarif Adımları */}
               {expanded[recipe.id] && (
                 <div className="mt-4">
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
                   <ul className="list-decimal list-inside text-sm">
                     {(() => {
-                      const stepsArray = Array.isArray(recipe.steps)
-                        ? recipe.steps
-                        : typeof recipe.steps === "string"
-                        ? recipe.steps.split("\n").filter(Boolean)
-                        : [];
-
+                      let stepsArray: string[] = [];
+                      if (Array.isArray(recipe.steps)) {
+                        stepsArray = recipe.steps.filter((s) => typeof s === "string" && s.trim() !== "");
+                      } else if (typeof recipe.steps === "string") {
+                        stepsArray = recipe.steps
+                          .split(/\d+\.\s+/)
+                          .map((s) => s.trim())
+                          .filter(Boolean);
+                      }
                       return stepsArray.length > 0 ? (
                         stepsArray.map((step, i) => <li key={i}>{step}</li>)
                       ) : (
