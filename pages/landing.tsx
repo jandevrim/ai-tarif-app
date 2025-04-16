@@ -31,10 +31,6 @@ const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData;
 console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
 const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
 
-const handleStart = () => {
-  localStorage.setItem("cihazMarkasi", selectedDevice); // LocalStorage'a yaz
-  onNavigate('/custom'); // Custom sayfasına yönlendir
-};
 
 
 // --- Helper Functions (defined globally or could be moved) ---
@@ -147,6 +143,11 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   </div>
 </footer> </div> );
 }
+
+const handleStart = () => {
+  localStorage.setItem("cihazMarkasi", selectedDevice); // LocalStorage'a yaz
+};
+
 
 // CustomRecipePage component definition
 function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }) {
