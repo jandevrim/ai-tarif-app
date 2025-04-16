@@ -95,17 +95,16 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               {/* Like ve Tarifi Göster/Gizle */}
               <div className="flex justify-between items-center mt-4">
                 <button
-                  onClick={() =>
-					  setExpanded((prev) => ({ ...prev, [recipe.id]: !prev[recipe.id] }))
-				    console.log("Tarif adımları:", recipe.steps);
-                  }
+                  onClick={() => {
+                    setExpanded((prev) => ({ ...prev, [recipe.id]: !prev[recipe.id] }));
+                    console.log("Tarif adımları:", recipe.steps);
+                  }}
                   className="text-sm text-blue-600 hover:underline"
                 >
                   {expanded[recipe.id] ? "Tarifi Gizle" : "Tarifi Göster"}
                 </button>
                 <button
                   onClick={() => handleLike(recipe.id, recipe.begeniSayisi)}
-				  
                   className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full shadow"
                 >
                   👍 {recipe.begeniSayisi ?? 0}
