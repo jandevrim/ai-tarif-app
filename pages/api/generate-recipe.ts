@@ -55,7 +55,7 @@ Lütfen Thermomix TM6 veya Arzum Thermogusto cihazına uygun tarif oluştur. Aş
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-0125-preview",
+      model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: fullPrompt },
         { role: "user", content: "Tarifi oluştur" },
