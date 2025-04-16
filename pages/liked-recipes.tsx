@@ -6,7 +6,7 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
-import { app } from "../utils/firebaseconfig";
+import { app } from "../utils/firebaseconfig"; // Firebase config dosyanızın yolu doğru olmalı
 
 const db = getFirestore(app);
 
@@ -16,7 +16,7 @@ interface Recipe {
   summary?: string;
   duration?: string;
   ingredients: string[];
-  steps?: string[];
+  steps?: string[]; // Adımlar string dizisi olabilir
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
@@ -35,34 +35,52 @@ const LikedRecipesPage = ({
   );
 
   const fetchRecipes = async () => {
-    const snapshot = await getDocs(collection(db, "likedRecipes"));
-    const data = snapshot.docs.map((docSnap) => {
-      const raw = docSnap.data();
-      return {
-        id: docSnap.id,
-        title: raw.title,
-        summary: raw.summary,
-        duration: raw.duration,
-        ingredients: raw.ingredients || [],
-        steps: Array.isArray(raw.steps)
-          ? raw.steps
+    console.log("fetchRecipes çağrıldı."); // DEBUG: Fonksiyonun çağrıldığını kontrol et
+    try {
+      const snapshot = await getDocs(collection(db, "likedRecipes"));
+      const data = snapshot.docs.map((docSnap) => {
+        const raw = docSnap.data();
+        // DEBUG: Firestore'dan gelen ham steps verisini logla
+        console.log(`HAM steps verisi (${docSnap.id}):`, raw.steps);
+
+        // Steps verisini işle
+        const processedSteps = Array.isArray(raw.steps)
+          ? raw.steps // Zaten array ise doğrudan kullan
           : typeof raw.steps === "string"
-          ? raw.steps.split(/\d+\.\s/).filter(Boolean).map((s: string) => s.trim())
-          : [],
-        cihazMarkasi: raw.cihazMarkasi,
-        tarifDili: raw.tarifDili,
-        kullaniciTarifi: raw.kullaniciTarifi,
-        begeniSayisi: raw.begeniSayisi,
-      };
-    });
-    setRecipes(data);
+          ? raw.steps // String ise regex ile böl, filtrele ve trim yap
+              .split(/\d+\.\s/) // "1. ", "2. " gibi pattern'lara göre böl
+              .filter(Boolean) // Bölme sonucu oluşabilecek boş string'leri kaldır
+              .map((s: string) => s.trim()) // Başındaki/sonundaki boşlukları temizle
+          : []; // Diğer durumlarda (undefined, null, vs.) boş array ata
+
+        // DEBUG: İşlenmiş steps verisini logla
+        console.log(`İŞLENMİŞ steps verisi (${docSnap.id}):`, processedSteps);
+
+        return {
+          id: docSnap.id,
+          title: raw.title,
+          summary: raw.summary,
+          duration: raw.duration,
+          ingredients: raw.ingredients || [], // Ingredients yoksa boş array
+          steps: processedSteps, // İşlenmiş adımları ata
+          cihazMarkasi: raw.cihazMarkasi,
+          tarifDili: raw.tarifDili,
+          kullaniciTarifi: raw.kullaniciTarifi,
+          begeniSayisi: raw.begeniSayisi,
+        };
+      });
+      setRecipes(data);
+      console.log("Tarifler state'e yüklendi:", data); // DEBUG: Yüklenen veriyi kontrol et
+    } catch (error) {
+        console.error("Tarifler çekilirken hata oluştu:", error); // DEBUG: Hata olursa logla
+    }
   };
 
   const handleLike = async (id: string, currentCount: number = 0) => {
     const ref = doc(db, "likedRecipes", id);
     try {
       await updateDoc(ref, { begeniSayisi: (currentCount ?? 0) + 1 });
-      fetchRecipes();
+      fetchRecipes(); // Başarılı güncelleme sonrası listeyi yenile
     } catch (err) {
       console.error("Beğeni güncellenemedi", err);
     }
@@ -70,7 +88,7 @@ const LikedRecipesPage = ({
 
   useEffect(() => {
     fetchRecipes();
-  }, []);
+  }, []); // Sadece component mount olduğunda çalışır
 
   const filteredRecipes = recipes.filter((r) =>
     filter === "tumu" ? true : r.cihazMarkasi === filter
@@ -121,7 +139,14 @@ const LikedRecipesPage = ({
               <div className="flex justify-between items-center mt-4">
                 <button
                   onClick={() => {
-                    setExpanded((prev) => ({ ...prev, [recipe.id]: !prev[recipe.id] }));
+                    // DEBUG: State güncellemesi öncesi ve sonrası loglama
+                    console.log("Önceki expanded state:", expanded);
+                    console.log("Tıklanan tarif ID:", recipe.id);
+                    setExpanded((prev) => {
+                      const newState = { ...prev, [recipe.id]: !prev[recipe.id] };
+                      console.log("Yeni expanded state:", newState);
+                      return newState;
+                    });
                   }}
                   className="text-sm text-blue-600 hover:underline"
                 >
@@ -135,9 +160,15 @@ const LikedRecipesPage = ({
                 </button>
               </div>
 
+              {/* ---- DEBUG: Koşullu render öncesi kontrol log'u ---- */}
+              {console.log(`Render: Tarif ID: ${recipe.id}, Expanded?: ${!!expanded[recipe.id]}`)}
+
+              {/* Koşullu olarak adımları gösteren bölüm */}
               {expanded[recipe.id] && (
                 <div className="mt-4">
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
+                    {/* ---- DEBUG: Render anındaki recipe.steps kontrol log'u ---- */}
+                    {console.log(`Render anındaki recipe.steps (${recipe.id}):`, recipe.steps)}
                   <ul className="list-decimal list-inside text-sm">
                     {recipe.steps && recipe.steps.length > 0 ? (
                       recipe.steps.map((step, i) => <li key={i}>{step}</li>)
