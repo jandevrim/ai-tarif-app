@@ -17,12 +17,12 @@ interface LikedRecipe {
   createdAt?: Date;
 }
 
-// Tarifi Firestore veritabanına kaydetme fonksiyonu
 export async function saveLikedRecipeToServer(recipe: LikedRecipe): Promise<string> {
   try {
     const docRef = await addDoc(collection(db, "likedRecipes"), {
       ...recipe,
       createdAt: new Date(),
+      steps: recipe.steps || [], // ✅ steps alanını da ekle
       cihazMarkasi: recipe.cihazMarkasi || "tumu",
       tarifDili: recipe.tarifDili || "tr",
       kullaniciTarifi: recipe.kullaniciTarifi ?? false,
