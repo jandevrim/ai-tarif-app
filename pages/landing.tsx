@@ -3,7 +3,7 @@ import RecipeFeedback from "../components/RecipeFeedback";
 import LikedRecipesPage from './liked-recipes';
 import { app } from "../utils/firebaseconfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
-
+const [selectedDevice, setSelectedDevice] = useState<'thermomix' | 'thermogusto' | null>(null);
 const db = getFirestore(app);
 // --- Error Boundary Component ---
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
