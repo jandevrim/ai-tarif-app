@@ -35,34 +35,31 @@ const LikedRecipesPage = ({
   );
 
   const fetchRecipes = async () => {
-    console.log("fetchRecipes çağrıldı."); // DEBUG: Fonksiyonun çağrıldığını kontrol et
+    console.log("fetchRecipes çağrıldı."); // Bu log sorun çıkarmaz (JSX içinde değil)
     try {
       const snapshot = await getDocs(collection(db, "likedRecipes"));
       const data = snapshot.docs.map((docSnap) => {
         const raw = docSnap.data();
-        // DEBUG: Firestore'dan gelen ham steps verisini logla
-        console.log(`HAM steps verisi (${docSnap.id}):`, raw.steps);
+        console.log(`HAM steps verisi (${docSnap.id}):`, raw.steps); // Bu log sorun çıkarmaz
 
-        // Steps verisini işle
         const processedSteps = Array.isArray(raw.steps)
-          ? raw.steps // Zaten array ise doğrudan kullan
+          ? raw.steps
           : typeof raw.steps === "string"
-          ? raw.steps // String ise regex ile böl, filtrele ve trim yap
-              .split(/\d+\.\s/) // "1. ", "2. " gibi pattern'lara göre böl
-              .filter(Boolean) // Bölme sonucu oluşabilecek boş string'leri kaldır
-              .map((s: string) => s.trim()) // Başındaki/sonundaki boşlukları temizle
-          : []; // Diğer durumlarda (undefined, null, vs.) boş array ata
+          ? raw.steps
+              .split(/\d+\.\s/)
+              .filter(Boolean)
+              .map((s: string) => s.trim())
+          : [];
 
-        // DEBUG: İşlenmiş steps verisini logla
-        console.log(`İŞLENMİŞ steps verisi (${docSnap.id}):`, processedSteps);
+        console.log(`İŞLENMİŞ steps verisi (${docSnap.id}):`, processedSteps); // Bu log sorun çıkarmaz
 
         return {
           id: docSnap.id,
           title: raw.title,
           summary: raw.summary,
           duration: raw.duration,
-          ingredients: raw.ingredients || [], // Ingredients yoksa boş array
-          steps: processedSteps, // İşlenmiş adımları ata
+          ingredients: raw.ingredients || [],
+          steps: processedSteps,
           cihazMarkasi: raw.cihazMarkasi,
           tarifDili: raw.tarifDili,
           kullaniciTarifi: raw.kullaniciTarifi,
@@ -70,9 +67,9 @@ const LikedRecipesPage = ({
         };
       });
       setRecipes(data);
-      console.log("Tarifler state'e yüklendi:", data); // DEBUG: Yüklenen veriyi kontrol et
+      console.log("Tarifler state'e yüklendi:", data); // Bu log sorun çıkarmaz
     } catch (error) {
-        console.error("Tarifler çekilirken hata oluştu:", error); // DEBUG: Hata olursa logla
+        console.error("Tarifler çekilirken hata oluştu:", error); // Bu log sorun çıkarmaz
     }
   };
 
@@ -80,15 +77,15 @@ const LikedRecipesPage = ({
     const ref = doc(db, "likedRecipes", id);
     try {
       await updateDoc(ref, { begeniSayisi: (currentCount ?? 0) + 1 });
-      fetchRecipes(); // Başarılı güncelleme sonrası listeyi yenile
+      fetchRecipes();
     } catch (err) {
-      console.error("Beğeni güncellenemedi", err);
+      console.error("Beğeni güncellenemedi", err); // Bu log sorun çıkarmaz
     }
   };
 
   useEffect(() => {
     fetchRecipes();
-  }, []); // Sadece component mount olduğunda çalışır
+  }, []);
 
   const filteredRecipes = recipes.filter((r) =>
     filter === "tumu" ? true : r.cihazMarkasi === filter
@@ -96,6 +93,7 @@ const LikedRecipesPage = ({
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
+      {/* ... Geri Dön Butonu, Başlık, Filtre Butonları ... */}
       <button
         onClick={() => onNavigate("/landing")}
         className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow"
@@ -119,12 +117,14 @@ const LikedRecipesPage = ({
         ))}
       </div>
 
+
       {filteredRecipes.length === 0 ? (
         <p className="text-gray-500">Filtreye uygun tarif bulunamadı.</p>
       ) : (
         <ul className="space-y-6">
           {filteredRecipes.map((recipe) => (
             <li key={recipe.id} className="bg-white p-5 rounded-xl shadow-md">
+              {/* ... Tarif Başlığı, Süre, Malzemeler ... */}
               <h2 className="text-xl font-bold mb-2">{recipe.title}</h2>
               <p className="text-sm text-gray-600 mb-2">
                 <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"}
@@ -139,7 +139,7 @@ const LikedRecipesPage = ({
               <div className="flex justify-between items-center mt-4">
                 <button
                   onClick={() => {
-                    // DEBUG: State güncellemesi öncesi ve sonrası loglama
+                    // Bu loglar sorun çıkarmaz (event handler içinde)
                     console.log("Önceki expanded state:", expanded);
                     console.log("Tıklanan tarif ID:", recipe.id);
                     setExpanded((prev) => {
@@ -160,15 +160,15 @@ const LikedRecipesPage = ({
                 </button>
               </div>
 
-              {/* ---- DEBUG: Koşullu render öncesi kontrol log'u ---- */}
-              {console.log(`Render: Tarif ID: ${recipe.id}, Expanded?: ${!!expanded[recipe.id]}`)}
+              {/* ---- DEBUG: Koşullu render öncesi kontrol log'u - DÜZELTİLDİ ---- */}
+              {console.log(`Render: Tarif ID: ${recipe.id}, Expanded?: ${!!expanded[recipe.id]}`) || null}
 
               {/* Koşullu olarak adımları gösteren bölüm */}
               {expanded[recipe.id] && (
                 <div className="mt-4">
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
-                    {/* ---- DEBUG: Render anındaki recipe.steps kontrol log'u ---- */}
-                    {console.log(`Render anındaki recipe.steps (${recipe.id}):`, recipe.steps)}
+                    {/* ---- DEBUG: Render anındaki recipe.steps kontrol log'u - DÜZELTİLDİ ---- */}
+                    {console.log(`Render anındaki recipe.steps (${recipe.id}):`, recipe.steps) || null}
                   <ul className="list-decimal list-inside text-sm">
                     {recipe.steps && recipe.steps.length > 0 ? (
                       recipe.steps.map((step, i) => <li key={i}>{step}</li>)
