@@ -16,7 +16,7 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
   recipeText,
   ingredients,
   steps,
-  cihazMarkasi={cihazMarkasi},
+  cihazMarkasi,
   tarifDili = "tr",
   kullaniciTarifi = false,
 }) => {
@@ -27,7 +27,7 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
         summary: recipeText,
         ingredients,
         steps, // ✅ steps artık gönderiliyor
-        cihazMarkasi,
+        {cihazMarkasiFromStorage ?? "tumu"},
         tarifDili,
         kullaniciTarifi,
         begeniSayisi: 1,
