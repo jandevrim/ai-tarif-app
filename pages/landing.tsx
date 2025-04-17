@@ -231,7 +231,10 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
 
   const handleGenerateRecipe = async () => {
     setIsLoading(true); setError(null); setRecipe(null); setCurrentStep(0); setShowSelector(false);
-    const payload = { ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })) };
+    const payload = {
+  ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })),
+  cihazMarkasi: localStorage.getItem("cihazMarkasi") || "tumu"
+};
     try {
       const response = await fetch("/api/generate-recipe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!response.ok) { const errorData = await response.json().catch(() => ({ error: `Sunucu hatası: ${response.statusText}` })); throw new Error(errorData.error || `HTTP error! status: ${response.status}`); }
@@ -297,7 +300,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
   ].join("\n")}
   ingredients={recipe.ingredients}
   steps={recipe.steps} // ← Bunu ekledik
-  cihazMarkasi="tumu"
+  cihazMarkasi={recipe.cihazMarkasi || "tumu"}
   tarifDili="tr"
   kullaniciTarifi={false}
 />
