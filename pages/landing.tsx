@@ -29,7 +29,6 @@ import { ingredients as fullIngredientsData } from '../data/ingredients';
 const realIngredients: Ingredient[] = []; // Keep empty for preview
 const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData;
 console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
-const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
 
 
 
