@@ -4,6 +4,8 @@ import LikedRecipesPage from './liked-recipes';
 import { app } from "../utils/firebaseconfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
+
+
 const db = getFirestore(app);
 // --- Error Boundary Component ---
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -105,7 +107,8 @@ function LoadingIndicator() { /* ... LoadingIndicator code ... */
 // LandingPage component definition (Unchanged)
 function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
-
+  const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
+  
   const handleStart = () => {
     localStorage.setItem("cihazMarkasi", selectedDevice);
     onNavigate("/custom");
@@ -160,6 +163,7 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
               onClick={() => setSelectedDevice("thermogusto")}
               className={`px-4 py-2 rounded-full shadow ${
                 selectedDevice === "thermogusto" ? "bg-green-600 text-white" : "bg-gray-200"
+
               }`}
             >
               ThermoGusto
