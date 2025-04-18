@@ -1,5 +1,6 @@
 import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore";
+const cihazMarkasiFromStorage = typeof window !== "undefined" ? localStorage.getItem("cihazMarkasi") : null;
 
 interface RecipeFeedbackProps {
   title: string;
