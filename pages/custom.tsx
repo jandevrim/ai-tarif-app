@@ -8,10 +8,22 @@ export default function CustomRecipePage() {
   const [recipe, setRecipe] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
+const cihazMarkasiFromStorage = typeof window !== 'undefined'
+  ? (localStorage.getItem("cihazMarkasi") as "thermomix" | "thermogusto" | null)
+  : null;
 
   // Log recipe state changes for debugging
   useEffect(() => {
     console.log("Recipe state updated:", recipe);
+   const storedDevice = localStorage.getItem("cihazMarkasi");
+  if (storedDevice === "thermomix" || storedDevice === "thermogusto") {
+    setCihazMarkasi(storedDevice);
+  } else {
+    setCihazMarkasi("tumu"); // fallback
+  }
+  console.log (recipe.cihazMarkasi);
+
   }, [recipe]);
 
   const handleSelectIngredient = (ingredient: Ingredient) => {

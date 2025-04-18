@@ -22,16 +22,16 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
 }) => {
   const handleLike = async () => {
     try {
-      await saveLikedRecipeToServer({
-        title,
-        summary: recipeText,
-        ingredients,
-        steps, // ✅ steps artık gönderiliyor
-        {cihazMarkasiFromStorage ?? "tumu"},
-        tarifDili,
-        kullaniciTarifi,
-        begeniSayisi: 1,
-      });
+     await saveLikedRecipeToServer({
+  title,
+  summary: recipeText,
+  ingredients,
+  steps, // ✅ steps artık gönderiliyor
+  cihazMarkasi: cihazMarkasiFromStorage ?? "tumu", // ✅ doğru kullanım
+  tarifDili,
+  kullaniciTarifi,
+  begeniSayisi: 1,
+});
       alert("Tarif beğenildi ve kaydedildi! 💚");
     } catch (err) {
       console.error(err);

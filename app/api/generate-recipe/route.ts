@@ -36,7 +36,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
   "summary": "...",
   "duration": "...",
   "ingredients": ["...", "..."],
-  "steps": ["...", "..."]
+  "steps": ["...", "..."],
 }
 `;
 
