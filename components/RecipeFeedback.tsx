@@ -1,6 +1,14 @@
 import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore";
-const cihazMarkasiFromStorage = typeof window !== "undefined" ? localStorage.getItem("cihazMarkasi") : null;
+const getValidCihazMarkasi = (): "thermomix" | "thermogusto" | "tumu" => {
+  if (typeof window === "undefined") return "tumu";
+  const val = localStorage.getItem("cihazMarkasi");
+  if (val === "thermomix" || val === "thermogusto" || val === "tumu") {
+    return val;
+  }
+  return "tumu";
+};
+const cihazMarkasiFromStorage = getValidCihazMarkasi();
 
 interface RecipeFeedbackProps {
   title: string;
@@ -23,16 +31,19 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
 }) => {
   const handleLike = async () => {
     try {
-     await saveLikedRecipeToServer({
+     
+await saveLikedRecipeToServer({
   title,
   summary: recipeText,
   ingredients,
   steps, // ✅ steps artık gönderiliyor
-  cihazMarkasi: cihazMarkasiFromStorage ?? "tumu", // ✅ doğru kullanım
+  cihazMarkasi: cihazMarkasiFromStorage, // ✅ artık TypeScript uyumlu
   tarifDili,
   kullaniciTarifi,
   begeniSayisi: 1,
 });
+
+     
       alert("Tarif beğenildi ve kaydedildi! 💚");
     } catch (err) {
       console.error(err);
