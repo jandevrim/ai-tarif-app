@@ -29,13 +29,17 @@ const IS_DEMO_MODE = false; // Hardcoded true for preview to work
 // console.log(`Demo mode active: ${IS_DEMO_MODE} (Preview Mode)`);
 
 // --- Data Definition ---
-const [ingredients, setIngredients] = useState([]);
+cconst [ingredients, setIngredients] = useState<Ingredient[]>([]); // <-- Provide the explicit type here
+
 useEffect(() => {
   const fetchIngredients = async () => {
-    const db = getFirestore(app);
     const snapshot = await getDocs(collection(db, "ingredients"));
-    const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setIngredients(data);
+    // Ensure the mapping aligns with the Ingredient interface
+    const data: Ingredient[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data() // Ensure data() returns fields matching Ingredient
+    } as Ingredient)); // Optional: Cast here for extra safety if needed
+    setIngredients(data); // Now this assignment should be type-compatible
   };
   fetchIngredients();
 }, []);
