@@ -76,24 +76,103 @@ const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
 
 
 // --- Mock Components ---
-function MockIngredientSelector({ /* ... props ... */ selected, onSelect, onClose }: { selected: Ingredient[]; onSelect: (ingredient: Ingredient) => void; onClose: () => void; }) {
-  const categories = React.useMemo(() => { /* ... category calculation ... */ if (!Array.isArray(ingredientsToUse)) { console.error("Ingredients data is not an array!", ingredientsToUse); return []; } const uniqueCategories = new Set(ingredientsToUse.map(ing => ing.category)); const categoryOrder = ['sebze', 'meyveler', 'et ürünleri', 'süt ürünleri', 'bakliyat', 'baharatlar', 'sıvılar', 'diğer']; return Array.from(uniqueCategories).sort((a, b) => { const indexA = categoryOrder.indexOf(a.toLowerCase()); const indexB = categoryOrder.indexOf(b.toLowerCase()); if (indexA === -1 && indexB === -1) return a.localeCompare(b, 'tr'); if (indexA === -1) return 1; if (indexB === -1) return -1; return indexA - indexB; }); }, [ingredientsToUse]);
+function MockIngredientSelector({
+  selected,
+  onSelect,
+  onClose,
+  ingredients = demoIngredients // Varsayılan olarak demoIngredients
+}: {
+  selected: Ingredient[];
+  onSelect: (ingredient: Ingredient) => void;
+  onClose: () => void;
+  ingredients?: Ingredient[];
+}) {
+  const categories = React.useMemo(() => {
+    if (!Array.isArray(ingredients)) {
+      console.error("Ingredients data is not an array!", ingredients);
+      return [];
+    }
+    const uniqueCategories = new Set(ingredients.map((ing) => ing.category));
+    const categoryOrder = ['sebze', 'meyveler', 'et ürünleri', 'süt ürünleri', 'bakliyat', 'baharatlar', 'sıvılar', 'diğer'];
+    return Array.from(uniqueCategories).sort((a, b) => {
+      const indexA = categoryOrder.indexOf(a.toLowerCase());
+      const indexB = categoryOrder.indexOf(b.toLowerCase());
+      if (indexA === -1 && indexB === -1) return a.localeCompare(b, 'tr');
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  }, [ingredients]);
+
   const [activeCategory, setActiveCategory] = useState<string>(categories[0] || '');
-  useEffect(() => { /* ... effect to reset active category ... */ if (categories.length > 0 && !categories.includes(activeCategory)) { setActiveCategory(categories[0]); } else if (categories.length === 0) { setActiveCategory(''); } }, [categories, activeCategory]);
-  // useEffect(() => { /* ... debug log ... */ const filtered = ingredientsToUse.filter(ing => ing.category === activeCategory); console.log(`SELECTOR: Category changed to "${activeCategory}". Filtered ingredients count: ${filtered.length}`); }, [activeCategory, ingredientsToUse]);
+
+  useEffect(() => {
+    if (categories.length > 0 && !categories.includes(activeCategory)) {
+      setActiveCategory(categories[0]);
+    } else if (categories.length === 0) {
+      setActiveCategory('');
+    }
+  }, [categories, activeCategory]);
+
+  // Yorumlanmış debug useEffect'i de güncelle (eğer kullanacaksan)
+  // useEffect(() => {
+  //   const filtered = ingredients.filter(ing => ing.category === activeCategory);
+  //   console.log(`SELECTOR: Category changed to "${activeCategory}". Filtered ingredients count: ${filtered.length}`);
+  // }, [activeCategory, ingredients]);
 
   return (
     <div className="p-4 border rounded-lg bg-white shadow-md mb-4">
-      {/* Category Tabs */}
-      <div className="flex flex-wrap gap-2 border-b pb-3 mb-3"> {categories.map((category) => ( <button key={category} onClick={() => setActiveCategory(category)} className={`px-3 py-1 rounded-full text-sm transition duration-200 ease-in-out shadow-sm ${ activeCategory === category ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700' }`} > {category.charAt(0).toUpperCase() + category.slice(1)} </button> ))} </div>
-      {/* Ingredient List */}
-      <h3 className="font-semibold mb-2 text-gray-600"> {activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'Malzeme'} Listesi: </h3>
-      <div key={activeCategory} className="flex flex-wrap gap-2 max-h-40 overflow-y-auto mb-4 pr-2"> {/* Added key here */}
-        {(ingredientsToUse || []).filter(ing => ing.category === activeCategory).map((ing) => { if (!ing || typeof ing.id !== 'string') { console.warn("Skipping ingredient with invalid id:", ing); return null; } const isSelected = selected.some(sel => sel.id === ing.id); return ( <button key={ing.id} onClick={() => onSelect(ing)} disabled={isSelected} className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition duration-200 ease-in-out shadow-sm ${ isSelected ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-gray-100 hover:bg-green-100 text-gray-800' }`} > {ing.emoji && <span className="mr-1">{ing.emoji}</span>} <span>{ing.name?.tr || 'İsimsiz'}</span> </button> ); })}
-         {(ingredientsToUse || []).filter(ing => ing.category === activeCategory).length === 0 && activeCategory && ( <p className="text-sm text-gray-500 italic">Bu kategoride malzeme bulunamadı.</p> )}
+      <div className="flex flex-wrap gap-2 border-b pb-3 mb-3">
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => setActiveCategory(category)}
+            className={`px-3 py-1 rounded-full text-sm transition duration-200 ease-in-out shadow-sm ${
+              activeCategory === category
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            }`}
+          >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
+        ))}
       </div>
-      {/* Close Button */}
-      <div className="text-right"> <button onClick={onClose} className="bg-gray-400 hover:bg-gray-500 text-gray-800 px-3 py-1 rounded-full text-sm shadow-sm transition duration-200 ease-in-out" > Kapat </button> </div>
+      <h3 className="font-semibold mb-2 text-gray-600">
+        {activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'Malzeme'} Listesi:
+      </h3>
+      <div key={activeCategory} className="flex flex-wrap gap-2 max-h-40 overflow-y-auto mb-4 pr-2">
+        {(ingredients || []).filter((ing) => ing.category === activeCategory).map((ing) => {
+          if (!ing || typeof ing.id !== 'string') {
+            console.warn("Skipping ingredient with invalid id:", ing);
+            return null;
+          }
+          const isSelected = selected.some((sel) => sel.id === ing.id);
+          return (
+            <button
+              key={ing.id}
+              onClick={() => onSelect(ing)}
+              disabled={isSelected}
+              className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition duration-200 ease-in-out shadow-sm ${
+                isSelected ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-gray-100 hover:bg-green-100 text-gray-800'
+              }`}
+            >
+              {ing.emoji && <span className="mr-1">{ing.emoji}</span>}
+              <span>{ing.name?.tr || 'İsimsiz'}</span>
+            </button>
+          );
+        })}
+        {(ingredients || []).filter((ing) => ing.category === activeCategory).length === 0 && activeCategory && (
+          <p className="text-sm text-gray-500 italic">Bu kategoride malzeme bulunamadı.</p>
+        )}
+      </div>
+      <div className="text-right">
+        <button
+          onClick={onClose}
+          className="bg-gray-400 hover:bg-gray-500 text-gray-800 px-3 py-1 rounded-full text-sm shadow-sm transition duration-200 ease-in-out"
+        >
+          Kapat
+        </button>
+      </div>
     </div>
   );
 }
