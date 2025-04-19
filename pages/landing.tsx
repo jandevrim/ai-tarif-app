@@ -29,7 +29,7 @@ const IS_DEMO_MODE = false; // Hardcoded true for preview to work
 // console.log(`Demo mode active: ${IS_DEMO_MODE} (Preview Mode)`);
 
 // --- Data Definition ---
-cconst [ingredients, setIngredients] = useState<Ingredient[]>([]); // <-- Provide the explicit type here
+const [ingredients, setIngredients] = useState<Ingredient[]>([]); // <-- Provide the explicit type here
 
 useEffect(() => {
   const fetchIngredients = async () => {
