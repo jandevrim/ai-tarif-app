@@ -97,7 +97,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         &larr; Geri Dön
       </button>
 
-      <h1 className="text-2xl font-bold mb-4">💚 Beğenilen Tarifler</h1>
+      <h1 className="text-2xl font-bold mb-4">💚 Harika Lezzetler Listesi</h1>
 
       <input
         type="text"
