@@ -27,6 +27,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [expanded, setExpanded] = useState<{ [id: string]: boolean }>({});
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
+  const [search, setSearch] = useState<string>("");
 
   const fetchRecipes = async () => {
     try {
@@ -76,9 +77,13 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     fetchRecipes();
   }, []);
 
-  const filteredRecipes = recipes.filter((r) =>
-    filter === "tumu" ? true : r.cihazMarkasi === filter
-  );
+  const filteredRecipes = recipes.filter((r) => {
+    const matchesFilter = filter === "tumu" || r.cihazMarkasi === filter;
+    const matchesSearch =
+      r.title.toLowerCase().includes(search.toLowerCase()) ||
+      r.ingredients.some((ing) => ing.toLowerCase().includes(search.toLowerCase()));
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
@@ -90,6 +95,14 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
       </button>
 
       <h1 className="text-2xl font-bold mb-4">💚 Beğenilen Tarifler</h1>
+
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Tarif veya malzeme ara..."
+        className="mb-4 px-4 py-2 border border-gray-300 rounded w-full shadow-sm"
+      />
 
       <div className="mb-4 flex gap-2">
         {["tumu", "thermomix", "thermogusto"].map((c) => (
@@ -108,39 +121,33 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
       {filteredRecipes.length === 0 ? (
         <p className="text-gray-500">Filtreye uygun tarif bulunamadı.</p>
       ) : (
-        <ul className="space-y-6">
+        <ul className="space-y-4">
           {filteredRecipes.map((recipe) => (
-            <li key={recipe.id} className="bg-white p-5 rounded-xl shadow-md">
-              <h2 className="text-xl font-bold mb-2">{recipe.title}</h2>
-              <p className="text-sm text-gray-600 mb-2">
-                <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"}
-              </p>
-              <p className="text-sm text-gray-600 mb-1 font-semibold">Malzemeler:</p>
-              <ul className="list-disc list-inside mb-2 text-sm">
-                {recipe.ingredients?.map((ing, i) => (
-                  <li key={i}>{ing}</li>
-                ))}
-              </ul>
-
-              <div className="flex justify-between items-center mt-4">
-                <button
-                  onClick={() => {
-                    setExpanded((prev) => ({ ...prev, [recipe.id]: !prev[recipe.id] }));
-                  }}
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  {expanded[recipe.id] ? "Tarifi Gizle" : "Tarifi Göster"}
-                </button>
-                <button
-                  onClick={() => handleLike(recipe.id, recipe.begeniSayisi)}
-                  className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full shadow"
-                >
-                  👍 {recipe.begeniSayisi ?? 0}
-                </button>
+            <li key={recipe.id} className="bg-white p-4 rounded-xl shadow-md">
+              <div
+                className="cursor-pointer"
+                onClick={() => setExpanded((prev) => ({ ...prev, [recipe.id]: !prev[recipe.id] }))}
+              >
+                <div className="flex justify-between items-center">
+                  <h2 className="text-lg font-semibold">{recipe.title}</h2>
+                  <span className="text-xs text-gray-600">
+                    {recipe.cihazMarkasi === "thermogusto"
+                      ? "ThermoGusto"
+                      : recipe.cihazMarkasi === "thermomix"
+                      ? "Thermomix"
+                      : "Cihaz Bilinmiyor"}
+                    {recipe.duration ? ` • ${recipe.duration}` : ""}
+                  </span>
+                </div>
               </div>
-
               {expanded[recipe.id] && (
                 <div className="mt-4">
+                  <h3 className="font-semibold mb-1">Malzemeler:</h3>
+                  <ul className="list-disc list-inside text-sm mb-3">
+                    {recipe.ingredients.map((ing, i) => (
+                      <li key={i}>{ing}</li>
+                    ))}
+                  </ul>
                   <h3 className="font-semibold mb-1">Hazırlık Adımları:</h3>
                   <ul className="list-decimal list-inside text-sm">
                     {recipe.steps && recipe.steps.length > 0 ? (
