@@ -175,7 +175,7 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
             onClick={() => onNavigate("/liked-recipes")}
             className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-medium px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
           >
-            💚 Beğenilen Tarifleri Gör
+            💚 Hazır Tarif Listesi
           </button>
         </div>
 
