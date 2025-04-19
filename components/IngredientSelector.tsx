@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ingredients } from "../data/ingredients";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { app } from "../utils/firebaseconfig";
 
 export interface Ingredient {
   id: string;
@@ -18,8 +19,20 @@ interface Props {
 export default function IngredientSelector({ selected, onSelect }: Props) {
   const [term, setTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [filtered, setFiltered] = useState<Ingredient[]>(ingredients);
+  const [filtered, setFiltered] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const db = getFirestore(app);
+
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      const snapshot = await getDocs(collection(db, "ingredients"));
+      const fetched = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Ingredient[];
+      setIngredients(fetched);
+    };
+    fetchIngredients();
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -37,7 +50,7 @@ export default function IngredientSelector({ selected, onSelect }: Props) {
       setIsLoading(false);
     }, 200);
     return () => clearTimeout(timeout);
-  }, [term, selectedCategory]);
+  }, [term, selectedCategory, ingredients]);
 
   const categories = Array.from(new Set(ingredients.map((i) => i.category)));
 
