@@ -308,6 +308,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
   const [currentStep, setCurrentStep] = useState(0);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
+
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
@@ -339,6 +340,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     };
     fetchIngredients();
   }, []);
+  const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : ingredients;
   // --- Moved handlers inside the component ---
   const handleSelectIngredient = (ingredient: Ingredient) => {
     if (!selectedIngredients.find((i) => i.id === ingredient.id)) {
