@@ -33,7 +33,7 @@ const IS_DEMO_MODE = false; // Hardcoded true for preview to work
 // --- Data Loading Logic ---
 const demoIngredients: Ingredient[] = [ { id: "domates", name: { tr: "domates", en: "Tomato" }, category: "sebze", tags: ['sebze', 'taze', 'kırmızı'], emoji: "🍅" }, { id: "soğan", name: { tr: "soğan", en: "Onion" }, category: "sebze", tags: ['sebze', 'keskin', 'aromatik'], emoji: "🧅" }, { id: "sarımsak", name: { tr: "sarımsak", en: "Garlic" }, category: "sebze", tags: ['sebze', 'aromatik', 'küçük'], emoji: "🧄" }, { id: "tavuk_göğsü", name: { tr: "tavuk göğsü", en: "Chicken Breast" }, category: "et ürünleri", tags: ['et', 'beyaz', 'yağsız'] }, { id: "süt", name: { tr: "süt", en: "Milk" }, category: "süt ürünleri", tags: ['süt', 'beyaz', 'sıvı'], emoji: "🥛" }, { id: "peynir", name: { tr: "peynir", en: "Cheese" }, category: "süt ürünleri", tags: ['süt', 'katı', 'fermente'], emoji: "🧀" }, { id: "nohut", name: { tr: "nohut", en: "Chickpeas" }, category: "bakliyat", tags: ['bakliyat', 'yuvarlak', 'protein'] }, { id: "mercimek", name: { tr: "mercimek", en: "Lentils" }, category: "bakliyat", tags: ['bakliyat', 'küçük', 'protein'] }, { id: "karabiber_b", name: { tr: "karabiber", en: "Black Pepper" }, category: "baharatlar", tags: ['baharat', 'keskin', 'toz'] }, { id: "zeytinyağı_s", name: { tr: "zeytinyağı", en: "Olive Oil" }, category: "sıvılar", tags: ['sıvı', 'yağ', 'soğuk'], emoji: "🫒" }, { id: "elma", name: { tr: "Elma" , en: "Apple"}, category: "meyveler", tags: ['meyve', 'tatlı', 'kırmızı'], emoji: "🍎" }, ];
 // In a real app, load full data when IS_DEMO_MODE is false
-import { ingredients as fullIngredientsData } from '../data/ingredients';
+
 const realIngredients: Ingredient[] = []; // Keep empty for preview
 const ingredientsToUse = IS_DEMO_MODE ? demoIngredients : fullIngredientsData;
 console.log(`Using ${IS_DEMO_MODE ? 'demo' : 'real'} ingredients. Count: ${ingredientsToUse.length}`);
@@ -231,25 +231,39 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
   const [recipe, setRecipe] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
-
-const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
   useEffect(() => {
-  const fetchIngredients = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, "ingredients"));
-      const data: Ingredient[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data()
-      } as Ingredient));
-      setIngredients(data);
-    } catch (err) {
-      console.error("Malzemeler yüklenirken hata oluştu:", err);
-      setError("Malzemeler yüklenemedi.");
-    }
-  };
-  fetchIngredients();
-}, []);
+    const fetchIngredients = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "ingredients"));
+        if (snapshot.empty) {
+          console.warn("Firebase'de 'ingredients' koleksiyonu boş.");
+          setIngredients([]);
+          return;
+        }
+        const data: Ingredient[] = snapshot.docs.map((doc) => {
+          const docData = doc.data();
+          return {
+            id: doc.id,
+            name: docData.name && typeof docData.name === 'object'
+              ? { tr: docData.name.tr || '', en: docData.name.en || '' }
+              : { tr: docData.name || '', en: docData.name || '' },
+            category: docData.category || 'diğer',
+            tags: Array.isArray(docData.tags) ? docData.tags : [],
+            emoji: docData.emoji || undefined
+          } as Ingredient;
+        });
+        console.log("Firebase'den çekilen veriler:", data); // Debug
+        setIngredients(data);
+      } catch (err) {
+        console.error("Firebase hatası:", err);
+        setError("Malzemeler yüklenemedi.");
+        setIngredients([]);
+      }
+    };
+    fetchIngredients();
+  }, []);
   // --- Moved handlers inside the component ---
   const handleSelectIngredient = (ingredient: Ingredient) => {
     if (!selectedIngredients.find((i) => i.id === ingredient.id)) {
