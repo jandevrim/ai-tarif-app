@@ -90,7 +90,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   });
 
   const selectedRecipe = recipes.find((r) => r.id === expanded);
-
+  const imageSrc = recipe.imageUrl || recipe.image;
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
       <button
@@ -227,12 +227,13 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                     {recipe.duration ? ` • ${recipe.duration}` : ""}
                   </span>
                 </div>
-                {recipe.imageUrl && (
-                  <img
-                    src={recipe.imageUrl}
-                    alt=""
-                    className="w-16 h-16 object-cover rounded-md border border-gray-200"
-                  />
+                {imageSrc && (
+              <img
+              src={imageSrc}
+              alt={recipe.title}
+              className="w-16 h-16 object-cover rounded-md border border-gray-200"
+              />
+                )}
                 )}
               </div>
             </li>
