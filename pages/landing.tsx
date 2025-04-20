@@ -199,7 +199,7 @@ function LoadingIndicator() { /* ... LoadingIndicator code ... */
 // --- Page Components ---
 
 // LandingPage component definition (Unchanged)
-ffunction LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
+function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
   const [user, setUser] = useState<User | null>(null);
