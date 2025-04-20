@@ -33,31 +33,28 @@ const cihazMarkasiFromStorage = typeof window !== 'undefined'
   };
 
   const handleGenerateRecipe = async () => {
-    setIsLoading(true);
-    setError(null);
-    setRecipe(null);
-    setCurrentStep(0);
+  setIsLoading(true);
+  setError(null);
+  setRecipe(null);
+  setCurrentStep(0);
 
-    try {
-      const response = await fetch("/api/generate-recipe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredients: selectedIngredients }),
-      });
+  try {
+    const response = await fetch("/api/generate-recipe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ingredients: selectedIngredients, cihazMarkasi }),
+    });
 
-      const data = await response.json();
-      console.log("API Response:", data); // Log raw API response
-
-      if (!response.ok) throw new Error(data.error || "Sunucu hatası");
-
-      if (!data || !data.steps || !data.ingredients) throw new Error("Tarif verisi eksik");
-      setRecipe(data);
-    } catch (err: any) {
-      setError(err.message || "Tarif oluşturulamadı.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Sunucu hatası");
+    if (!data || !data.steps || !data.ingredients) throw new Error("Tarif verisi eksik");
+    setRecipe(data);
+  } catch (err: any) {
+    setError(err.message || "Tarif oluşturulamadı.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900">
