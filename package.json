@@ -2,13 +2,15 @@
   "name": "ai-tarif-app",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "generate-images": "ts-node utils/generateImagesForRecipes.js",
+  "check-types": "tsc --noEmit"
+} ,
   "dependencies": {
+    "uuid": "^9.0.0",
     "autoprefixer": "^10.4.19",
-    "dotenv": "^16.5.0",
     "firebase": "^11.6.0",
     "framer-motion": "^11.0.0",
     "next": "^15.2.5",
