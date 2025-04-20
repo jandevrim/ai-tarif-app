@@ -175,6 +175,5 @@ const cihazMarkasiFromStorage = typeof window !== 'undefined'
         </div>
       )}
     </div>
-  );
+  );<AuthFooter />
 }
-<AuthFooter />
