@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import IngredientSelector, { Ingredient } from "../components/IngredientSelector";
+import AuthFooter from "../components/AuthFooter"; // dizin yapına göre yol değişebilir
 
 export default function CustomRecipePage() {
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
@@ -176,3 +177,4 @@ const cihazMarkasiFromStorage = typeof window !== 'undefined'
     </div>
   );
 }
+<AuthFooter />

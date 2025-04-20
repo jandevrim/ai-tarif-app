@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import AuthFooter from "../components/AuthFooter"; // dizin yapına göre yol değişebilir
 import {
   getFirestore,
   collection,
@@ -228,5 +229,5 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     </div>
   );
 };
-
+<AuthFooter />
 export default LikedRecipesPage;

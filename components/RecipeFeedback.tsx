@@ -1,5 +1,6 @@
 import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore";
+
 const getValidCihazMarkasi = (): "thermomix" | "thermogusto" | "tumu" => {
   if (typeof window === "undefined") return "tumu";
   const val = localStorage.getItem("cihazMarkasi");
@@ -14,7 +15,7 @@ interface RecipeFeedbackProps {
   title: string;
   recipeText: string;
   ingredients: string[];
-  steps: string[]; // 🔧 Eksik olan eklendi!
+  steps: string[];
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
@@ -31,19 +32,16 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
 }) => {
   const handleLike = async () => {
     try {
-     
-await saveLikedRecipeToServer({
-  title,
-  summary: recipeText,
-  ingredients,
-  steps, // ✅ steps artık gönderiliyor
-  cihazMarkasi: cihazMarkasiFromStorage, // ✅ artık TypeScript uyumlu
-  tarifDili,
-  kullaniciTarifi,
-  begeniSayisi: 1,
-});
-
-     
+      await saveLikedRecipeToServer({
+        title,
+        summary: recipeText,
+        ingredients,
+        steps,
+        cihazMarkasi: cihazMarkasi || cihazMarkasiFromStorage, // Prop varsa onu kullan, yoksa storage
+        tarifDili,
+        kullaniciTarifi,
+        begeniSayisi: 1,
+      });
       alert("Tarif beğenildi ve kaydedildi! 💚");
     } catch (err) {
       console.error(err);
@@ -74,3 +72,9 @@ await saveLikedRecipeToServer({
 };
 
 export default RecipeFeedback;
+
+// Not: Firestore hatası için utils/firestore.ts dosyasını kontrol edin.
+// saveLikedRecipeToServer içinde collection(firestore, "likedRecipes") şeklinde
+// geçerli bir Firestore örneği kullanılmalı. Örneğin:
+// const firestore = getFirestore();
+// await addDoc(collection(firestore, "likedRecipes"), recipeData);
