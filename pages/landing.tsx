@@ -266,15 +266,7 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
           >
             Tarif Oluştur 🚀
           </button>
- 
-          <button
-            onClick={handleLogin}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Google ile Giriş Yap
-          </button>
-      
-          {/* Cihaz Seçimi */}
+           {/* Cihaz Seçimi */}
           <div className="flex justify-center gap-4 mb-4">
             <button
               onClick={() => setSelectedDevice("thermomix")}
@@ -302,44 +294,47 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
           >
             💚 ThermoChef AI'dan Harika Hazır Tarifler!
           </button>
-          <div className="mt-6 text-center text-sm text-gray-700">
+          
+        </div>
+
+      {/* Tanıtıcı Kartlar - Optimize Edilmiş */}
+<div className="grid grid-cols-3 gap-2 mt-8 w-full max-w-sm">
+  <button className="category-btn flex flex-col items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 rounded-lg shadow-sm text-center space-y-1 transition duration-200 ease-in-out">
+    <span className="text-2xl">🍲</span>
+    <span className="text-xs font-medium text-gray-700 text-center">Malzemelerini Seç</span>
+  </button>
+  <button className="category-btn flex flex-col items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 rounded-lg shadow-sm text-center space-y-1 transition duration-200 ease-in-out">
+    <span className="text-2xl">🍹</span>
+    <span className="text-xs font-medium text-gray-700 text-center">AI Tarif Oluştursun</span>
+  </button>
+  <button className="category-btn flex flex-col items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 rounded-lg shadow-sm text-center space-y-1 transition duration-200 ease-in-out">
+    <span className="text-2xl">🍰</span>
+    <span className="text-xs font-medium text-gray-700 text-center">Adım Adım Pişir</span>
+  </button>
+</div>
+{/* Kullanıcı Girişi Bilgisi */}
+<div className="mt-12 text-center">
   {user ? (
-    <>
-      <p>👋 Hoş geldin, {user.displayName || "Kullanıcı"}</p>
-      <button onClick={handleLogout} className="text-blue-600 underline mt-1">
+    <div className="flex flex-col items-center gap-2">
+      <p className="text-sm text-gray-700">👋 Hoş geldin, <strong>{user.displayName || "Kullanıcı"}</strong></p>
+      <button
+        onClick={handleLogout}
+        className="text-red-600 hover:text-red-800 underline text-sm"
+      >
         Çıkış Yap
       </button>
-    </>
+    </div>
   ) : (
     <button
       onClick={handleLogin}
-      className="bg-white text-gray-800 font-semibold px-6 py-2 mt-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md flex items-center gap-2 mx-auto"
+      className="bg-white text-gray-800 font-semibold px-6 py-2 border border-gray-300 rounded-lg shadow hover:shadow-md flex items-center gap-2 mx-auto"
     >
       <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
       Google ile Giriş Yap
     </button>
   )}
 </div>
-        </div>
 
-        {/* Tanıtıcı Kartlar */}
-        <div className="grid grid-cols-3 gap-4 mt-10 w-full max-w-md">
-          <button className="category-btn flex flex-col items-center justify-center p-4 bg-gray-100 hover:bg-gray-200 rounded-lg shadow text-center space-y-1 transition duration-300 ease-in-out">
-            <span className="text-4xl mb-1">🍲</span>
-            <span className="font-medium text-gray-700">Evdeki Malzemelerini Seç!</span>
-            <span className="text-xs text-gray-500"></span>
-          </button>
-          <button className="category-btn flex flex-col items-center justify-center p-4 bg-gray-100 hover:bg-gray-200 rounded-lg shadow text-center space-y-1 transition duration-300 ease-in-out">
-            <span className="text-4xl mb-1">🍹</span>
-            <span className="font-medium text-gray-700">Yapay Zeka Sana Özel Tarifi Oluştursun!</span>
-            <span className="text-xs text-gray-500"></span>
-          </button>
-          <button className="category-btn flex flex-col items-center justify-center p-4 bg-gray-100 hover:bg-gray-200 rounded-lg shadow text-center space-y-1 transition duration-300 ease-in-out">
-            <span className="text-4xl mb-1">🍰</span>
-            <span className="font-medium text-gray-700">ThermoGusto ya da Thermomix ile adım adım pişir!</span>
-            <span className="text-xs text-gray-500"></span>
-          </button>
-        </div>
       </main>
 
       <footer className="text-center py-6 text-sm text-gray-500 border-t mt-10 bg-white">
