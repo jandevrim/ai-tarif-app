@@ -3,8 +3,6 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -27,5 +25,7 @@ if (typeof window !== "undefined") {
 }
 
 export { app };
+export const auth = getAuth(app);
+export const provider = new GoogleAuthProvider();
 
 
