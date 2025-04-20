@@ -17,16 +17,8 @@ interface Ingredient {
   tags: string[];
   emoji?: string;
 }
-const handleLogout = async () => {
-  const auth = getAuth();
-  try {
-    await auth.signOut();
-    setUser(null);
-    console.log("Kullanıcı çıkış yaptı.");
-  } catch (error) {
-    console.error("Çıkış yapılırken hata oluştu:", error);
-  }
-};
+
+
 // --- Error Boundary Component ---
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) { super(props); this.state = { hasError: false, error: null }; }
