@@ -84,7 +84,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
     try {
       const imagePrompt = `a realistic food photography of a dish called "${recipe.title}" prepared with ingredients like ${selectedNames.join(", ")}. Professional, studio lighting, clean background`;
       const imageResponse = await openai.images.generate({
-        model: "dall-e-3",
+        //model: "dall-e-3",
         prompt: imagePrompt,
         n: 1,
         size: "1024x1024",
