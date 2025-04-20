@@ -35,11 +35,10 @@ export async function POST(req: NextRequest) {
       systemPrompt = process.env.SYSTEM_PROMPT_THERMOMIX || "";
     } else if (cihazMarkasi === "thermogusto") {
       systemPrompt = process.env.SYSTEM_PROMPT_THERMOGUSTO || "";
-    }
+    };
 
 Seçilen malzemeler: ${selectedNames.join(", ")}
 
-Lütfen Thermomix TM6 veya Arzum Thermogusto cihazına uygun tarif oluştur.
 Yanıtı aşağıdaki JSON formatında döndür:
 
 {
