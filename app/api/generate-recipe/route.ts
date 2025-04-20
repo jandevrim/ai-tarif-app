@@ -87,7 +87,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
         //model: "dall-e-3",
         prompt: imagePrompt,
         n: 1,
-        size: "1024x1024",
+        size: "512x512",
       });
 
       const imageUrl = imageResponse.data?.[0]?.url;
