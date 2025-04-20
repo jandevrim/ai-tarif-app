@@ -90,7 +90,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   });
 
   const selectedRecipe = recipes.find((r) => r.id === expanded);
-  const imageSrc = recipes.imageUrl || recipes.image;
+  const imageSrc = selectedRecipe?.imageUrl || selectedRecipe?.image;
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
       <button
