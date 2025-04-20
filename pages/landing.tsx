@@ -199,11 +199,12 @@ function LoadingIndicator() { /* ... LoadingIndicator code ... */
 // --- Page Components ---
 
 // LandingPage component definition (Unchanged)
-function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
+ffunction LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
   const [user, setUser] = useState<User | null>(null);
 
+  // Kullanıcıyı dinle
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -211,28 +212,33 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
     return () => unsubscribe();
   }, []);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user);
-    });
-    return () => unsubscribe();
-  }, []);
-   const handleLogin = async () => {
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
+  const handleLogin = async () => {
     try {
       await signInWithPopup(auth, provider);
+      // user zaten onAuthStateChanged ile set edilecek
     } catch (err) {
       console.error("Login failed:", err);
     }
   };
- const handleStart = () => {
-  if (!user) {
-    handleLogin(); // login popup aç
-    return;
-  }
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setUser(null);
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
+  const handleStart = () => {
+    if (!user) {
+      handleLogin(); // login popup aç
+      return;
+    }
+    localStorage.setItem("cihazMarkasi", selectedDevice);
+    onNavigate("/custom");
+  };
+
   localStorage.setItem("cihazMarkasi", selectedDevice);
   onNavigate("/custom");
 };
