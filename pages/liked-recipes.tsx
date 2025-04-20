@@ -1,5 +1,30 @@
-// ...importlar aynı
-import Image from "next/image";
+// pages/liked-recipes.tsx
+
+import React, { useEffect, useState } from "react";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import { app } from "../utils/firebaseconfig";
+
+const db = getFirestore(app);
+
+interface Recipe {
+  id: string;
+  title: string;
+  summary?: string;
+  duration?: string;
+  ingredients: string[];
+  steps?: string[];
+  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
+  tarifDili?: string;
+  kullaniciTarifi?: boolean;
+  begeniSayisi?: number;
+  image?: string;
+}
 
 const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -35,7 +60,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           tarifDili: raw.tarifDili,
           kullaniciTarifi: raw.kullaniciTarifi,
           begeniSayisi: raw.begeniSayisi,
-          image: raw.imageUrl || raw.image || "", // destek için iki key de kontrol
+          image: raw.image || raw.imageUrl || null,
         };
       });
       setRecipes(data);
@@ -44,22 +69,41 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     }
   };
 
-  // ...handleLike, useEffect, filter logic aynı
+  const handleLike = async (id: string, currentCount: number = 0) => {
+    const ref = doc(db, "likedRecipes", id);
+    try {
+      await updateDoc(ref, { begeniSayisi: (currentCount ?? 0) + 1 });
+      fetchRecipes();
+    } catch (err) {
+      console.error("Beğeni güncellenemedi", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  const filteredRecipes = recipes.filter((r) => {
+    const matchesFilter = filter === "tumu" || r.cihazMarkasi === filter;
+    const matchesSearch =
+      r.title.toLowerCase().includes(search.toLowerCase()) ||
+      r.ingredients.some((ing) => ing.toLowerCase().includes(search.toLowerCase()));
+    return matchesFilter && matchesSearch;
+  });
 
   const selectedRecipe = recipes.find((r) => r.id === expanded);
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
-      {/* Geri Dön ve Başlık */}
+    <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans relative">
       <button
         onClick={() => onNavigate("/landing")}
         className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow"
       >
         &larr; Geri Dön
       </button>
+
       <h1 className="text-2xl font-bold mb-4">💚 Harika Lezzetler Listesi</h1>
 
-      {/* Arama ve Filtre */}
       <input
         type="text"
         value={search}
@@ -67,6 +111,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         placeholder="Tarif veya malzeme ara..."
         className="mb-4 px-4 py-2 border border-gray-300 rounded w-full shadow-sm"
       />
+
       <div className="mb-4 flex gap-2">
         {["tumu", "thermomix", "thermogusto"].map((c) => (
           <button
@@ -81,31 +126,8 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         ))}
       </div>
 
-      {/* Modal */}
-      {modalImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-          onClick={() => setModalImage(null)}
-        >
-          <img
-            src={modalImage}
-            alt="Tarif Görseli"
-            className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-lg"
-          />
-        </div>
-      )}
-
-      {/* Expanded Recipe */}
       {expanded && selectedRecipe ? (
-        <div className="bg-white p-6 rounded-xl shadow-lg relative">
-          {selectedRecipe.image && (
-            <img
-              src={selectedRecipe.image}
-              alt={selectedRecipe.title}
-              className="mb-4 rounded-lg cursor-pointer object-cover max-h-64 w-full"
-              onClick={() => setModalImage(selectedRecipe.image!)}
-            />
-          )}
+        <div className="bg-white p-6 rounded-xl shadow-lg">
           <h2 className="text-2xl font-bold mb-2">{selectedRecipe.title}</h2>
           <p className="text-sm text-gray-500 mb-1">
             {selectedRecipe.cihazMarkasi === "thermogusto"
@@ -115,6 +137,15 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               : "Cihaz Bilinmiyor"}
             {selectedRecipe.duration ? ` • ${selectedRecipe.duration}` : ""}
           </p>
+
+          {selectedRecipe.image && (
+            <img
+              src={selectedRecipe.image}
+              alt={selectedRecipe.title}
+              className="w-full h-64 object-cover rounded mt-3 cursor-pointer"
+              onClick={() => setModalImage(selectedRecipe.image!)}
+            />
+          )}
 
           {currentStep === 0 ? (
             <div>
@@ -151,14 +182,14 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                   Önceki
                 </button>
               )}
-              {currentStep < (selectedRecipe.steps?.length || 0) && (
+              {currentStep < (selectedRecipe.steps?.length || 0) ? (
                 <button
                   onClick={() => setCurrentStep((s) => s + 1)}
                   className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
                 >
                   {currentStep === 0 ? "Hazırlık Adımlarına Geç" : "Sonraki"}
                 </button>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
@@ -177,7 +208,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                 <img
                   src={recipe.image}
                   alt={recipe.title}
-                  className="w-16 h-16 rounded object-cover shadow-sm"
+                  className="w-16 h-16 object-cover rounded"
                 />
               )}
               <div className="flex-1">
@@ -194,6 +225,19 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
             </li>
           ))}
         </ul>
+      )}
+
+      {modalImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center"
+          onClick={() => setModalImage(null)}
+        >
+          <img
+            src={modalImage}
+            alt="Tarif Görseli"
+            className="max-w-full max-h-full rounded-lg shadow-lg"
+          />
+        </div>
       )}
     </div>
   );
