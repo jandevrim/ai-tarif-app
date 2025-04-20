@@ -3,6 +3,8 @@ import RecipeFeedback from "../components/RecipeFeedback";
 import LikedRecipesPage from './liked-recipes';
 import { app } from "../utils/firebaseconfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 
 
 
@@ -189,7 +191,23 @@ function LoadingIndicator() { /* ... LoadingIndicator code ... */
 function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
-  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+   const handleLogin = async () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
+  };
   const handleStart = () => {
     localStorage.setItem("cihazMarkasi", selectedDevice);
     onNavigate("/custom");
@@ -229,7 +247,14 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
           >
             Tarif Oluştur 🚀
           </button>
-
+ ) : (
+          <button
+            onClick={handleLogin}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            Google ile Giriş Yap
+          </button>
+        )}
           {/* Cihaz Seçimi */}
           <div className="flex justify-center gap-4 mb-4">
             <button
