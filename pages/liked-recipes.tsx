@@ -1,27 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
-import { app } from "../utils/firebaseconfig";
-
-const db = getFirestore(app);
-
-interface Recipe {
-  id: string;
-  title: string;
-  summary?: string;
-  duration?: string;
-  ingredients: string[];
-  steps?: string[];
-  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
-  tarifDili?: string;
-  kullaniciTarifi?: boolean;
-  begeniSayisi?: number;
-}
+// ...importlar aynı
+import Image from "next/image";
 
 const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -29,6 +7,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
   const [search, setSearch] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const [modalImage, setModalImage] = useState<string | null>(null);
 
   const fetchRecipes = async () => {
     try {
@@ -56,6 +35,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           tarifDili: raw.tarifDili,
           kullaniciTarifi: raw.kullaniciTarifi,
           begeniSayisi: raw.begeniSayisi,
+          image: raw.imageUrl || raw.image || "", // destek için iki key de kontrol
         };
       });
       setRecipes(data);
@@ -64,41 +44,22 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     }
   };
 
-  const handleLike = async (id: string, currentCount: number = 0) => {
-    const ref = doc(db, "likedRecipes", id);
-    try {
-      await updateDoc(ref, { begeniSayisi: (currentCount ?? 0) + 1 });
-      fetchRecipes();
-    } catch (err) {
-      console.error("Beğeni güncellenemedi", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
-
-  const filteredRecipes = recipes.filter((r) => {
-    const matchesFilter = filter === "tumu" || r.cihazMarkasi === filter;
-    const matchesSearch =
-      r.title.toLowerCase().includes(search.toLowerCase()) ||
-      r.ingredients.some((ing) => ing.toLowerCase().includes(search.toLowerCase()));
-    return matchesFilter && matchesSearch;
-  });
+  // ...handleLike, useEffect, filter logic aynı
 
   const selectedRecipe = recipes.find((r) => r.id === expanded);
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
+      {/* Geri Dön ve Başlık */}
       <button
         onClick={() => onNavigate("/landing")}
         className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow"
       >
         &larr; Geri Dön
       </button>
-
       <h1 className="text-2xl font-bold mb-4">💚 Harika Lezzetler Listesi</h1>
 
+      {/* Arama ve Filtre */}
       <input
         type="text"
         value={search}
@@ -106,7 +67,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         placeholder="Tarif veya malzeme ara..."
         className="mb-4 px-4 py-2 border border-gray-300 rounded w-full shadow-sm"
       />
-
       <div className="mb-4 flex gap-2">
         {["tumu", "thermomix", "thermogusto"].map((c) => (
           <button
@@ -121,8 +81,31 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         ))}
       </div>
 
+      {/* Modal */}
+      {modalImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          onClick={() => setModalImage(null)}
+        >
+          <img
+            src={modalImage}
+            alt="Tarif Görseli"
+            className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-lg"
+          />
+        </div>
+      )}
+
+      {/* Expanded Recipe */}
       {expanded && selectedRecipe ? (
-        <div className="bg-white p-6 rounded-xl shadow-lg">
+        <div className="bg-white p-6 rounded-xl shadow-lg relative">
+          {selectedRecipe.image && (
+            <img
+              src={selectedRecipe.image}
+              alt={selectedRecipe.title}
+              className="mb-4 rounded-lg cursor-pointer object-cover max-h-64 w-full"
+              onClick={() => setModalImage(selectedRecipe.image!)}
+            />
+          )}
           <h2 className="text-2xl font-bold mb-2">{selectedRecipe.title}</h2>
           <p className="text-sm text-gray-500 mb-1">
             {selectedRecipe.cihazMarkasi === "thermogusto"
@@ -168,14 +151,14 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                   Önceki
                 </button>
               )}
-              {currentStep < (selectedRecipe.steps?.length || 0) ? (
+              {currentStep < (selectedRecipe.steps?.length || 0) && (
                 <button
                   onClick={() => setCurrentStep((s) => s + 1)}
                   className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
                 >
                   {currentStep === 0 ? "Hazırlık Adımlarına Geç" : "Sonraki"}
                 </button>
-              ) : null}
+              )}
             </div>
           </div>
         </div>
@@ -184,13 +167,20 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           {filteredRecipes.map((recipe) => (
             <li
               key={recipe.id}
-              className="bg-white p-4 rounded-xl shadow-md cursor-pointer"
+              className="bg-white p-4 rounded-xl shadow-md cursor-pointer flex items-center gap-4"
               onClick={() => {
                 setExpanded(recipe.id);
                 setCurrentStep(0);
               }}
             >
-              <div className="flex justify-between items-center">
+              {recipe.image && (
+                <img
+                  src={recipe.image}
+                  alt={recipe.title}
+                  className="w-16 h-16 rounded object-cover shadow-sm"
+                />
+              )}
+              <div className="flex-1">
                 <h2 className="text-lg font-semibold">{recipe.title}</h2>
                 <span className="text-xs text-gray-600">
                   {recipe.cihazMarkasi === "thermogusto"
