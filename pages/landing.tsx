@@ -4,9 +4,16 @@ import LikedRecipesPage from './liked-recipes';
 import { app } from "../utils/firebaseconfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth, provider } from "../utils/firebaseconfig";
+import { onAuthStateChanged, signInWithPopup, signOut, User } from "firebase/auth";
+const [user, setUser] = useState<User | null>(null);
 
-
-
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    setUser(currentUser);
+  });
+  return () => unsubscribe();
+}, []);
 
 const db = getFirestore(app);
 interface Ingredient {
