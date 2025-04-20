@@ -81,35 +81,35 @@ Yanıtı aşağıdaki JSON formatında döndür:
     }
 
     // 🖼️ Resim oluştur ve Firebase'e yükle
-    try {
-      const imagePrompt = `a realistic food photography of a dish called "${recipe.title}" prepared with ingredients like ${selectedNames.join(", ")}. Professional, studio lighting, clean background`;
-      const imageResponse = await openai.images.generate({
+    //try {
+      //const imagePrompt = `a realistic food photography of a dish called "${recipe.title}" prepared with ingredients like ${selectedNames.join(", ")}. Professional, studio lighting, clean background`;
+      //const imageResponse = await openai.images.generate({
         //model: "dall-e-3",
-        prompt: imagePrompt,
-        n: 1,
-        size: "256x256",
-      });
+        //prompt: imagePrompt,
+        //n: 1,
+        //size: "256x256",
+      //});
 
-      const imageUrl = imageResponse.data?.[0]?.url;
-      if (imageUrl) {
-        const imageRes = await fetch(imageUrl);
-        const imageBuffer = await imageRes.arrayBuffer();
+      //const imageUrl = imageResponse.data?.[0]?.url;
+      //if (imageUrl) {
+        //const imageRes = await fetch(imageUrl);
+        //const imageBuffer = await imageRes.arrayBuffer();
 
-        const filename = `recipe-images/${uuidv4()}.png`;
-        const storageRef = ref(storage, filename);
-        await uploadBytes(storageRef, new Uint8Array(imageBuffer), {
-          contentType: "image/png",
-        });
+        //const filename = `recipe-images/${uuidv4()}.png`;
+        //const storageRef = ref(storage, filename);
+        //await uploadBytes(storageRef, new Uint8Array(imageBuffer), {
+          //contentType: "image/png",
+        //});
 
-        const firebaseUrl = await getDownloadURL(storageRef);
-        recipe.imageUrl = firebaseUrl;
-      } else {
-        recipe.imageUrl = null;
-      }
-    } catch (imageError) {
-      console.warn("Görsel oluşturulamadı:", imageError);
-      recipe.imageUrl = null;
-    }
+        //const firebaseUrl = await getDownloadURL(storageRef);
+        //recipe.imageUrl = firebaseUrl;
+      //} else {
+        //recipe.imageUrl = null;
+      //}
+    //} catch (imageError) {
+      //console.warn("Görsel oluşturulamadı:", imageError);
+      //recipe.imageUrl = null;
+    //}
 
     return new Response(JSON.stringify(recipe), {
       status: 200,
