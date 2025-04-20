@@ -231,18 +231,15 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   };
 
   const handleStart = () => {
-    if (!user) {
-      handleLogin(); // login popup aç
-      return;
-    }
-    localStorage.setItem("cihazMarkasi", selectedDevice);
-    onNavigate("/custom");
-  };
-
+  if (!user) {
+    handleLogin(); // login popup aç
+    return;
+  }
   localStorage.setItem("cihazMarkasi", selectedDevice);
   onNavigate("/custom");
 };
 
+ 
   return (
     <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans">
       <main className="flex flex-col items-center px-6 py-10 pt-16 flex-1">
