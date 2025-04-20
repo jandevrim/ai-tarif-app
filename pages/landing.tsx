@@ -205,14 +205,13 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   }, []);
 
   const handleLogin = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-      // user zaten onAuthStateChanged ile set edilecek
-    } catch (err) {
-      console.error("Login failed:", err);
-    }
-  };
-
+  try {
+    await signInWithPopup(auth, provider);
+    // onAuthStateChanged zaten user'ı set ediyor
+  } catch (err) {
+    console.error("Login failed:", err);
+  }
+};
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -222,13 +221,15 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
     }
   };
 
-  const handleStart = () => {
+const handleStart = async () => {
   if (!user) {
-    handleLogin(); // login popup aç
+    await handleLogin(); // login popup aç
+    // burada return, çünkü login olduktan sonra yeniden tıklanmalı
     return;
   }
   localStorage.setItem("cihazMarkasi", selectedDevice);
   onNavigate("/custom");
+};
 };
 
  
@@ -241,7 +242,7 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
             alt="ThermoChefAI Ana Logo"
             width={300}
             height={300}
-            className="rounded-2xl shadow-lg object-contain mx-auto"
+            className="rounded-2xl object-contain mx-auto"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
@@ -255,11 +256,6 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
           <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900">
             Yemekleri Yapay Zeka ile Keşfedin 🍳
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto">
-            ThermoChefAI, evinizdeki malzemelere göre Thermomix ve ThermoGusto cihazlarına özel tarifler üretir.
-            Pratik, yaratıcı ve lezzetli yemekler artık bir tık uzakta!
-          </p>
-
           <button
             onClick={handleStart}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
