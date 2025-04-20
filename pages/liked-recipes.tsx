@@ -1,5 +1,3 @@
-// pages/liked-recipes.tsx
-
 import React, { useEffect, useState } from "react";
 import {
   getFirestore,
@@ -23,7 +21,7 @@ interface Recipe {
   tarifDili?: string;
   kullaniciTarifi?: boolean;
   begeniSayisi?: number;
-  image?: string;
+  imageUrl?: string;
 }
 
 const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
@@ -32,7 +30,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
   const [search, setSearch] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [modalImage, setModalImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fetchRecipes = async () => {
     try {
@@ -60,7 +58,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           tarifDili: raw.tarifDili,
           kullaniciTarifi: raw.kullaniciTarifi,
           begeniSayisi: raw.begeniSayisi,
-          image: raw.image || raw.imageUrl || null,
+          imageUrl: raw.imageUrl,
         };
       });
       setRecipes(data);
@@ -94,7 +92,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const selectedRecipe = recipes.find((r) => r.id === expanded);
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans relative">
+    <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
       <button
         onClick={() => onNavigate("/landing")}
         className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow"
@@ -126,6 +124,19 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         ))}
       </div>
 
+      {previewImage && (
+        <div
+          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center"
+          onClick={() => setPreviewImage(null)}
+        >
+          <img
+            src={previewImage}
+            alt="Tarif Görseli"
+            className="max-w-[90%] max-h-[90%] rounded shadow-xl border-4 border-white"
+          />
+        </div>
+      )}
+
       {expanded && selectedRecipe ? (
         <div className="bg-white p-6 rounded-xl shadow-lg">
           <h2 className="text-2xl font-bold mb-2">{selectedRecipe.title}</h2>
@@ -138,12 +149,12 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
             {selectedRecipe.duration ? ` • ${selectedRecipe.duration}` : ""}
           </p>
 
-          {selectedRecipe.image && (
+          {selectedRecipe.imageUrl && (
             <img
-              src={selectedRecipe.image}
-              alt={selectedRecipe.title}
-              className="w-full h-64 object-cover rounded mt-3 cursor-pointer"
-              onClick={() => setModalImage(selectedRecipe.image!)}
+              src={selectedRecipe.imageUrl}
+              alt="Tarif"
+              className="w-full max-h-64 object-cover rounded-lg my-4 cursor-pointer"
+              onClick={() => setPreviewImage(selectedRecipe.imageUrl!)}
             />
           )}
 
@@ -198,46 +209,35 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           {filteredRecipes.map((recipe) => (
             <li
               key={recipe.id}
-              className="bg-white p-4 rounded-xl shadow-md cursor-pointer flex items-center gap-4"
+              className="bg-white p-4 rounded-xl shadow-md cursor-pointer"
               onClick={() => {
                 setExpanded(recipe.id);
                 setCurrentStep(0);
               }}
             >
-              {recipe.image && (
-                <img
-                  src={recipe.image}
-                  alt={recipe.title}
-                  className="w-16 h-16 object-cover rounded"
-                />
-              )}
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold">{recipe.title}</h2>
-                <span className="text-xs text-gray-600">
-                  {recipe.cihazMarkasi === "thermogusto"
-                    ? "ThermoGusto"
-                    : recipe.cihazMarkasi === "thermomix"
-                    ? "Thermomix"
-                    : "Cihaz Bilinmiyor"}
-                  {recipe.duration ? ` • ${recipe.duration}` : ""}
-                </span>
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="text-lg font-semibold mb-1">{recipe.title}</h2>
+                  <span className="text-xs text-gray-600">
+                    {recipe.cihazMarkasi === "thermogusto"
+                      ? "ThermoGusto"
+                      : recipe.cihazMarkasi === "thermomix"
+                      ? "Thermomix"
+                      : "Cihaz Bilinmiyor"}
+                    {recipe.duration ? ` • ${recipe.duration}` : ""}
+                  </span>
+                </div>
+                {recipe.imageUrl && (
+                  <img
+                    src={recipe.imageUrl}
+                    alt=""
+                    className="w-16 h-16 object-cover rounded-md border border-gray-200"
+                  />
+                )}
               </div>
             </li>
           ))}
         </ul>
-      )}
-
-      {modalImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center"
-          onClick={() => setModalImage(null)}
-        >
-          <img
-            src={modalImage}
-            alt="Tarif Görseli"
-            className="max-w-full max-h-full rounded-lg shadow-lg"
-          />
-        </div>
       )}
     </div>
   );
