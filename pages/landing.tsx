@@ -208,10 +208,14 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
       console.error("Login failed:", err);
     }
   };
-  const handleStart = () => {
-    localStorage.setItem("cihazMarkasi", selectedDevice);
-    onNavigate("/custom");
-  };
+ const handleStart = () => {
+  if (!user) {
+    handleLogin(); // login popup aç
+    return;
+  }
+  localStorage.setItem("cihazMarkasi", selectedDevice);
+  onNavigate("/custom");
+};
 
   return (
     <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans">
@@ -281,8 +285,26 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
             onClick={() => onNavigate("/liked-recipes")}
             className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-medium px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
           >
-            💚 Hazır Tarif Listesi
+            💚 ThermoChef AI'dan Harika Hazır Tarifler!
           </button>
+          <div className="mt-6 text-center text-sm text-gray-700">
+  {user ? (
+    <>
+      <p>👋 Hoş geldin, {user.displayName || "Kullanıcı"}</p>
+      <button onClick={handleLogout} className="text-blue-600 underline mt-1">
+        Çıkış Yap
+      </button>
+    </>
+  ) : (
+    <button
+      onClick={handleLogin}
+      className="bg-white text-gray-800 font-semibold px-6 py-2 mt-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md flex items-center gap-2 mx-auto"
+    >
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
+      Google ile Giriş Yap
+    </button>
+  )}
+</div>
         </div>
 
         {/* Tanıtıcı Kartlar */}
