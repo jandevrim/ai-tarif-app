@@ -247,14 +247,14 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
           >
             Tarif Oluştur 🚀
           </button>
- ) : (
+ 
           <button
             onClick={handleLogin}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
           >
             Google ile Giriş Yap
           </button>
-        )}
+      
           {/* Cihaz Seçimi */}
           <div className="flex justify-center gap-4 mb-4">
             <button
