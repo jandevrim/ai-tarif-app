@@ -5,6 +5,8 @@ import { app } from "../utils/firebaseconfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, provider } from "../utils/firebaseconfig";
+import type { User } from "firebase/auth";
+
 const [user, setUser] = useState<User | null>(null);
 
 useEffect(() => {
