@@ -348,7 +348,6 @@ const handleStart = async () => {
       </footer>
     </div>
   );
-}
 
 
 // CustomRecipePage component definition
