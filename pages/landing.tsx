@@ -7,14 +7,7 @@ import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from
 import { auth, provider } from "../utils/firebaseconfig";
 import type { User } from "firebase/auth";
 
-const [user, setUser] = useState<User | null>(null);
 
-useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    setUser(currentUser);
-  });
-  return () => unsubscribe();
-}, []);
 
 const db = getFirestore(app);
 interface Ingredient {
@@ -209,6 +202,15 @@ function LoadingIndicator() { /* ... LoadingIndicator code ... */
 function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     const auth = getAuth();
