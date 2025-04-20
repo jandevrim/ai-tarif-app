@@ -22,6 +22,7 @@ interface Recipe {
   kullaniciTarifi?: boolean;
   begeniSayisi?: number;
   imageUrl?: string;
+  image?: string;
 }
 
 const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
@@ -30,7 +31,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
   const [search, setSearch] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fetchRecipes = async () => {
     try {
@@ -59,6 +59,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           kullaniciTarifi: raw.kullaniciTarifi,
           begeniSayisi: raw.begeniSayisi,
           imageUrl: raw.imageUrl,
+          image: raw.image,
         };
       });
       setRecipes(data);
@@ -90,7 +91,8 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   });
 
   const selectedRecipe = recipes.find((r) => r.id === expanded);
-  const imageSrc = selectedRecipe?.imageUrl || selectedRecipe?.image;
+  const imageSrc = selectedRecipe?.imageUrl || selectedRecipe?.image || null;
+
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
       <button
@@ -124,23 +126,18 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         ))}
       </div>
 
-      {previewImage && (
-        <div
-          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center"
-          onClick={() => setPreviewImage(null)}
-        >
-          <img
-            src={previewImage}
-            alt="Tarif Görseli"
-            className="max-w-[90%] max-h-[90%] rounded shadow-xl border-4 border-white"
-          />
-        </div>
-      )}
-
       {expanded && selectedRecipe ? (
         <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-bold mb-2">{selectedRecipe.title}</h2>
-          <p className="text-sm text-gray-500 mb-1">
+          {imageSrc && (
+            <img
+              src={imageSrc}
+              alt={selectedRecipe.title}
+              className="w-full max-w-md mx-auto mb-4 rounded-lg border border-gray-200"
+            />
+          )}
+
+          <h2 className="text-2xl font-bold mb-2 text-center">{selectedRecipe.title}</h2>
+          <p className="text-sm text-gray-500 mb-1 text-center">
             {selectedRecipe.cihazMarkasi === "thermogusto"
               ? "ThermoGusto"
               : selectedRecipe.cihazMarkasi === "thermomix"
@@ -148,15 +145,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               : "Cihaz Bilinmiyor"}
             {selectedRecipe.duration ? ` • ${selectedRecipe.duration}` : ""}
           </p>
-
-          {selectedRecipe.imageUrl && (
-            <img
-              src={selectedRecipe.imageUrl}
-              alt="Tarif"
-              className="w-full max-h-64 object-cover rounded-lg my-4 cursor-pointer"
-              onClick={() => setPreviewImage(selectedRecipe.imageUrl!)}
-            />
-          )}
 
           {currentStep === 0 ? (
             <div>
@@ -193,14 +181,14 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                   Önceki
                 </button>
               )}
-              {currentStep < (selectedRecipe.steps?.length || 0) ? (
+              {currentStep < (selectedRecipe.steps?.length || 0) && (
                 <button
                   onClick={() => setCurrentStep((s) => s + 1)}
                   className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
                 >
                   {currentStep === 0 ? "Hazırlık Adımlarına Geç" : "Sonraki"}
                 </button>
-              ) : null}
+              )}
             </div>
           </div>
         </div>
@@ -209,32 +197,29 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           {filteredRecipes.map((recipe) => (
             <li
               key={recipe.id}
-              className="bg-white p-4 rounded-xl shadow-md cursor-pointer"
+              className="bg-white p-4 rounded-xl shadow-md cursor-pointer flex items-center gap-4"
               onClick={() => {
                 setExpanded(recipe.id);
                 setCurrentStep(0);
               }}
             >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-lg font-semibold mb-1">{recipe.title}</h2>
-                  <span className="text-xs text-gray-600">
-                    {recipe.cihazMarkasi === "thermogusto"
-                      ? "ThermoGusto"
-                      : recipe.cihazMarkasi === "thermomix"
-                      ? "Thermomix"
-                      : "Cihaz Bilinmiyor"}
-                    {recipe.duration ? ` • ${recipe.duration}` : ""}
-                  </span>
-                </div>
-                {imageSrc && (
-              <img
-              src={imageSrc}
-              alt={recipe.title}
-              className="w-16 h-16 object-cover rounded-md border border-gray-200"
-              />
-                )}
-                )}
+              {recipe.imageUrl && (
+                <img
+                  src={recipe.imageUrl}
+                  alt={recipe.title}
+                  className="w-16 h-16 object-cover rounded-md border border-gray-200"
+                />
+              )}
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold">{recipe.title}</h2>
+                <span className="text-xs text-gray-600">
+                  {recipe.cihazMarkasi === "thermogusto"
+                    ? "ThermoGusto"
+                    : recipe.cihazMarkasi === "thermomix"
+                    ? "Thermomix"
+                    : "Cihaz Bilinmiyor"}
+                  {recipe.duration ? ` • ${recipe.duration}` : ""}
+                </span>
               </div>
             </li>
           ))}
