@@ -254,6 +254,7 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
   const [user, setUser] = useState<User | null>(null);
   const provider = new GoogleAuthProvider(); // Provider burada tanımlandı
+const [recipeCount, setRecipeCount] = useState<number | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), (currentUser) => {
@@ -261,7 +262,16 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
     });
     return () => unsubscribe();
   }, []);
+const fetchRecipeCount = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "likedRecipes"));
+        setRecipeCount(snapshot.size);
+      } catch (error) {
+        console.error("Tarif sayısı alınamadı:", error);
+      }
+    };
 
+    fetchRecipeCount();
   const handleLogin = async () => {
     try {
       await signInWithPopup(getAuth(), provider);
