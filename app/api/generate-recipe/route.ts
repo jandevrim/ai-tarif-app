@@ -8,7 +8,12 @@ export const runtime = "edge"; // Vercel Edge Function
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
-
+//Cihaz markası için değişkeni alıyoruz 
+const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
+const cihazMarkasiFromStorage = typeof window !== 'undefined'
+  ? (localStorage.getItem("cihazMarkasi") as "thermomix" | "thermogusto" | null)
+  : null;
+//Bitti bu bölüm. 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -24,7 +29,13 @@ export async function POST(req: NextRequest) {
       typeof i === "string" ? i : i?.name?.tr || i?.name
     );
 
-    const prompt = `${systemPrompt || process.env.SYSTEM_PROMPT}
+     // Cihaz markasına göre sistem prompt'unu seçiyoruz
+    let systemPrompt = process.env.SYSTEM_PROMPT || "";
+    if (cihazMarkasi === "thermomix") {
+      systemPrompt = process.env.SYSTEM_PROMPT_THERMOMIX || "";
+    } else if (cihazMarkasi === "thermogusto") {
+      systemPrompt = process.env.SYSTEM_PROMPT_THERMOGUSTO || "";
+    }
 
 Seçilen malzemeler: ${selectedNames.join(", ")}
 
