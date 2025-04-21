@@ -9,6 +9,7 @@ import { ensureUserInFirestore } from "../utils/userCredits";
 import { getUserRecipeCredits } from "../utils/userCredits";
 import { decrementRecipeCredit } from "../utils/firebaseconfig"; // sayfanın en üstüne ekle
 import { getUserCredits, decrementCredits } from "../utils/userCredits";
+import { useRouter } from 'next/router';
 
 const db = getFirestore(app);
 interface Ingredient {
@@ -306,7 +307,7 @@ const fetchRecipeCount = async () => {
 
   const credits = await getUserRecipeCredits();
   if (credits <= 0) {
-    onNavigate("/membership"); // burada yönlendirme yapılır
+    router.push("/membership");
     return;
   }
 
