@@ -12,6 +12,7 @@ interface LikedRecipe {
   kullaniciTarifi?: boolean;
   begeniSayisi?: number;
   createdAt?: Date;
+  userId: string; // ⬅️ bunu ekle
 }
 
 export async function saveLikedRecipeToServer(recipe: LikedRecipe): Promise<string> {
@@ -25,6 +26,7 @@ export async function saveLikedRecipeToServer(recipe: LikedRecipe): Promise<stri
       tarifDili: recipe.tarifDili || "tr",
       kullaniciTarifi: recipe.kullaniciTarifi ?? false,
       begeniSayisi: recipe.begeniSayisi ?? 1,
+      userId: recipe.userId, // ⬅️ bu satır kritik
     });
     return docRef.id;
   } catch (error) {

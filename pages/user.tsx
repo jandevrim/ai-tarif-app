@@ -3,6 +3,11 @@ import { getAuth, deleteUser } from "firebase/auth";
 import { doc, getDoc, collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "../utils/firebaseconfig";
 import { useRouter } from "next/router";
+import { collection, getDocs, query, where } from "firebase/firestore";
+
+import { deleteDoc, query, where, getDocs } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+
 
 export default function UserPage() {
   const [user, setUser] = useState<any>(null);
@@ -10,11 +15,38 @@ export default function UserPage() {
   const [createdAt, setCreatedAt] = useState<string>("...");
   const [recipes, setRecipes] = useState<any[]>([]);
   const router = useRouter();
+  const [userRecipes, setUserRecipes] = useState<any[]>([]);
 
   useEffect(() => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
     setUser(currentUser);
+
+const handleDeleteAccount = async () => {
+  const confirmDelete = confirm("Bu işlem geri alınamaz. Hesabınızı ve tariflerinizi silmek istediğinize emin misiniz?");
+  if (!confirmDelete || !user) return;
+
+  try {
+    // 1. likedRecipes içindeki kullanıcıya ait tarifleri sil
+    const recipesQuery = query(collection(db, "likedRecipes"), where("userId", "==", user.uid));
+    const recipesSnapshot = await getDocs(recipesQuery);
+    const deletePromises = recipesSnapshot.docs.map((docSnap) => deleteDoc(docSnap.ref));
+    await Promise.all(deletePromises);
+
+    // 2. users koleksiyonundan kullanıcıyı sil
+    await deleteDoc(doc(db, "users", user.uid));
+
+    // 3. Oturumu kapat
+    await signOut(getAuth());
+
+    // 4. Anasayfaya yönlendir
+    router.push("/landing");
+  } catch (error) {
+    alert("Hesap silinirken bir hata oluştu.");
+    console.error(error);
+  }
+};
+
 
     const fetchData = async () => {
       if (currentUser) {
@@ -32,6 +64,13 @@ export default function UserPage() {
           collection(db, "likedRecipes"),
           where("kullaniciTarifi", "==", true)
         );
+        const fetchUserRecipes = async () => {
+          if (!currentUser) return;
+          const q = query(collection(db, "likedRecipes"), where("userId", "==", currentUser.uid));
+          const snapshot = await getDocs(q);
+          const recipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setUserRecipes(recipes);
+        };
         const snapshot = await getDocs(q);
         const userRecipes = snapshot.docs
           .filter((doc) => doc.data().uid === currentUser.uid)
@@ -80,20 +119,25 @@ export default function UserPage() {
 
       <div className="mt-8 w-full max-w-md">
         <h2 className="text-lg font-semibold mb-2">📋 Tarifleriniz</h2>
-        {recipes.length === 0 ? (
-          <p className="text-sm text-gray-500 italic">Henüz tarif oluşturmadınız.</p>
-        ) : (
-          <ul className="space-y-2">
-            {recipes.map((recipe) => (
-              <li
-                key={recipe.id}
-                className="bg-gray-100 px-4 py-2 rounded cursor-pointer hover:bg-gray-200"
-                onClick={() => router.push(`/tarif/${recipe.id}`)}
-              >
-                {recipe.title || "Başlıksız Tarif"}
-              </li>
-            ))}
-          </ul>
+       
+<div className="w-full max-w-md mt-8">
+  <h2 className="text-lg font-bold mb-2">📚 Tarifleriniz</h2>
+  {userRecipes.length === 0 ? (
+    <p className="text-sm text-gray-500">Henüz tarif beğenmediniz.</p>
+  ) : (
+    <ul className="space-y-2">
+      {userRecipes.map((recipe) => (
+        <li key={recipe.id} className="bg-gray-100 p-3 rounded shadow">
+          <a href={`/recipe/${recipe.id}`} className="text-green-700 hover:underline font-semibold">
+            {recipe.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+
+
+
         )}
       </div>
 
@@ -104,12 +148,17 @@ export default function UserPage() {
         >
           ← Geri Dön
         </button>
-        <button
-          onClick={handleDeleteUser}
-          className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded shadow"
-        >
-          🚨 Bilgilerimi Sil
-        </button>
+        <div className="mt-6">
+  <button
+    onClick={handleDeleteAccount}
+    className="bg-red-600 hover:bg-red-700 text-white font-medium px-5 py-2 rounded-full shadow-md transition duration-300"
+  >
+    🚫 Bilgilerimi Sil
+  </button>
+</div>
+
+
+        
       </div>
     </div>
   );

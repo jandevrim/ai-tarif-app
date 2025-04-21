@@ -1,6 +1,6 @@
 import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore"; // ✅ Sadece import, tekrar tanım yok
-
+import { getAuth } from "firebase/auth";
 
 const getValidCihazMarkasi = (): "thermomix" | "thermogusto" | "tumu" => {
   if (typeof window === "undefined") return "tumu";
@@ -21,6 +21,7 @@ interface RecipeFeedbackProps {
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
+  userId?: string; // ⬅️ bunu ekle
 }
 
 const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
@@ -35,24 +36,19 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
   const handleLike = async () => {
     try {
       console.log("buraya geldi");
-      await saveLikedRecipeToServer({
-        title,
-        summary: recipeText,
-        ingredients,
-        steps,
-        cihazMarkasi: cihazMarkasi || cihazMarkasiFromStorage,
-        tarifDili,
-        kullaniciTarifi,
-        begeniSayisi: 1,
-      });
+       await saveLikedRecipeToServer({
+      title,
+      summary: recipeText,
+      ingredients,
+      steps,
+      cihazMarkasi: cihazMarkasi || cihazMarkasiFromStorage,
+      tarifDili,
+      kullaniciTarifi,
+      begeniSayisi: 1,
+      userId: user.uid, // ⬅️ burada ekliyoruz
+    });
       alert("Tarif beğenildi ve kaydedildi! 💚");
     } catch (err) {
-      console.error("Tarif kaydedilirken hata oluştu:", err);
-      console.error("Tarif kaydedilirken hata oluştu:", title);
-      console.error("Tarif kaydedilirken hata oluştu:", recipeText);
-      console.error("Tarif kaydedilirken hata oluştu:", ingredients);
-      console.error("Tarif kaydedilirken hata oluştu:", steps);
-      console.error("Tarif kaydedilirken hata oluştu:", cihazMarkasi);      
       alert("Kaydetme sırasında hata oluştu.");
     }
   };
