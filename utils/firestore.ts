@@ -16,6 +16,7 @@ interface LikedRecipe {
 
 export async function saveLikedRecipeToServer(recipe: LikedRecipe): Promise<string> {
   try {
+    console.log(db)
     const docRef = await addDoc(collection(db, "likedRecipes"), {
       ...recipe,
       createdAt: new Date(),
