@@ -1,6 +1,7 @@
 import React from "react";
 import { saveLikedRecipeToServer } from "../utils/firestore"; // ✅ Sadece import, tekrar tanım yok
 
+
 const getValidCihazMarkasi = (): "thermomix" | "thermogusto" | "tumu" => {
   if (typeof window === "undefined") return "tumu";
   const val = localStorage.getItem("cihazMarkasi");

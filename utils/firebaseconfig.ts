@@ -38,3 +38,4 @@ export const decrementRecipeCredit = async (uid: string) => {
 export { app, db };
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
+
