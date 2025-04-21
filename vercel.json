@@ -4,6 +4,11 @@
       "src": "package.json",
       "use": "@vercel/next"
     }
+  ],
+  "crons": [
+    {
+      "path": "app/api/generate-images",
+      "schedule": "0 10 * * *"
+    }
   ]
-  
 }

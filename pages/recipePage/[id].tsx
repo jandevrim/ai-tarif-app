@@ -40,15 +40,26 @@ export default function RecipePage() {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-white text-gray-800">
-      <h1 className="text-2xl font-bold mb-4">📋 {recipe.title}</h1>
+    <div className="min-h-screen p-6 bg-white text-gray-800 font-sans">
+      {/* Tarif görseli */}
+      {recipe.imageUrl && (
+        <div className="mb-6">
+          <img
+            src={recipe.imageUrl}
+            alt="Tarif görseli"
+            className="w-full max-w-md mx-auto rounded-xl shadow"
+          />
+        </div>
+      )}
+
+      <h1 className="text-2xl font-bold mb-4 text-center">📋 {recipe.title}</h1>
 
       {recipe.summary && (
-        <p className="mb-4 italic text-gray-600">{recipe.summary}</p>
+        <p className="mb-4 italic text-gray-600 text-center">{recipe.summary}</p>
       )}
 
       {recipe.duration && (
-        <p className="mb-4 font-medium">⏱️ Süre: {recipe.duration}</p>
+        <p className="mb-4 font-medium text-center">⏱️ Süre: {recipe.duration}</p>
       )}
 
       <div className="mb-6">
@@ -60,13 +71,23 @@ export default function RecipePage() {
         </ul>
       </div>
 
-      <div>
+      <div className="mb-8">
         <h2 className="font-semibold mb-2">👨‍🍳 Hazırlık Adımları:</h2>
         <ol className="list-decimal list-inside space-y-2">
           {recipe.steps?.map((step: string, idx: number) => (
             <li key={idx}>{step}</li>
           ))}
         </ol>
+      </div>
+
+      {/* Geri Dön butonu */}
+      <div className="flex justify-center">
+        <button
+          onClick={() => router.back()}
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-6 py-2 rounded-full shadow transition duration-300"
+        >
+          ← Geri Dön
+        </button>
       </div>
     </div>
   );
