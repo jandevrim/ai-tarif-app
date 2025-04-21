@@ -11,6 +11,7 @@ export async function getUserCredits() {
 }
 
 export async function decrementCredits() {
+  console.log("Azaltmaya geldi ✅");
   const user = getAuth().currentUser;
   if (!user) return;
   const userRef = doc(db, "users", user.uid);
