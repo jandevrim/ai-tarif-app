@@ -1,6 +1,8 @@
 import { getAuth } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { app } from "./firebaseconfig"; // doğru yol bu
+import { doc, getDoc, updateDoc, setDoc, getFirestore } from "firebase/firestore";
+import { app } from "./firebaseconfig";
+
+const db = getFirestore(app);
 
 export async function getUserCredits() {
   const user = getAuth().currentUser;
