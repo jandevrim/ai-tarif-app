@@ -1,5 +1,5 @@
 import React from "react";
-import { saveLikedRecipeToServer } from "../utils/firestore";
+import { saveLikedRecipeToServer } from "../utils/firestore"; // ✅ Sadece import, tekrar tanım yok
 
 const getValidCihazMarkasi = (): "thermomix" | "thermogusto" | "tumu" => {
   if (typeof window === "undefined") return "tumu";
@@ -9,6 +9,7 @@ const getValidCihazMarkasi = (): "thermomix" | "thermogusto" | "tumu" => {
   }
   return "tumu";
 };
+
 const cihazMarkasiFromStorage = getValidCihazMarkasi();
 
 interface RecipeFeedbackProps {
@@ -37,14 +38,14 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
         summary: recipeText,
         ingredients,
         steps,
-        cihazMarkasi: cihazMarkasi || cihazMarkasiFromStorage, // Prop varsa onu kullan, yoksa storage
+        cihazMarkasi: cihazMarkasi || cihazMarkasiFromStorage,
         tarifDili,
         kullaniciTarifi,
         begeniSayisi: 1,
       });
       alert("Tarif beğenildi ve kaydedildi! 💚");
     } catch (err) {
-      console.error(err);
+      console.error("Tarif kaydedilirken hata oluştu:", err);
       alert("Kaydetme sırasında hata oluştu.");
     }
   };
@@ -72,9 +73,3 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
 };
 
 export default RecipeFeedback;
-
-// Not: Firestore hatası için utils/firestore.ts dosyasını kontrol edin.
-// saveLikedRecipeToServer içinde collection(firestore, "likedRecipes") şeklinde
-// geçerli bir Firestore örneği kullanılmalı. Örneğin:
-// const firestore = getFirestore();
-// await addDoc(collection(firestore, "likedRecipes"), recipeData);
