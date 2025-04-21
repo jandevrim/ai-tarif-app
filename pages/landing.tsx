@@ -260,16 +260,17 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const provider = new GoogleAuthProvider(); // Provider burada tanımlandı
 const [recipeCount, setRecipeCount] = useState<number | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(), (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-      await ensureUserInFirestore(currentUser); // 🔥 burada çağırıyoruz
-    }
-    });
-    return () => unsubscribe();
-  }, []);
 
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(getAuth(), async (currentUser) => {
+    setUser(currentUser);
+    if (currentUser) {
+      await ensureUserInFirestore(currentUser); // artık doğru
+    }
+  });
+
+  return () => unsubscribe();
+}, []);
 const fetchRecipeCount = async () => {
       try {
         const snapshot = await getDocs(collection(db, "likedRecipes"));
