@@ -507,6 +507,14 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
       }
       setRecipe(data);
+
+      // ✅ UID ile kredi azaltma – user tanımlı mı kontrol ediyoruz
+        const user = getAuth().currentUser;
+        if (user) {
+          await decrementRecipeCredit(user.uid);
+        }
+
+
       await decrementRecipeCredit(user!.uid); 
     } catch (err: any) {
       console.error("API call failed:", err);
