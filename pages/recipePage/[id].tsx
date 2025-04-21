@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../utils/firebaseconfig";
+import { db } from "../../utils/firebaseconfig";
 
 export default function RecipePage() {
   const router = useRouter();
