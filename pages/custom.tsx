@@ -12,7 +12,7 @@ export default function CustomRecipePage() {
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
-const cihazMarkasiFromStorage = typeof window !== 'undefined'
+const cihazMarkasiFromStorage = typeof window !== 'undefined';
 const [recipeCredits, setRecipeCredits] = useState<number | null>(null);
 
   ? (localStorage.getItem("cihazMarkasi") as "thermomix" | "thermogusto" | null)
