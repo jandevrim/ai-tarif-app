@@ -1,9 +1,5 @@
-import { db } from "./firebaseconfig"; // 🔁 BU SATIRI DÜZELTTİK
+import { db } from "./firebaseconfig"; // 🔥 sadece import
 import { collection, addDoc } from "firebase/firestore";
-import { getFirestore } from "firebase/firestore";
-import { app } from "./firebaseconfig"; // firebase.ts değil!
-
-export const db = getFirestore(app); // doğru şekilde app üzerinden çağır
 
 interface LikedRecipe {
   title: string;
