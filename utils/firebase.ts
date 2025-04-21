@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // ✅ Bunu ekle
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -13,7 +13,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig); // ✅ sadece bir defa tanımla
 
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
@@ -21,7 +21,7 @@ if (typeof window !== "undefined") {
   });
 }
 
-export const app = app;
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
-export const db = getFirestore(app); // ✅ Bunu ekle
+export const db = getFirestore(app); // ✅ bu da burada tanımlı olmalı
+export { app }; // ✅ tekrar tanımlama değil, sadece export
