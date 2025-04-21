@@ -1,9 +1,9 @@
-// utils/firebaseConfig.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore, doc, updateDoc, increment } from "firebase/firestore";
 
-
+// Firebase config
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
@@ -14,7 +14,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
-// Aynı app daha önce initialize edilmişse tekrar etmiyoruz
+// Uygulamayı başlat
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 // Analytics (opsiyonel)
@@ -23,14 +23,18 @@ if (typeof window !== "undefined") {
     if (supported) getAnalytics(app);
   });
 }
+
+// Firestore instance
+const db = getFirestore(app);
+
+// Kredi azaltıcı fonksiyon
 export const decrementRecipeCredit = async (uid: string) => {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, {
     recipeCredits: increment(-1),
   });
 };
-export { app };
+
+export { app, db };
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
-
-
