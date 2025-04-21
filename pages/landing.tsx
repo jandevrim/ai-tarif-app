@@ -8,7 +8,7 @@ import type { User } from "firebase/auth";
 import { ensureUserInFirestore } from "../utils/userCredits";
 import { getUserRecipeCredits } from "../utils/userCredits";
 import { decrementRecipeCredit } from "../utils/firebaseconfig"; // sayfanın en üstüne ekle
-
+import { getUserCredits, decrementCredits } from "../utils/userCredits";
 
 const db = getFirestore(app);
 interface Ingredient {
