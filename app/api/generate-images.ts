@@ -1,4 +1,3 @@
-/ app/api/generate-images.ts
 
 import { NextApiRequest, NextApiResponse } from "next";
 import { generateAndUploadImages } from "../../utils/generateAndUploadImages";
