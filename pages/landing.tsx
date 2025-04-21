@@ -304,7 +304,7 @@ const fetchRecipeCount = async () => {
     return;
   }
 
-  const credits = await getUserRecipeCredits(user.uid);
+  const credits = await getUserRecipeCredits();
   if (credits <= 0) {
     onNavigate("/membership"); // burada yönlendirme yapılır
     return;
