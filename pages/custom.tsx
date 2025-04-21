@@ -176,7 +176,8 @@ export default function CustomRecipePage() {
         </div>
       )}
 
-      <AuthFooter />
+      
     </div>
+    <AuthFooter />
   );
 }
