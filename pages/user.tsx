@@ -141,25 +141,21 @@ const handleDeleteAccount = async () => {
         )}
       </div>
 
-      <div className="mt-10 flex flex-col items-center gap-4">
-        <button
-          onClick={() => router.back()}
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-6 py-2 rounded shadow"
-        >
-          ← Geri Dön
-        </button>
-        <div className="mt-6">
+     <div className="mt-10 flex flex-col items-center gap-4">
+  <button
+    onClick={() => router.back()}
+    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-6 py-2 rounded-full shadow-md transition duration-300"
+  >
+    ← Geri Dön
+  </button>
+
   <button
     onClick={handleDeleteAccount}
-    className="bg-red-600 hover:bg-red-700 text-white font-medium px-5 py-2 rounded-full shadow-md transition duration-300"
+    className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-full shadow-md transition duration-300"
   >
     🚫 Bilgilerimi Sil
   </button>
 </div>
-
-
-        
-      </div>
     </div>
   );
 }
