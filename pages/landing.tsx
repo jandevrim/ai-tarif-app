@@ -259,7 +259,8 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [selectedDevice, setSelectedDevice] = useState<"thermomix" | "thermogusto">("thermomix");
   const [user, setUser] = useState<User | null>(null);
   const provider = new GoogleAuthProvider(); // Provider burada tanımlandı
-const [recipeCount, setRecipeCount] = useState<number | null>(null);
+  const [recipeCount, setRecipeCount] = useState<number | null>(null);
+  const router = useRouter();
 
 
 useEffect(() => {
