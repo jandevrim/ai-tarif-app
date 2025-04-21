@@ -18,3 +18,23 @@ export async function decrementCredits() {
     recipeCredits: (await getUserCredits()) - 1,
   });
 }
+
+export async function ensureUserInFirestore(user: any) {
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      email: user.email || "",
+      displayName: user.displayName || "",
+      recipeCredits: 5,
+    });
+  }
+}
+
+export async function getUserRecipeCredits(): Promise<number> {
+  const user = getAuth().currentUser;
+  if (!user) return 0;
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  return userSnap.exists() ? userSnap.data().recipeCredits || 0 : 0;
+}
