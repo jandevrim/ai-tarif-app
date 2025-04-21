@@ -58,16 +58,7 @@ const IS_DEMO_MODE = false;
 // --- Data Loading Logic ---
 const demoIngredients: Ingredient[] = [
   { id: "domates", name: { tr: "domates", en: "Tomato" }, category: "sebze", tags: ['sebze', 'taze', 'kırmızı'], emoji: "🍅" },
-  { id: "soğan", name: { tr: "soğan", en: "Onion" }, category: "sebze", tags: ['sebze', 'keskin', 'aromatik'], emoji: "🧅" },
-  { id: "sarımsak", name: { tr: "sarımsak", en: "Garlic" }, category: "sebze", tags: ['sebze', 'aromatik', 'küçük'], emoji: "🧄" },
-  { id: "tavuk_göğsü", name: { tr: "tavuk göğsü", en: "Chicken Breast" }, category: "et ürünleri", tags: ['et', 'beyaz', 'yağsız'] },
-  { id: "süt", name: { tr: "süt", en: "Milk" }, category: "süt ürünleri", tags: ['süt', 'beyaz', 'sıvı'], emoji: "🥛" },
-  { id: "peynir", name: { tr: "peynir", en: "Cheese" }, category: "süt ürünleri", tags: ['süt', 'katı', 'fermente'], emoji: "🧀" },
-  { id: "nohut", name: { tr: "nohut", en: "Chickpeas" }, category: "bakliyat", tags: ['bakliyat', 'yuvarlak', 'protein'] },
-  { id: "mercimek", name: { tr: "mercimek", en: "Lentils" }, category: "bakliyat", tags: ['bakliyat', 'küçük', 'protein'] },
-  { id: "karabiber_b", name: { tr: "karabiber", en: "Black Pepper" }, category: "baharatlar", tags: ['baharat', 'keskin', 'toz'] },
-  { id: "zeytinyağı_s", name: { tr: "zeytinyağı", en: "Olive Oil" }, category: "sıvılar", tags: ['sıvı', 'yağ', 'soğuk'], emoji: "🫒" },
-  { id: "elma", name: { tr: "Elma", en: "Apple" }, category: "meyveler", tags: ['meyve', 'tatlı', 'kırmızı'], emoji: "🍎" },
+  
 ];
 
 // --- Helper Functions ---
@@ -370,7 +361,7 @@ const fetchRecipeCount = async () => {
   💚 {recipeCount !== null
     ? `ThermoChef AI'dan ${recipeCount} Hazır Tarif!`
     : "Tarifler Yükleniyor..."}
-</button>
+</button>  
         </div>
 
         <div className="grid grid-cols-3 gap-2 mt-8 w-full max-w-sm">

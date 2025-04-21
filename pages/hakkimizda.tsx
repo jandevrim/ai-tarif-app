@@ -20,7 +20,7 @@ export default function Hakkimizda() {
         </p>
         <p>
           Geri bildirimlerinizi bizimle paylaşarak, ThermoChefAI'nin gelişimine katkıda
-          bulunabilirsiniz.
+          bulunabilirsiniz. charge.consulting.
         </p>
       </div>
     </div>
