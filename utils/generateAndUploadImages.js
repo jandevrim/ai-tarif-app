@@ -26,7 +26,6 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function generateImage(title) {
   const response = await openai.images.generate({
-    model: "dall-e-3",
     prompt: `High-quality food photo of this recipe: ${title}`,
     n: 1,
     size: "1024x1024",
