@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import IngredientSelector, { Ingredient } from "../components/IngredientSelector";
 import AuthFooter from "../components/AuthFooter"; // dizin yapına göre yol değişebilir
+import { getDoc, doc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default function CustomRecipePage() {
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
@@ -11,20 +13,21 @@ export default function CustomRecipePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
 const cihazMarkasiFromStorage = typeof window !== 'undefined'
+const [recipeCredits, setRecipeCredits] = useState<number | null>(null);
+
   ? (localStorage.getItem("cihazMarkasi") as "thermomix" | "thermogusto" | null)
   : null;
 
   // Log recipe state changes for debugging
   useEffect(() => {
-    console.log("Recipe state updated:", recipe);
+    
    const storedDevice = localStorage.getItem("cihazMarkasi");
   if (storedDevice === "thermomix" || storedDevice === "thermogusto") {
     setCihazMarkasi(storedDevice);
   } else {
     setCihazMarkasi("tumu"); // fallback
   }
-  console.log (recipe.cihazMarkasi);
-
+  
   }, [recipe]);
 
   const handleSelectIngredient = (ingredient: Ingredient) => {
@@ -32,13 +35,27 @@ const cihazMarkasiFromStorage = typeof window !== 'undefined'
       setSelectedIngredients([...selectedIngredients, ingredient]);
     }
   };
+const fetchCredits = async () => {
+    const currentUser = getAuth().currentUser;
+    if (!currentUser) return;
+    const userRef = doc(db, "users", currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      setRecipeCredits(userSnap.data().recipeCredits || 0);
+    }
+  };
 
+  fetchCredits();
+}
   const handleGenerateRecipe = async () => {
   setIsLoading(true);
   setError(null);
   setRecipe(null);
   setCurrentStep(0);
-
+if (recipeCredits !== null && recipeCredits <= 0) {
+  onNavigate("/kredi-satin-al");
+  return;
+}
   try {
     const response = await fetch("/api/generate-recipe", {
       method: "POST",
@@ -50,6 +67,16 @@ const cihazMarkasiFromStorage = typeof window !== 'undefined'
     if (!response.ok) throw new Error(data.error || "Sunucu hatası");
     if (!data || !data.steps || !data.ingredients) throw new Error("Tarif verisi eksik");
     setRecipe(data);
+    if (recipeCredits !== null && recipeCredits > 0) {
+  const currentUser = getAuth().currentUser;
+  if (currentUser) {
+    const userRef = doc(db, "users", currentUser.uid);
+    await updateDoc(userRef, {
+      recipeCredits: recipeCredits - 1
+    });
+    setRecipeCredits(recipeCredits - 1); // local state'i de güncelle
+  }
+}
   } catch (err: any) {
     setError(err.message || "Tarif oluşturulamadı.");
   } finally {

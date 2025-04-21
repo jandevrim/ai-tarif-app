@@ -5,6 +5,10 @@ import { app } from "../utils/firebaseconfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import type { User } from "firebase/auth";
+import { ensureUserInFirestore } from "../utils/userCredits";
+import { getUserRecipeCredits } from "../utils/userCredits";
+import { decrementRecipeCredit } from "../utils/firebaseconfig"; // sayfanın en üstüne ekle
+
 
 const db = getFirestore(app);
 interface Ingredient {
@@ -259,9 +263,13 @@ const [recipeCount, setRecipeCount] = useState<number | null>(null);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+      await ensureUserInFirestore(currentUser); // 🔥 burada çağırıyoruz
+    }
     });
     return () => unsubscribe();
   }, []);
+
 const fetchRecipeCount = async () => {
       try {
         const snapshot = await getDocs(collection(db, "likedRecipes"));
@@ -290,13 +298,20 @@ const fetchRecipeCount = async () => {
   };
 
   const handleStart = async () => {
-    if (!user) {
-      await handleLogin();
-      return;
-    }
-    localStorage.setItem("cihazMarkasi", selectedDevice);
-    onNavigate("/custom");
-  };
+  if (!user) {
+    await handleLogin();
+    return;
+  }
+
+  const credits = await getUserRecipeCredits(user.uid);
+  if (credits <= 0) {
+    onNavigate("/membership"); // burada yönlendirme yapılır
+    return;
+  }
+
+  localStorage.setItem("cihazMarkasi", selectedDevice);
+  onNavigate("/custom");
+};
 
   return (
     <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans">
@@ -346,11 +361,13 @@ const fetchRecipeCount = async () => {
             </button>
           </div>
           <button
-            onClick={() => onNavigate("/liked-recipes")}
-            className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-medium px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            💚 ThermoChef AI'dan Harika Hazır Tarifler!
-          </button>
+  onClick={() => onNavigate("/liked-recipes")}
+  className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-medium px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
+>
+  💚 {recipeCount !== null
+    ? `ThermoChef AI'dan ${recipeCount} Hazır Tarif!`
+    : "Tarifler Yükleniyor..."}
+</button>
         </div>
 
         <div className="grid grid-cols-3 gap-2 mt-8 w-full max-w-sm">
@@ -371,8 +388,15 @@ const fetchRecipeCount = async () => {
         <div className="mt-12 text-center">
           {user ? (
             <div className="flex flex-col items-center gap-2">
-              <p className="text-sm text-gray-700">👋 Hoş geldin, <strong>{user.displayName || "Kullanıcı"}</strong></p>
-              <button
+          
+<p
+  onClick={() => router.push("/user")}
+  className="text-sm cursor-pointer hover:underline"
+>
+  👋 Hoş geldin, <strong>{user.displayName || "Kullanıcı"}</strong>
+</p>
+
+             <button
                 onClick={handleLogout}
                 className="text-red-600 hover:text-red-800 underline text-sm"
               >
@@ -479,8 +503,8 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         console.error("Invalid recipe data structure received from API:", data);
         throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
       }
-      console.log("Received recipe data from API:", data);
       setRecipe(data);
+      await decrementRecipeCredit(user!.uid); 
     } catch (err: any) {
       console.error("API call failed:", err);
       setError(err.message || "Tarif oluşturulurken bir hata oluştu.");

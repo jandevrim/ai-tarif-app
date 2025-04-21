@@ -23,7 +23,12 @@ if (typeof window !== "undefined") {
     if (supported) getAnalytics(app);
   });
 }
-
+export const decrementRecipeCredit = async (uid: string) => {
+  const userRef = doc(db, "users", uid);
+  await updateDoc(userRef, {
+    recipeCredits: increment(-1),
+  });
+};
 export { app };
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
