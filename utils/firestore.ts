@@ -1,11 +1,12 @@
-import { db } from "./firebase";
+import { db } from "./firebaseconfig"; // 🔁 BU SATIRI DÜZELTTİK
 import { collection, addDoc } from "firebase/firestore";
+
 interface LikedRecipe {
   title: string;
   summary?: string;
   duration?: string;
   ingredients: string[];
-  steps?: string[]; // ✅ Ekli olmalı
+  steps?: string[];
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
   kullaniciTarifi?: boolean;
@@ -18,7 +19,7 @@ export async function saveLikedRecipeToServer(recipe: LikedRecipe): Promise<stri
     const docRef = await addDoc(collection(db, "likedRecipes"), {
       ...recipe,
       createdAt: new Date(),
-      steps: recipe.steps || [], // ✅ ÖZELLİKLE BUNU EKLE
+      steps: recipe.steps || [],
       cihazMarkasi: recipe.cihazMarkasi || "tumu",
       tarifDili: recipe.tarifDili || "tr",
       kullaniciTarifi: recipe.kullaniciTarifi ?? false,
