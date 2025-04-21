@@ -34,6 +34,7 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
 }) => {
   const handleLike = async () => {
     try {
+      console.log("buraya geldi");
       await saveLikedRecipeToServer({
         title,
         summary: recipeText,
@@ -47,6 +48,11 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
       alert("Tarif beğenildi ve kaydedildi! 💚");
     } catch (err) {
       console.error("Tarif kaydedilirken hata oluştu:", err);
+      console.error("Tarif kaydedilirken hata oluştu:", title);
+      console.error("Tarif kaydedilirken hata oluştu:", recipeText);
+      console.error("Tarif kaydedilirken hata oluştu:", ingredients);
+      console.error("Tarif kaydedilirken hata oluştu:", steps);
+      console.error("Tarif kaydedilirken hata oluştu:", cihazMarkasi);      
       alert("Kaydetme sırasında hata oluştu.");
     }
   };
