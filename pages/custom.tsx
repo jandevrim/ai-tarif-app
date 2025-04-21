@@ -11,25 +11,19 @@ export default function CustomRecipePage() {
   const [recipe, setRecipe] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
-  const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
-const cihazMarkasiFromStorage = typeof window !== 'undefined';
+const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
 const [recipeCredits, setRecipeCredits] = useState<number | null>(null);
 
-  ? (localStorage.getItem("cihazMarkasi") as "thermomix" | "thermogusto" | null)
-  : null;
-
-  // Log recipe state changes for debugging
-  useEffect(() => {
-    
-   const storedDevice = localStorage.getItem("cihazMarkasi");
-  if (storedDevice === "thermomix" || storedDevice === "thermogusto") {
-    setCihazMarkasi(storedDevice);
-  } else {
-    setCihazMarkasi("tumu"); // fallback
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const storedDevice = localStorage.getItem("cihazMarkasi");
+    if (storedDevice === "thermomix" || storedDevice === "thermogusto") {
+      setCihazMarkasi(storedDevice);
+    } else {
+      setCihazMarkasi("tumu"); // fallback
+    }
   }
-  
-  }, [recipe]);
-
+}, [recipe]);
   const handleSelectIngredient = (ingredient: Ingredient) => {
     if (!selectedIngredients.find((i) => i.id === ingredient.id)) {
       setSelectedIngredients([...selectedIngredients, ingredient]);
