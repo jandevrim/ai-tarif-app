@@ -33,10 +33,15 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
   tarifDili = "tr",
   kullaniciTarifi = false,
 }) => {
-  const handleLike = async () => {
-    try {
-      console.log("buraya geldi");
-       await saveLikedRecipeToServer({
+ const handleLike = async () => {
+  try {
+    const user = getAuth().currentUser;
+    if (!user) {
+      alert("Giriş yapmadan beğenemezsiniz.");
+      return;
+    }
+
+    await saveLikedRecipeToServer({
       title,
       summary: recipeText,
       ingredients,
@@ -45,14 +50,15 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
       tarifDili,
       kullaniciTarifi,
       begeniSayisi: 1,
-      userId: user.uid, // ⬅️ burada ekliyoruz
+      userId: user.uid, // ✅ Artık hata vermeyecek
     });
-      alert("Tarif beğenildi ve kaydedildi! 💚");
-    } catch (err) {
-      alert("Kaydetme sırasında hata oluştu.");
-    }
-  };
 
+    alert("Tarif beğenildi ve kaydedildi! 💚");
+  } catch (err) {
+    alert("Kaydetme sırasında hata oluştu.");
+    console.error(err);
+  }
+};
   const handleDislike = () => {
     alert("Üzgünüz, bu tarif senlik değilmiş. 🙁");
   };
