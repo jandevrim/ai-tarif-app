@@ -102,7 +102,7 @@ export default function UserPage() {
             {userRecipes.map((recipe) => (
               <li key={recipe.id} className="bg-gray-100 p-3 rounded shadow">
                 <a
-                  href={`/recipe/${recipe.id}`}
+                  href={`/recipePage/${recipe.id}`}
                   className="text-green-700 hover:underline font-semibold"
                 >
                   {recipe.title}
