@@ -65,7 +65,7 @@ export async function generateAndUploadImages() {
       });
       console.log(`✅ Firestore güncellendi: ${recipe.title}`);
     } catch (err) {
-      console.error(`❌ HATA [${recipe.title}]:`, err.message || err);
+      console.error(`❌ HATA [${recipe.title}]:`, err);
     }
   }
 }
