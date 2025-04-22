@@ -25,15 +25,20 @@ const openai = new OpenAI({
   baseURL: "https://api.x.ai/v1", // 🔥 Bu satır önemli!
 });
 
-async function generateImageWithXAI(title,ingredientList) {
+async function generateImageWithXAI(title, ingredientList) {
+  const prompt = `Minimalist top-down line drawing of a healthy Turkish dish named "${title}". Ingredients include: ${ingredientList}. Use soft green and beige colors. Instagram look. Optimize for fast generation. Make sure that it fits the description of the food.`;
   const result = await openai.images.generate({
     model: "grok-2-image",
-    const prompt = `Minimalist top-down line drawing of a healthy Turkish dish named "${title}". Ingredients include: ${ingredientList}. Use soft green and beige colors. Instagram look.  Optimize for fast generation. Make sure that it fits the description of the food.`;
+    prompt,
     n: 1,
+    response_format: "url",
   });
-  console.log(``Minimalist top-down line drawing of a healthy Turkish dish named "${title}". Ingredients include: ${ingredientList}. Use soft green and beige colors. Instagram look.  Optimize for fast generation. Make sure that it fits the description of the food.`;`);
+
   return result.data[0].url;
 }
+
+
+
 async function generateAndUploadImages() {
   const snapshot = await getDocs(collection(db, "likedRecipes"));
   const filtered = snapshot.docs.filter(doc => !doc.data().imageUrl);
