@@ -18,7 +18,7 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export async function generateImage(title: string) {
+export async function generateImage(title) {
   console.log("⚡ OpenAI çağrısı başlatılıyor:", title);
   const response = await openai.images.generate({
     prompt: `High-quality food photo of this recipe: ${title}`,
@@ -28,7 +28,7 @@ export async function generateImage(title: string) {
   return response.data[0].url;
 }
 
-export async function generateImage(title) {
+export async function generateAndUploadImages() {
   const snapshot = await getDocs(collection(db, "likedRecipes"));
   const filtered = snapshot.docs.filter(doc => !doc.data().imageUrl);
   console.log(`🧾 Tarif sayısı: ${snapshot.docs.length}`);
