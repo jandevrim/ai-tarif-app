@@ -23,7 +23,7 @@ export async function generateImage(title) {
   const response = await openai.images.generate({
     prompt: `High-quality food photo of this recipe: ${title}`,
     n: 1,
-    size: "512x512", // ✅ Daha düşük çözünürlük
+    size: "256x256", // ✅ Daha düşük çözünürlük
   });
   return response.data[0].url;
 }
