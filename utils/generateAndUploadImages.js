@@ -25,10 +25,10 @@ const openai = new OpenAI({
   baseURL: "https://api.x.ai/v1", // 🔥 Bu satır önemli!
 });
 
-async function generateImageWithXAI(title) {
+async function generateImageWithXAI(title,ingredientList) {
   const result = await openai.images.generate({
     model: "grok-2-image",
-    prompt: `High-quality food photo of this recipe: ${title}`,
+    const prompt = `Minimalist top-down line drawing of a healthy Turkish dish named "${title}". Ingredients include: ${ingredientList}. Use soft green and beige colors. Instagram look.  Optimize for fast generation. Make sure that it fits the description of the food.`;
     n: 1,
   });
   return result.data[0].url;
@@ -48,7 +48,7 @@ async function generateAndUploadImages() {
   const recipe = { id: filtered[0].id, ...filtered[0].data() };
   console.log("🎯 İşlenecek tarif:", recipe.title);
 
-  const imageUrl = await generateImageWithXAI(recipe.title);
+  const imageUrl = await generateImageWithXAI(recipe.title, recipe.ingredientList);
   const response = await fetch(imageUrl);
   const buffer = Buffer.from(await response.arrayBuffer());
 
