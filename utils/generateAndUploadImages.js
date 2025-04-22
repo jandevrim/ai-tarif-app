@@ -31,6 +31,7 @@ async function generateImageWithXAI(title,ingredientList) {
     const prompt = `Minimalist top-down line drawing of a healthy Turkish dish named "${title}". Ingredients include: ${ingredientList}. Use soft green and beige colors. Instagram look.  Optimize for fast generation. Make sure that it fits the description of the food.`;
     n: 1,
   });
+  console.log(``Minimalist top-down line drawing of a healthy Turkish dish named "${title}". Ingredients include: ${ingredientList}. Use soft green and beige colors. Instagram look.  Optimize for fast generation. Make sure that it fits the description of the food.`;`);
   return result.data[0].url;
 }
 async function generateAndUploadImages() {
