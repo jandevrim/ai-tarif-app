@@ -28,7 +28,7 @@ export async function generateImage(title: string) {
   return response.data[0].url;
 }
 
-export async function generateAndUploadImages() {
+export async function generateImage(title) {
   const snapshot = await getDocs(collection(db, "likedRecipes"));
   const filtered = snapshot.docs.filter(doc => !doc.data().imageUrl);
   console.log(`🧾 Tarif sayısı: ${snapshot.docs.length}`);
