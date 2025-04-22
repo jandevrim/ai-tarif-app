@@ -9,7 +9,7 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("🚀 [API] /api/generate-images çağrıldı");
+  console.log("🚀 [API] /api/generate-images         çağrıldı");
 
   if (req.method !== "GET") {
     console.log("❌ Yalnızca GET isteği destekleniyor");
