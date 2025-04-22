@@ -1,6 +1,6 @@
 // app/api/generate-images.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { generateAndUploadImages } from "../../utils/generateAndUploadImages";
+import generateAndUploadImages from "../../utils/generateAndUploadImages";
 
 export const config = {
   api: {
