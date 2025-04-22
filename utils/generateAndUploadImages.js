@@ -5,9 +5,7 @@ import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/fire
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import fetch from "node-fetch";
 import OpenAI from "openai";
-import * as dotenv from "dotenv";
 
-dotenv.config();
 
 // Firebase config
 const firebaseConfig = {
