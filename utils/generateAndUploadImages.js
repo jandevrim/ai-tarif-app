@@ -41,7 +41,6 @@ export async function generateAndUploadImages() {
       console.log(`✅ Atlaniyor (zaten var): ${recipe.title}`);
       continue;
     }
-
 try {
   console.log(`⏳ Olusturuluyor: ${recipe.title}`);
   const imageUrl = await generateImage(recipe.title);
@@ -69,10 +68,7 @@ try {
 } catch (err) {
   console.error(`❌ HATA [${recipe.title}]:`, err.message || err);
 }
-    } catch (err) {
-      console.error(`❌ HATA [${recipe.title}]:`, err.message);
-    }
-  }
+
 }
 
 generateAndUploadImages();
