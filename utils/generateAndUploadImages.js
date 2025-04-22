@@ -1,9 +1,10 @@
 // pages/api/generate-images.js
-import { xai } from "@ai-sdk/xai";
+import OpenAI from "openai";
 import { getApps, initializeApp, getApp } from "firebase/app";
 import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -13,16 +14,22 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Firebase başlat
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// XAI (Grok) için OpenAI istemcisi
+const openai = new OpenAI({
+  apiKey: process.env.XAI_API_KEY,
+  baseURL: "https://api.x.ai/v1", // 🔥 Bu satır önemli!
+});
+
 async function generateImageWithXAI(title) {
-  const result = await xai.images.generate({
+  const result = await openai.images.generate({
     model: "grok-2-image",
     prompt: `High-quality food photo of this recipe: ${title}`,
     n: 1,
-    response_format: "url",
   });
   return result.data[0].url;
 }
