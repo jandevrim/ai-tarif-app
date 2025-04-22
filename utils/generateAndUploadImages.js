@@ -33,7 +33,6 @@ async function generateImageWithXAI(title,ingredientList) {
   });
   return result.data[0].url;
 }
-
 async function generateAndUploadImages() {
   const snapshot = await getDocs(collection(db, "likedRecipes"));
   const filtered = snapshot.docs.filter(doc => !doc.data().imageUrl);
@@ -44,7 +43,6 @@ async function generateAndUploadImages() {
     console.log("✅ Tüm tariflerde görsel mevcut.");
     return;
   }
-
   const recipe = { id: filtered[0].id, ...filtered[0].data() };
   console.log("🎯 İşlenecek tarif:", recipe.title);
 
