@@ -1,10 +1,4 @@
 {
-  "functions": {
-    "api/generate-images.js": {
-      "memory": 512,
-      "maxDuration": 60
-    }
-  },
   "builds": [
     {
       "src": "package.json",
