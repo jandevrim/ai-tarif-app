@@ -4,7 +4,6 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import fetch from "node-fetch";
 import OpenAI from "openai";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -19,53 +18,43 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export async function generateImage(title) {
+export async function generateImage(title: string) {
+  console.log("⚡ OpenAI çağrısı başlatılıyor:", title);
   const response = await openai.images.generate({
     prompt: `High-quality food photo of this recipe: ${title}`,
     n: 1,
-    size: "256x256", // ✅ Daha düşük çözünürlük
+    size: "512x512",
   });
   return response.data[0].url;
 }
 
 export async function generateAndUploadImages() {
   const snapshot = await getDocs(collection(db, "likedRecipes"));
+  const filtered = snapshot.docs.filter(doc => !doc.data().imageUrl);
   console.log(`🧾 Tarif sayısı: ${snapshot.docs.length}`);
+  console.log(`🔎 Eksik görselli tarif sayısı: ${filtered.length}`);
 
-  for (const docSnap of snapshot.docs) {
-    const recipe = { id: docSnap.id, ...docSnap.data() };
+  if (filtered.length === 0) return;
 
-    if (recipe.imageUrl && recipe.imageUrl.includes("firebase")) {
-      console.log(`✅ Atlaniyor (zaten var): ${recipe.title}`);
-      continue;
-    }
+  const recipe = { id: filtered[0].id, ...filtered[0].data() };
+  console.log("🎯 İlk eksik tarif:", recipe.title);
 
-    try {
-      console.log(`⏳ Olusturuluyor: ${recipe.title}`);
-      const imageUrl = await generateImage(recipe.title);
-      console.log(`🎯 Görsel URL alındı: ${imageUrl}`);
+  try {
+    const imageUrl = await generateImage(recipe.title);
+    const response = await fetch(imageUrl);
+    const buffer = await response.buffer();
 
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        console.error(`🚫 Fetch başarısız: ${response.status} ${response.statusText}`);
-        continue;
-      }
+    const imagePath = `recipe_images/${recipe.id}.jpg`;
+    const storageRef = ref(storage, imagePath);
+    await uploadBytes(storageRef, buffer, { contentType: "image/jpeg" });
+    const downloadURL = await getDownloadURL(storageRef);
 
-      const buffer = await response.buffer();
-      console.log(`📥 Görsel indirildi: ${recipe.title}`);
+    await updateDoc(doc(db, "likedRecipes", recipe.id), {
+      imageUrl: downloadURL,
+    });
 
-      const imagePath = `recipe_images/${recipe.id}.jpg`;
-      const storageRef = ref(storage, imagePath);
-      await uploadBytes(storageRef, buffer, { contentType: "image/jpeg" });
-      console.log(`📤 Görsel storage'a yüklendi: ${imagePath}`);
-
-      const downloadURL = await getDownloadURL(storageRef);
-      await updateDoc(doc(db, "likedRecipes", recipe.id), {
-        imageUrl: downloadURL,
-      });
-      console.log(`✅ Firestore güncellendi: ${recipe.title}`);
-    } catch (err) {
-      console.error(`❌ HATA [${recipe.title}]:`, err);
-    }
+    console.log(`✅ Yüklendi ve güncellendi: ${recipe.title}`);
+  } catch (err) {
+    console.error(`❌ HATA:`, err.message || err);
   }
 }
