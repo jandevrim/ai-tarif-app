@@ -18,7 +18,7 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 async function generateImageWithXAI(title) {
-  const result = await xai.image.generate({
+  const result = await xai.images.generate({
     model: "grok-2-image",
     prompt: `High-quality food photo of this recipe: ${title}`,
     n: 1,
