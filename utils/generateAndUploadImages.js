@@ -19,7 +19,7 @@ const storage = getStorage(app);
 
 async function generateImageWithXAI(title) {
   const result = await xai.image.generate({
-    model: "grok-2-image-1212",
+    model: "grok-2-image",
     prompt: `High-quality food photo of this recipe: ${title}`,
     n: 1,
     response_format: "url",
