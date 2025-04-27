@@ -610,32 +610,85 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     }
   
     if (currentStep > recipe.steps.length) {
-      // SON: Beğeni ekranı
+      const cihazMarkasiLocal = recipe.cihazMarkasi || "tumu";
+    
+      const handleCopy = async () => {
+        try {
+          await navigator.clipboard.writeText(`${recipe.title}\n\n${recipe.steps.join('\n')}`);
+          console.log("Tarif panoya kopyalandı ✅");
+        } catch (err) {
+          console.error("Kopyalama işlemi başarısız:", err);
+        }
+      };
+    
+      const handleLike = async () => {
+        try {
+          const user = getAuth().currentUser;
+          if (!user) {
+            alert("Giriş yapmadan beğenemezsiniz.");
+            return;
+          }
+    
+          await saveLikedRecipeToServer({
+            title: recipe.title,
+            summary: recipe.summary,
+            ingredients: recipe.ingredients,
+            steps: recipe.steps,
+            cihazMarkasi: cihazMarkasiLocal,
+            tarifDili: "tr",
+            kullaniciTarifi: false,
+            begeniSayisi: 1,
+            userId: user.uid,
+          });
+    
+          alert("Beğendiğinize Sevindik! 🎉");
+        } catch (err) {
+          alert("Kaydetme sırasında hata oluştu.");
+          console.error(err);
+        }
+      };
+    
+      const handleShare = async () => {
+        if ('share' in navigator) {
+          try {
+            await navigator.share({ title: `Tarif: ${recipe.title}`, text: recipe.steps.join('\n') });
+            console.log("Paylaşım başarılı.");
+          } catch (err) {
+            console.warn("Paylaşım iptal edildi veya başarısız:", err);
+          }
+        }
+      };
+    
       return (
         <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in text-center">
           <h2 className="text-2xl font-bold mb-6">Tarifi Beğendiniz mi?</h2>
-          <RecipeFeedback
-            title={recipe.title || "Tarif"}
-            recipeText={[
-              recipe.summary || "",
-              `Süre: ${recipe.duration || "Belirtilmemiş"}`,
-              "Malzemeler:",
-              ...(recipe.ingredients || []),
-              "Hazırlık Adımları:",
-              ...(recipe.steps || []),
-            ].join("\n")}
-            ingredients={recipe.ingredients || []}
-            steps={recipe.steps || []}
-            cihazMarkasi={recipe.cihazMarkasi || "tumu"}
-            tarifDili="tr"
-            kullaniciTarifi={false}
-          />
+          <div className="flex flex-wrap justify-center gap-4">
+            <button
+              onClick={handleLike}
+              className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
+            >
+              👍 Beğendim
+            </button>
+            <button
+              onClick={handleCopy}
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
+            >
+              📋 Kopyala
+            </button>
+            {'share' in navigator ? (
+              <button
+                onClick={handleShare}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
+              >
+                📤 Paylaş
+              </button>
+            ) : (
+              <p className="text-sm text-gray-500">Paylaşım desteklenmiyor, lütfen kopyalayın.</p>
+            )}
+          </div>
         </div>
       );
     }
-  
-    return null;
-  };
   const handleStartOver = () => {
     setSelectedIngredients([]);
     setShowSelector(false);
