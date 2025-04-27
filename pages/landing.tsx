@@ -523,13 +523,15 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
 
   const renderCurrentCard = () => {
     if (!recipe) return null;
+  
     const extractDeviceCommandLocal = (text: string): string | null => {
       const regex = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
       const match = text.match(regex);
       return match ? match[0].replace(/\s+/g, ' ').trim() : null;
     };
-
+  
     if (currentStep === 0) {
+      // Başlangıç kartı
       return (
         <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
           <h2 className="text-xl font-bold mb-2 text-center"> 📋 {recipe.title || "Başlık yok"} </h2>
@@ -560,25 +562,23 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         </div>
       );
     }
-    const stepIndex = currentStep - 1;
-    if (recipe.steps && stepIndex >= 0 && stepIndex < recipe.steps.length) {
+  
+    if (currentStep >= 1 && currentStep <= recipe.steps.length) {
+      // Adım kartları
+      const stepIndex = currentStep - 1;
       const stepText = recipe.steps[stepIndex];
       const command = extractDeviceCommandLocal(stepText);
-      const fullRecipeTextForSharing = [
-        recipe.title || "Tarif",
-        recipe.summary || "",
-        '',
-        'Malzemeler:',
-        ...(recipe.ingredients || []),
-        '',
-        'Hazırlık Adımları:',
-        ...(recipe.steps || []).map((s: string, i: number) => `${i + 1}. ${s}`)
-      ].join('\n');
-
+  
       return (
         <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
-          <h2 className="text-xl font-bold mb-4 text-center">🍳 Hazırlık Adımı {currentStep} / {recipe.steps.length}</h2>
-          {command && <div className="text-center text-lg font-bold text-green-700 mb-2 p-2 bg-green-50 rounded">{command}</div>}
+          <h2 className="text-xl font-bold mb-4 text-center">
+            🍳 Hazırlık Adımı {currentStep} / {recipe.steps.length}
+          </h2>
+          {command && (
+            <div className="text-center text-lg font-bold text-green-700 mb-2 p-2 bg-green-50 rounded">
+              {command}
+            </div>
+          )}
           <p className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded min-h-[6rem]">
             {getStepWithEmoji(stepText)}
           </p>
@@ -597,38 +597,45 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
                 Sonraki →
               </button>
             ) : (
-              <div className="w-full flex flex-col items-center mt-4">
-                <span className="px-4 py-2 text-gray-500 font-semibold mb-4">
-                  Afiyet Olsun!
-                </span>
-                <RecipeFeedback
-                  title={recipe.title || "Tarif"}
-                  recipeText={[
-                    recipe.summary || "",
-                    `Süre: ${recipe.duration || "Belirtilmemiş"}`,
-                    "Malzemeler:",
-                    ...(recipe.ingredients || []),
-                    "Hazırlık Adımları:",
-                    ...(recipe.steps || []),
-                  ].join("\n")}
-                  ingredients={recipe.ingredients || []}
-                  steps={recipe.steps || []}
-                  cihazMarkasi={recipe.cihazMarkasi || "tumu"} // Cihaz markasını geçir
-                  tarifDili="tr"
-                  kullaniciTarifi={false}
-                />
-              </div>
+              <button
+                onClick={() => setCurrentStep((prev) => prev + 1)}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+              >
+                Bitti →
+              </button>
             )}
           </div>
-          {currentStep === recipe.steps.length && (
-            <ShareButtons title={recipe.title || "Tarif"} recipeText={fullRecipeTextForSharing} />
-          )}
         </div>
       );
     }
-    return <p>Tarif adımı bulunamadı.</p>;
+  
+    if (currentStep > recipe.steps.length) {
+      // SON: Beğeni ekranı
+      return (
+        <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in text-center">
+          <h2 className="text-2xl font-bold mb-6">Tarifi Beğendiniz mi?</h2>
+          <RecipeFeedback
+            title={recipe.title || "Tarif"}
+            recipeText={[
+              recipe.summary || "",
+              `Süre: ${recipe.duration || "Belirtilmemiş"}`,
+              "Malzemeler:",
+              ...(recipe.ingredients || []),
+              "Hazırlık Adımları:",
+              ...(recipe.steps || []),
+            ].join("\n")}
+            ingredients={recipe.ingredients || []}
+            steps={recipe.steps || []}
+            cihazMarkasi={recipe.cihazMarkasi || "tumu"}
+            tarifDili="tr"
+            kullaniciTarifi={false}
+          />
+        </div>
+      );
+    }
+  
+    return null;
   };
-
   const handleStartOver = () => {
     setSelectedIngredients([]);
     setShowSelector(false);
