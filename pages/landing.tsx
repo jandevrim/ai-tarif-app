@@ -478,10 +478,15 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     setRecipe(null);
     setCurrentStep(0);
     setShowSelector(false);
+
+    const cihazMarkasi = localStorage.getItem("cihazMarkasi") || "tumu"; // Cihaz markasını al
+    console.log("Cihaz markası (handleGenerateRecipe):", cihazMarkasi); // Log ekledim
+
     const payload = {
       ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })),
-      cihazMarkasi: localStorage.getItem("cihazMarkasi") || "tumu"
+      cihazMarkasi, // Cihaz markasını payload'a ekle
     };
+
     try {
       const response = await fetch("/api/generate-recipe", {
         method: "POST",
@@ -494,14 +499,14 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json(); // Sadece bir kez çağrılıyor
+      const data = await response.json();
       if (!data || typeof data !== 'object' || !data.steps || !data.ingredients || typeof data.title !== 'string') {
         console.error("Invalid recipe data structure received from API:", data);
         throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
       }
 
-      setRecipe(data);
-      console.log("API'den dönen veri:", data); // Burada data'yı tekrar kullanabilirsiniz
+      setRecipe({ ...data, cihazMarkasi }); // Cihaz markasını recipe'ye ekle
+      console.log("API'den dönen veri:", data);
 
       const user = getAuth().currentUser;
       if (user) {
@@ -608,7 +613,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
                   ].join("\n")}
                   ingredients={recipe.ingredients || []}
                   steps={recipe.steps || []}
-                  cihazMarkasi={recipe.cihazMarkasi || "tumu"}
+                  cihazMarkasi={recipe.cihazMarkasi || "tumu"} // Cihaz markasını geçir
                   tarifDili="tr"
                   kullaniciTarifi={false}
                 />
