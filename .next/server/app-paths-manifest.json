@@ -1,0 +1,3 @@
+{
+  "/api/generate-recipe/route": "app/api/generate-recipe/route.js"
+}

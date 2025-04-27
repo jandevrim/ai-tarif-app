@@ -360,7 +360,7 @@ const fetchRecipeCount = async () => {
 >
   💚 {recipeCount !== null
     ? `ThermoChef AI'dan ${recipeCount} Hazır Tarif!`
-    : "Tarifler Yükleniyor..."}
+   : "Tarifler Yükleniyor..."}
 </button>  
         </div>
 
@@ -498,7 +498,8 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
       }
       setRecipe(data);
-
+      const data2 = await response.json();
+      console.log("API'den dönen veri:", data2);
       // ✅ UID ile kredi azaltma – user tanımlı mı kontrol ediyoruz
         const user = getAuth().currentUser;
         if (user) {

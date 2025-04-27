@@ -40,7 +40,7 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
       alert("Giriş yapmadan beğenemezsiniz.");
       return;
     }
-
+    console.log("RecipeFeedback cihazMarkasi:", cihazMarkasi);
     await saveLikedRecipeToServer({
       title,
       summary: recipeText,

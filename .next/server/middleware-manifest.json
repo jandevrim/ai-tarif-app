@@ -1,0 +1,36 @@
+{
+  "version": 3,
+  "middleware": {},
+  "functions": {
+    "/api/generate-recipe/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/api/generate-recipe/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/generate-recipe/route.js"
+      ],
+      "name": "app/api/generate-recipe/route",
+      "page": "/api/generate-recipe/route",
+      "matchers": [
+        {
+          "regexp": "^/api/generate\\-recipe$",
+          "originalSource": "/api/generate-recipe"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "o9Qe97-A0vndKYIS2rHqv",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "r+3n0YzkfPOb14DRGJXsRiYy2L6wUEhrBc3qzXINgk0=",
+        "__NEXT_PREVIEW_MODE_ID": "d8166985fd2698dfc706c2b3768ebe89",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "c49d05b010175691d5e8b975733af340a0de33ba596321dd738b91295b00155a",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "feed451b2b1395cac4e6f79ca030a932307cfa381c169f8cfa9903a3ef058b4f"
+      }
+    }
+  },
+  "sortedMiddleware": []
+}

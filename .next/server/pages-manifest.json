@@ -1,0 +1,16 @@
+{
+  "/_app": "pages/_app.js",
+  "/_document": "pages/_document.js",
+  "/custom": "pages/custom.js",
+  "/hakkimizda": "pages/hakkimizda.js",
+  "/iletisim": "pages/iletisim.js",
+  "/": "pages/index.js",
+  "/landing": "pages/landing.js",
+  "/_error": "pages/_error.js",
+  "/liked-recipes": "pages/liked-recipes.js",
+  "/profile": "pages/profile.js",
+  "/recipe": "pages/recipe.js",
+  "/recipePage/[id]": "pages/recipePage/[id].js",
+  "/user": "pages/user.js",
+  "/api/generate-images": "pages/api/generate-images.js"
+}

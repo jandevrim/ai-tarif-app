@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/generate-recipe/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"/workspaces/ai-tarif-app/":[],"/workspaces/ai-tarif-app/app/api/generate-recipe/route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}}
