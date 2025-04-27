@@ -486,28 +486,27 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       const response = await fetch("/api/generate-recipe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `Sunucu hatası: ${response.statusText}` }));
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
+
+      const data = await response.json(); // Sadece bir kez çağrılıyor
       if (!data || typeof data !== 'object' || !data.steps || !data.ingredients || typeof data.title !== 'string') {
         console.error("Invalid recipe data structure received from API:", data);
         throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
       }
+
       setRecipe(data);
-      const data2 = await response.json();
-      console.log("API'den dönen veri:", data2);
-      // ✅ UID ile kredi azaltma – user tanımlı mı kontrol ediyoruz
-        const user = getAuth().currentUser;
-        if (user) {
-          await decrementRecipeCredit(user.uid);
-        }
+      console.log("API'den dönen veri:", data); // Burada data'yı tekrar kullanabilirsiniz
 
-
-      await decrementRecipeCredit(user!.uid); 
+      const user = getAuth().currentUser;
+      if (user) {
+        await decrementRecipeCredit(user.uid);
+      }
     } catch (err: any) {
       console.error("API call failed:", err);
       setError(err.message || "Tarif oluşturulurken bir hata oluştu.");
