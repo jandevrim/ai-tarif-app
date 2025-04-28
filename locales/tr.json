@@ -1,0 +1,50 @@
+{
+  "landing": {
+    "title": "Yemekleri Yapay Zeka ile Keşfedin 🍳",
+    "startRecipeButton": "Tarif Oluştur 🚀",
+    "selectIngredients": "Malzemelerini Seç",
+    "generateRecipe": "AI Tarif Oluştursun",
+    "stepByStepCooking": "Adım Adım Pişir",
+    "readyRecipes": "{{count}} Hazır Tarif!",
+    "loadingRecipes": "Tarifler Yükleniyor...",
+    "welcomeUser": "Hoş geldin, {{name}}",
+    "logout": "Çıkış Yap",
+    "loginWithGoogle": "Google ile Giriş Yap",
+    "aboutUs": "Hakkımızda",
+    "contact": "İletişim",
+    "footerCopyright": "© 2025 ThermoChefAI. Tüm hakları saklıdır."
+  },
+  "custom": {
+    "pageTitle": "Kendi Tarifini Oluştur",
+    "selectedIngredients": "Seçilen Malzemeler:",
+    "startWithAddingIngredients": "Başlamak için malzeme ekleyin.",
+    "addIngredientButton": "Malzeme Ekle/Göster",
+    "hideIngredientSelectorButton": "Malzeme Seçiciyi Gizle",
+    "generateRecipeButton": "Tarif Oluştur",
+    "errorLoadingIngredients": "Malzemeler yüklenemedi.",
+    "errorGeneratingRecipe": "Tarif oluşturulurken bir hata oluştu.",
+    "ingredientsNeeded": "Gereken Malzemeler:",
+    "startCooking": "Hazırlanışa Başla →",
+    "step": "Hazırlık Adımı {{current}} / {{total}}",
+    "done": "Bitti →",
+    "recipeCompletedQuestion": "Tarifi Beğendiniz mi?",
+    "likeRecipe": "👍 Beğendim",
+    "copyRecipe": "📋 Kopyala",
+    "shareRecipe": "📤 Paylaş",
+    "newRecipeButton": "Yeni Tarif Oluştur",
+    "backButton": "← Geri"
+  },
+  "share": {
+    "copySuccess": "Tarif panoya kopyalandı ✅",
+    "copyFailed": "Kopyalama işlemi başarısız.",
+    "shareNotSupported": "Paylaşım desteklenmiyor, lütfen kopyalayın."
+  },
+  "loading": {
+    "loadingRecipe": "Tarifiniz hazırlanıyor..."
+  },
+  "errors": {
+    "generalError": "Oops! Bir Hata Oluştu.",
+    "retryLater": "Lütfen tarayıcı konsolunu kontrol edin veya daha sonra tekrar deneyin.",
+    "ingredientsFetchFailed": "Malzemeler yüklenemedi."
+  }
+}

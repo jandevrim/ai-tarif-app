@@ -10,6 +10,8 @@ import { getUserRecipeCredits } from "../utils/userCredits";
 import { decrementRecipeCredit } from "../utils/firebaseconfig"; // sayfanın en üstüne ekle
 import { getUserCredits, decrementCredits } from "../utils/userCredits";
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
+import HeroSection from "../components/HeroSection";
 
 
 const db = getFirestore(app);
@@ -253,7 +255,7 @@ function LandingPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const provider = new GoogleAuthProvider(); // Provider burada tanımlandı
   const [recipeCount, setRecipeCount] = useState<number | null>(null);
   const router = useRouter();
-
+  const { t } = useTranslation();
 
 useEffect(() => {
   const unsubscribe = onAuthStateChanged(getAuth(), async (currentUser) => {
@@ -311,32 +313,10 @@ const fetchRecipeCount = async () => {
   return (
     <div className="min-h-screen bg-white text-gray-800 flex flex-col font-sans">
       <main className="flex flex-col items-center px-6 py-10 pt-16 flex-1">
-        <div className="relative w-full max-w-xs mb-8">
-          <img
-            src="/logo.png"
-            alt="ThermoChefAI Ana Logo"
-            width={300}
-            height={300}
-            className="rounded-2xl object-contain mx-auto"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.onerror = null;
-              target.src = "https://placehold.co/300x300/e0f2fe/334155?text=Logo+Bulunamadı";
-              console.error("Logo yüklenemedi: /logo.png");
-            }}
-          />
-        </div>
-
+       
         <div className="text-center space-y-5">
-          <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900">
-            Yemekleri Yapay Zeka ile Keşfedin 🍳
-          </h1>
-          <button
-            onClick={handleStart}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Tarif Oluştur 🚀
-          </button>
+         
+         <HeroSection onStart={handleStart} />
           <div className="flex justify-center gap-4 mb-4">
             <button
               onClick={() => setSelectedDevice("thermomix")}
@@ -702,9 +682,6 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     return null; // Ensure the function returns something if no conditions are met
   };
 
-  function handleStartOver(event: React.MouseEvent<HTMLButtonElement>): void {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans relative">

@@ -1,0 +1,10 @@
+{
+  "welcome": "Welcome to ThermoChefAI!",
+  "start_recipe": "Create New Recipe 🚀",
+  "logo_alt": "ThermoChefAI  Logo",
+  "logo_error": "Could not load: /logo.png",
+  "device_thermomix": "Thermomix",
+  "device_thermogusto": "ThermoGusto",
+  "liked_recipes": "{{count}} Recipes from ThermoChef AI!",
+  "loading_recipes": "Loading Recipes..."
+}
