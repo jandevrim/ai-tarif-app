@@ -502,6 +502,15 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     }
   };
 
+  const handleStartOver = () => {
+    setSelectedIngredients([]);
+    setShowSelector(false);
+    setIsLoading(false);
+    setRecipe(null);
+    setError(null);
+    setCurrentStep(0);
+  };
+
   const renderCurrentCard = () => {
     if (!recipe) return null;
   
