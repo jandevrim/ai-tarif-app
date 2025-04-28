@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RecipeFeedback from "../components/RecipeFeedback";
 import LikedRecipesPage from './liked-recipes';
 import { app } from "../utils/firebaseconfig";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { ensureUserInFirestore } from "../utils/userCredits";
@@ -10,6 +10,7 @@ import { getUserRecipeCredits } from "../utils/userCredits";
 import { decrementRecipeCredit } from "../utils/firebaseconfig"; // sayfanın en üstüne ekle
 import { getUserCredits, decrementCredits } from "../utils/userCredits";
 import { useRouter } from 'next/router';
+
 
 const db = getFirestore(app);
 interface Ingredient {
