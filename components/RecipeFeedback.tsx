@@ -1,8 +1,12 @@
 import React from "react";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { app } from "../utils/firebaseconfig";
+
+const db = getFirestore(app);
 
 interface RecipeFeedbackProps {
   title: string;
- summary: string;
+  summary: string;
   recipeText: string;
   ingredients: string[];
   steps: string[];
@@ -25,39 +29,37 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
   begeniSayisi = 0,
   userId
 }) => {
-  console.log("RecipeFeedback cihazMarkasi:", cihazMarkasi); // Log ekledim
-
   const handleSaveFeedback = async () => {
     try {
-      const response = await fetch("/api/save-feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          recipeText,
-          ingredients,
-          steps,
-          cihazMarkasi, // Cihaz markasını kaydet
-          tarifDili,
-          kullaniciTarifi,
-        }),
+      await addDoc(collection(db, "likedRecipes"), {
+        title,
+        summary,
+        recipeText,
+        ingredients,
+        steps,
+        cihazMarkasi,
+        tarifDili,
+        kullaniciTarifi,
+        begeniSayisi,
+        userId,
+        createdAt: new Date()
       });
-
-      if (!response.ok) {
-        throw new Error("Feedback kaydedilemedi.");
-      }
-
-      console.log("Feedback başarıyla kaydedildi.");
+      console.log("Tarif Firestore'a başarıyla kaydedildi!");
+      alert("Beğendiğinize Sevindik! 🎉");
     } catch (error) {
-      console.error("Feedback kaydedilemedi:", error);
+      console.error("Tarif kaydedilemedi:", error);
+      alert("Kaydetme sırasında hata oluştu.");
     }
   };
 
   return (
-    <div>
-      <h2>{title}</h2>
-      <p>{recipeText}</p>
-      <button onClick={handleSaveFeedback}>Geri Bildirim Gönder</button>
+    <div className="mt-6 flex gap-4 justify-center">
+      <button
+        onClick={handleSaveFeedback}
+        className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+      >
+        👍 Beğendim
+      </button>
     </div>
   );
 };
