@@ -30,6 +30,7 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
   userId
 }) => {
   const handleSaveFeedback = async () => {
+    console.log("Save feedback başlıyor"); // EKLE
     try {
       await addDoc(collection(db, "likedRecipes"), {
         title,
@@ -51,7 +52,6 @@ const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
       alert("Kaydetme sırasında hata oluştu.");
     }
   };
-
   return (
     <div className="mt-6 flex gap-4 justify-center">
       <button
