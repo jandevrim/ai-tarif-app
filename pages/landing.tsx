@@ -620,7 +620,6 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
           console.error("Kopyalama işlemi başarısız:", err);
         }
       };
-    
       const handleLike = async () => {
         try {
           const user = getAuth().currentUser;
@@ -628,8 +627,8 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             alert("Giriş yapmadan beğenemezsiniz.");
             return;
           }
-    
-          await RecipeFeedback({
+      
+          await addDoc(collection(db, "likedRecipes"), {
             title: recipe.title,
             summary: recipe.summary,
             ingredients: recipe.ingredients,
@@ -639,16 +638,16 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             kullaniciTarifi: false,
             begeniSayisi: 1,
             userId: user.uid,
+            createdAt: new Date(),
             recipeText: recipe.steps.join('\n')
           });
-    
+      
           alert("Beğendiğinize Sevindik! 🎉");
         } catch (err) {
           alert("Kaydetme sırasında hata oluştu.");
           console.error(err);
         }
       };
-    
       const handleShare = async () => {
         if ('share' in navigator) {
           try {
