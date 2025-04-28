@@ -629,7 +629,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             return;
           }
     
-          await saveLikedRecipeToServer({
+          await RecipeFeedback({
             title: recipe.title,
             summary: recipe.summary,
             ingredients: recipe.ingredients,
@@ -639,6 +639,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             kullaniciTarifi: false,
             begeniSayisi: 1,
             userId: user.uid,
+            recipeText: recipe.steps.join('\n')
           });
     
           alert("Beğendiğinize Sevindik! 🎉");
@@ -689,14 +690,21 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         </div>
       );
     }
-  const handleStartOver = () => {
-    setSelectedIngredients([]);
-    setShowSelector(false);
-    setIsLoading(false);
-    setRecipe(null);
-    setError(null);
-    setCurrentStep(0);
+    const handleStartOver = () => {
+      setSelectedIngredients([]);
+      setShowSelector(false);
+      setIsLoading(false);
+      setRecipe(null);
+      setError(null);
+      setCurrentStep(0);
+    };
+  
+    return null; // Ensure the function returns something if no conditions are met
   };
+
+  function handleStartOver(event: React.MouseEvent<HTMLButtonElement>): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans relative">

@@ -2,22 +2,28 @@ import React from "react";
 
 interface RecipeFeedbackProps {
   title: string;
+ summary: string;
   recipeText: string;
   ingredients: string[];
   steps: string[];
   cihazMarkasi: string;
   tarifDili: string;
   kullaniciTarifi: boolean;
+  begeniSayisi?: number;
+  userId: string;
 }
 
 const RecipeFeedback: React.FC<RecipeFeedbackProps> = ({
   title,
+  summary,
   recipeText,
   ingredients,
   steps,
   cihazMarkasi,
   tarifDili,
   kullaniciTarifi,
+  begeniSayisi = 0,
+  userId
 }) => {
   console.log("RecipeFeedback cihazMarkasi:", cihazMarkasi); // Log ekledim
 
