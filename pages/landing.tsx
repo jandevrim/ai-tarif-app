@@ -96,7 +96,7 @@ const extractDeviceCommand = (text: string): string | null => {
 };
 
 // --- Share Component ---
-<ShareButtons title={recipe.title} recipeText={recipe.steps.join('\n')} />
+
 // --- Mock Components ---
 function MockIngredientSelector({
   selected,
@@ -499,6 +499,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       const cihazMarkasiLocal = recipe.cihazMarkasi || "tumu";
     
       const handleCopy = async () => {
+        <ShareButtons title={recipe.title} recipeText={recipe.steps.join('\n')} />
         try {
           await navigator.clipboard.writeText(`${recipe.title}\n\n${recipe.steps.join('\n')}`);
           console.log("Tarif panoya kopyalandı ✅");
