@@ -1,0 +1,10 @@
+"use client";
+
+import React, { useState } from "react";
+import { getAuth } from "firebase/auth";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { app } from "../utils/firebaseconfig";
+import ShareButtons from "../components/ShareButtons";
+import { useTranslation } from "react-i18next";
+
+const db = getFirestore(app);

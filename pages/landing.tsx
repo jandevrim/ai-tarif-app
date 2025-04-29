@@ -32,17 +32,13 @@ interface Ingredient {
   emoji?: string;
 }
 
-
-
 // --- Environment Variable Simulation ---
 const IS_DEMO_MODE = false;
-
 // --- Data Loading Logic ---
 const demoIngredients: Ingredient[] = [
   { id: "domates", name: { tr: "domates", en: "Tomato" }, category: "sebze", tags: ['sebze', 'taze', 'kırmızı'], emoji: "🍅" },
   
 ];
-
 // --- Helper Functions ---
 const getStepWithEmoji = (step: string): string => {
   const mappings: { [key: string]: string } = {
@@ -167,7 +163,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-
+  const { t } = useTranslation();
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
@@ -250,7 +246,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       }
     } catch (err: any) {
       console.error("API call failed:", err);
-      setError(err.message || "Tarif oluşturulurken bir hata oluştu.");
+      setError(err.message || t('customRecipe.errorCreatingRecipe'));
       setRecipe(null);
     } finally {
       setIsLoading(false);
@@ -283,25 +279,25 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
           <p className="italic text-sm mb-2 text-gray-600 text-center">{recipe.summary || "Özet yok"}</p>
           <p className="text-center mb-4"> <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"} </p>
           <div className="mb-4 p-3 border rounded bg-gray-50 max-h-32 overflow-y-auto">
-            <h3 className="font-semibold mb-1">Gereken Malzemeler:</h3>
+          <h3 className="font-semibold mb-1">{t('customRecipe.requiredIngredients')}</h3>
             <ul className="list-disc list-inside text-sm">
               {recipe.ingredients && recipe.ingredients.length > 0 ? (
                 recipe.ingredients.map((ing: string, idx: number) => (
                   <li key={idx}>{ing}</li>
                 ))
               ) : (
-                <li>Malzeme yok</li>
+                <li>{t('customRecipe.noIngredients')}</li>
               )}
             </ul>
           </div>
           <div className="text-center mt-4">
             {recipe.steps && recipe.steps.length > 0 && (
-              <button
-                onClick={() => setCurrentStep(1)}
-                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
-              >
-                Hazırlanışa Başla →
-              </button>
+             <button
+             onClick={() => setCurrentStep(1)}
+             className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+           >
+             {t('customRecipe.startPreparation')} →
+           </button>
             )}
           </div>
         </div>
@@ -332,21 +328,22 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
               onClick={() => setCurrentStep((prev) => prev - 1)}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-full shadow-md transition duration-300"
             >
-              ← {currentStep === 1 ? "Özet" : "Geri"}
+              ← {currentStep === 1 ? t('customRecipe.summary') : t('customRecipe.back')}
             </button>
             {currentStep < recipe.steps.length ? (
               <button
                 onClick={() => setCurrentStep((prev) => prev + 1)}
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
               >
-                Sonraki →
+                {t('customRecipe.next')}
               </button>
             ) : (
               <button
                 onClick={() => setCurrentStep((prev) => prev + 1)}
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
               >
-                Bitti →
+                {t('customRecipe.finish')}
+
               </button>
             )}
           </div>
@@ -370,7 +367,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         try {
           const user = getAuth().currentUser;
           if (!user) {
-            alert("Giriş yapmadan beğenemezsiniz.");
+            alert(t('customRecipe.mustLoginToLike'));
             return;
           }
       
@@ -388,9 +385,9 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             recipeText: recipe.steps.join('\n')
           });
       
-          alert("Beğendiğinize Sevindik! 🎉");
+          alert(t('customRecipe.likeSuccess'));
         } catch (err) {
-          alert("Kaydetme sırasında hata oluştu.");
+          alert(t('customRecipe.saveError'));
           console.error(err);
         }
       };
@@ -413,23 +410,23 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
               onClick={handleLike}
               className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
             >
-              👍 Beğendim
+             {t('customRecipe.like')}
             </button>
             <button
               onClick={handleCopy}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
             >
-              📋 Kopyala
+             {t('customRecipe.copy')}
             </button>
             {'share' in navigator ? (
               <button
                 onClick={handleShare}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
               >
-                📤 Paylaş
+                {t('customRecipe.share')}
               </button>
             ) : (
-              <p className="text-sm text-gray-500">Paylaşım desteklenmiyor, lütfen kopyalayın.</p>
+              <p className="text-sm text-gray-500">{t('customRecipe.pleaseshare')}</p>
             )}
           </div>
         </div>
@@ -458,7 +455,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
           ← Geri
         </button>
       )}
-      <h1 className="text-2xl font-bold mb-4 text-center pt-8">Kendi Tarifini Oluştur</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center pt-8">{t('customRecipe.createyourownrecipe')}</h1>
       {isLoading ? (
         <LoadingIndicator />
       ) : recipe ? (
@@ -476,9 +473,9 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       ) : (
         <>
           <div className="mb-4 p-3 border rounded bg-white/50 min-h-[5rem]">
-            <h2 className="text-sm font-semibold mb-2">Seçilen Malzemeler:</h2>
+            <h2 className="text-sm font-semibold mb-2">{t('customRecipe.selectedIngredients')}:</h2>
             {selectedIngredients.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">Başlamak için malzeme ekleyin.</p>
+              <p className="text-sm text-gray-500 italic">{t('customRecipe.addIngredient')}</p>
             ) : (
               <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
                 {selectedIngredients.map((i) => (
@@ -520,14 +517,14 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
               disabled={selectedIngredients.length === 0}
               className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105"
             >
-              Tarif Oluştur
+              {t('customRecipe.createRecipe')}
             </button>
           </div>
         </>
       )}
       {!isLoading && error && (
         <p className="text-red-600 mt-4 p-3 bg-red-100 border border-red-400 rounded text-center">
-          Hata: {error}
+          {t('customRecipe.error')}: {error}
         </p>
       )}
       <style jsx global>{`
