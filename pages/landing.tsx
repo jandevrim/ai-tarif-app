@@ -15,6 +15,10 @@ import HeroSection from "../components/HeroSection";
 import DeviceSelector from "../components/DeviceSelector";
 import CategoryButtons from "../components/CategoryButtons";
 import LikedRecipesButton from "../components/LikedRecipesButton";
+import AuthSection from "../components/AuthSection";
+import Footer from "../components/Footer";
+import ShareButtons from "../components/ShareButtons";
+
 
 const db = getFirestore(app);
 interface Ingredient {
@@ -92,50 +96,7 @@ const extractDeviceCommand = (text: string): string | null => {
 };
 
 // --- Share Component ---
-interface ShareButtonsProps { title: string; recipeText: string; }
-const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(`${title}\n\n${recipeText}`);
-      console.log("Tarif panoya kopyalandı ✅");
-    } catch (err) {
-      console.error("Kopyalama işlemi başarısız:", err);
-    }
-  };
-
-  const handleShare = async () => {
-    if ('share' in navigator) {
-      try {
-        await navigator.share({ title: `Tarif: ${title}`, text: recipeText });
-        console.log("Paylaşım başarılı.");
-      } catch (err) {
-        console.warn("Paylaşım iptal edildi veya başarısız:", err);
-      }
-    }
-  };
-
-  return (
-    <div className="mt-6 flex gap-4 justify-center">
-      <button
-        onClick={handleCopy}
-        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
-      >
-        📋 Kopyala
-      </button>
-      {'share' in navigator ? (
-        <button
-          onClick={handleShare}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
-        >
-          📤 Paylaş
-        </button>
-      ) : (
-        <p className="text-sm text-gray-500">Paylaşım desteklenmiyor, lütfen kopyalayın.</p>
-      )}
-    </div>
-  );
-};
-
+<ShareButtons title={recipe.title} recipeText={recipe.steps.join('\n')} />
 // --- Mock Components ---
 function MockIngredientSelector({
   selected,
@@ -325,48 +286,15 @@ const fetchRecipeCount = async () => {
             />
           <LikedRecipesButton recipeCount={recipeCount} onClick={() => onNavigate("/liked-recipes")} />
         </div>
-
         <CategoryButtons />
-
-        <div className="mt-12 text-center">
-          {user ? (
-            <div className="flex flex-col items-center gap-2">
-          
-<p
-  onClick={() => router.push("/user")}
-  className="text-sm cursor-pointer hover:underline"
->
-  👋 Hoş geldin, <strong>{user.displayName || "Kullanıcı"}</strong>
-</p>
-
-             <button
-                onClick={handleLogout}
-                className="text-red-600 hover:text-red-800 underline text-sm"
-              >
-                Çıkış Yap
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleLogin}
-              className="bg-white text-gray-800 font-semibold px-6 py-2 border border-gray-300 rounded-lg shadow hover:shadow-md flex items-center gap-2 mx-auto"
-            >
-              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
-              Google ile Giriş Yap
-            </button>
-          )}
-        </div>
+        <AuthSection
+          user={user}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+          onNavigateToUserPage={() => router.push("/user")}
+        />
       </main>
-
-      <footer className="text-center py-6 text-sm text-gray-500 border-t mt-10 bg-white">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p>© 2025 ThermoChefAI. Tüm hakları saklıdır.</p>
-          <div className="flex gap-4">
-            <a href="/hakkimizda" className="hover:underline">Hakkımızda</a>
-            <a href="/iletisim" className="hover:underline">İletişim</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
