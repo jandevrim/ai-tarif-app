@@ -1,13 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import AuthFooter from "../components/AuthFooter"; // dizin yapına göre yol değişebilir
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
+import AuthFooter from "../components/AuthFooter"; // dizin yapına göre ayarlarsın
+import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { app } from "../utils/firebaseconfig";
+import { useTranslation } from "react-i18next";
 
 const db = getFirestore(app);
 
@@ -32,22 +29,18 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
   const [search, setSearch] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const { t } = useTranslation();
 
   const fetchRecipes = async () => {
     try {
       const snapshot = await getDocs(collection(db, "likedRecipes"));
       const data = snapshot.docs.map((docSnap) => {
         const raw = docSnap.data();
-        const processedSteps =
-          Array.isArray(raw.steps) && raw.steps.every((s: any) => typeof s === "string")
-            ? raw.steps
-            : typeof raw.steps === "string"
-            ? raw.steps
-                .split(/\d+\.\s/)
-                .filter(Boolean)
-                .map((s: string) => s.trim())
-            : [];
-
+        const processedSteps = Array.isArray(raw.steps)
+          ? raw.steps
+          : typeof raw.steps === "string"
+          ? raw.steps.split(/\d+\.\s/).filter(Boolean).map((s: string) => s.trim())
+          : [];
         return {
           id: docSnap.id,
           title: raw.title,
@@ -100,16 +93,16 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         onClick={() => onNavigate("/landing")}
         className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow"
       >
-        &larr; Geri Dön
+        {t("likedRecipes.backToLanding")}
       </button>
 
-      <h1 className="text-2xl font-bold mb-4">💚 Harika Lezzetler Listesi</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("likedRecipes.title")}</h1>
 
       <input
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Tarif veya malzeme ara..."
+        placeholder={t("likedRecipes.searchPlaceholder")}
         className="mb-4 px-4 py-2 border border-gray-300 rounded w-full shadow-sm"
       />
 
@@ -122,7 +115,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               filter === c ? "bg-green-600 text-white" : "bg-white text-gray-700"
             }`}
           >
-            {c === "tumu" ? "Tümü" : c === "thermomix" ? "Thermomix" : "ThermoGusto"}
+            {t(`likedRecipes.filters.${c}`)}
           </button>
         ))}
       </div>
@@ -139,29 +132,27 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
 
           <h2 className="text-2xl font-bold mb-2 text-center">{selectedRecipe.title}</h2>
           <p className="text-sm text-gray-500 mb-1 text-center">
-            {selectedRecipe.cihazMarkasi === "thermogusto"
-              ? "ThermoGusto"
-              : selectedRecipe.cihazMarkasi === "thermomix"
-              ? "Thermomix"
-              : "Cihaz Bilinmiyor"}
+            {selectedRecipe.cihazMarkasi
+              ? t(`likedRecipes.filters.${selectedRecipe.cihazMarkasi}`)
+              : t("likedRecipes.filters.unknownDevice")}
             {selectedRecipe.duration ? ` • ${selectedRecipe.duration}` : ""}
           </p>
 
           {currentStep === 0 ? (
             <div>
-              <h3 className="font-semibold mt-4 mb-2">Malzemeler:</h3>
+              <h3 className="font-semibold mt-4 mb-2">{t("likedRecipes.ingredients")}</h3>
               <ul className="list-disc list-inside text-sm mb-4">
                 {selectedRecipe.ingredients.map((ing, i) => (
                   <li key={i}>{ing}</li>
                 ))}
               </ul>
               <p className="text-sm italic text-gray-500">
-                Toplam adım sayısı: {selectedRecipe.steps?.length || 0}
+                {t("likedRecipes.totalSteps", { count: selectedRecipe.steps?.length || 0 })}
               </p>
             </div>
           ) : (
             <div className="mt-4">
-              <h3 className="font-semibold mb-1">Adım {currentStep}:</h3>
+              <h3 className="font-semibold mb-1">{t("likedRecipes.stepTitle", { currentStep })}</h3>
               <p className="text-sm">{selectedRecipe.steps?.[currentStep - 1]}</p>
             </div>
           )}
@@ -171,7 +162,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               onClick={() => setExpanded(null)}
               className="text-sm text-gray-600 underline"
             >
-              &larr; Geri
+              {t("likedRecipes.back")}
             </button>
             <div className="space-x-2">
               {currentStep > 0 && (
@@ -179,7 +170,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                   onClick={() => setCurrentStep((s) => s - 1)}
                   className="text-sm bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
                 >
-                  Önceki
+                  {t("likedRecipes.previous")}
                 </button>
               )}
               {currentStep < (selectedRecipe.steps?.length || 0) && (
@@ -187,7 +178,9 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                   onClick={() => setCurrentStep((s) => s + 1)}
                   className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
                 >
-                  {currentStep === 0 ? "Hazırlık Adımlarına Geç" : "Sonraki"}
+                  {currentStep === 0
+                    ? t("likedRecipes.startPreparation")
+                    : t("likedRecipes.next")}
                 </button>
               )}
             </div>
@@ -214,11 +207,9 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               <div className="flex-1">
                 <h2 className="text-lg font-semibold">{recipe.title}</h2>
                 <span className="text-xs text-gray-600">
-                  {recipe.cihazMarkasi === "thermogusto"
-                    ? "ThermoGusto"
-                    : recipe.cihazMarkasi === "thermomix"
-                    ? "Thermomix"
-                    : "Cihaz Bilinmiyor"}
+                  {recipe.cihazMarkasi
+                    ? t(`likedRecipes.filters.${recipe.cihazMarkasi}`)
+                    : t("likedRecipes.filters.unknownDevice")}
                   {recipe.duration ? ` • ${recipe.duration}` : ""}
                 </span>
               </div>
@@ -226,8 +217,9 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           ))}
         </ul>
       )}
+      <AuthFooter />
     </div>
   );
 };
-<AuthFooter />
+
 export default LikedRecipesPage;

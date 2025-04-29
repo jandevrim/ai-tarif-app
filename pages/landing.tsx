@@ -313,7 +313,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       return (
         <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
           <h2 className="text-xl font-bold mb-4 text-center">
-            🍳 Hazırlık Adımı {currentStep} / {recipe.steps.length}
+          {t('customRecipe.stepstext')}{currentStep} / {recipe.steps.length}
           </h2>
           {command && (
             <div className="text-center text-lg font-bold text-green-700 mb-2 p-2 bg-green-50 rounded">
@@ -452,7 +452,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
           onClick={() => onNavigate('/landing')}
           className="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm shadow z-10"
         >
-          ← Geri
+         {t('customRecipe.back')}
         </button>
       )}
       <h1 className="text-2xl font-bold mb-4 text-center pt-8">{t('customRecipe.createyourownrecipe')}</h1>
@@ -466,7 +466,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
               onClick={handleStartOver}
               className="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105"
             >
-              Yeni Tarif Oluştur
+              {t('customRecipe.createNewRecipe')}
             </button>
           </div>
         </>
@@ -501,7 +501,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             onClick={() => setShowSelector(!showSelector)}
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full mb-4 shadow-md transition duration-300 transform hover:scale-105"
           >
-            {showSelector ? 'Malzeme Seçiciyi Gizle' : 'Malzeme Ekle/Göster'}
+            {showSelector ? t('customRecipe.hideIngredientSelector') : t('customRecipe.showIngredientSelector')}
           </button>
           {showSelector && (
             <MockIngredientSelector

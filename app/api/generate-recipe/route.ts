@@ -1,12 +1,9 @@
-// app/api/generate-recipe/route.ts
-
 import { NextRequest } from "next/server";
 import OpenAI from "openai";
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { v4 as uuidv4 } from "uuid";
+import { getStorage } from "firebase/storage";
 
-// Firebase setup
+// --- Firebase Setup ---
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
@@ -22,17 +19,38 @@ const storage = getStorage(firebaseApp);
 export const runtime = "edge";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
+// --- Helper to Load Locale Texts ---
+async function loadLocale(locale: string) {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ""}/locales/${locale}.json`);
+    if (!res.ok) throw new Error(`Dil dosyası yüklenemedi: ${locale}`);
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    const fallbackRes = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ""}/locales/tr.json`);
+    return await fallbackRes.json();
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // --- Locale Detection ---
+    const url = new URL(req.url);
+    const localeFromQuery = url.searchParams.get('lang');
+    const localeFromHeader = req.headers.get('accept-language')?.split(",")[0]?.slice(0, 2)?.toLowerCase();
+    const locale = localeFromQuery || localeFromHeader || "tr";
+
+    const texts = await loadLocale(locale);
+
     const { ingredients, cihazMarkasi = "tumu" } = await req.json();
 
     if (!ingredients || ingredients.length === 0) {
-      return new Response(JSON.stringify({ error: "Malzeme listesi boş olamaz." }), { status: 400 });
+      return new Response(JSON.stringify({ error: texts.emptyIngredients }), { status: 400 });
     }
 
     const validCihazMarkasi = ["thermomix", "thermogusto", "tumu"];
     if (!validCihazMarkasi.includes(cihazMarkasi)) {
-      return new Response(JSON.stringify({ error: "Geçersiz cihaz markası" }), { status: 400 });
+      return new Response(JSON.stringify({ error: texts.invalidDevice }), { status: 400 });
     }
 
     const selectedNames = ingredients.map((i: any) =>
@@ -49,6 +67,8 @@ export async function POST(req: NextRequest) {
     const finalPrompt = `${baseSystemPrompt}
 
 Seçilen malzemeler: ${selectedNames.join(", ")}
+
+${texts.extraInstruction || ""}
 
 Yanıtı aşağıdaki JSON formatında döndür:
 
@@ -73,11 +93,12 @@ Yanıtı aşağıdaki JSON formatında döndür:
     const rawText = response.choices[0]?.message?.content?.trim() || "";
     const cleanJson = rawText.replace(/^```json|```$/g, "").trim();
     let recipe;
+
     try {
       recipe = JSON.parse(cleanJson);
     } catch (parseError) {
       console.error("JSON parse error:", parseError);
-      return new Response(JSON.stringify({ error: "Invalid JSON response from AI", raw: rawText }), { status: 500 });
+      return new Response(JSON.stringify({ error: texts.parseError, raw: rawText }), { status: 500 });
     }
 
     return new Response(JSON.stringify(recipe), {
@@ -87,7 +108,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
 
   } catch (error: any) {
     console.error("Tarif oluşturulamadı:", error);
-    return new Response(JSON.stringify({ error: "Sunucu hatası: " + error.message }), {
+    return new Response(JSON.stringify({ error: `Sunucu hatası: ${error.message}` }), {
       status: 500,
     });
   }

@@ -46,5 +46,106 @@
     "generalError": "Oops! Bir Hata Oluştu.",
     "retryLater": "Lütfen tarayıcı konsolunu kontrol edin veya daha sonra tekrar deneyin.",
     "ingredientsFetchFailed": "Malzemeler yüklenemedi."
-  }
+  },
+  "customRecipe": {
+    "errorWhileCreatingRecipe": "Tarif oluşturulurken bir hata oluştu.",
+    "requiredIngredients": "Gereken Malzemeler:",
+    "noIngredients": "Malzeme yok",
+    "startPreparation": "Hazırlanışa Başla →",
+    "backOrSummary": "Özet",
+    "likeSuccess": "Beğendiğinize Sevindik! 🎉",
+    "saveError": "Kaydetme sırasında hata oluştu.",
+    "likeButton": "👍 Beğendim",
+    "ingredientSelectorToggleShow": "Malzeme Ekle/Göster",
+    "ingredientSelectorToggleHide": "Malzeme Seçiciyi Gizle",
+    "likeWithoutLogin": "Giriş yapmadan beğenemezsiniz.",
+    "createYourRecipe": "Kendi Tarifini Oluştur",
+      "addIngredient": "Malzeme Ekle",
+      "generateRecipe": "Tarif Oluştur",
+      "creating": "Oluşturuluyor...",
+      "ingredientsList": "Malzemeler:",
+      "viewSteps": "Adımları Gör",
+      "duration": "Süre",
+      "noTitle": "Başlık yok",
+      "noSummary": "Özet yok",
+      "noDuration": "Belirtilmemiş",
+      "preparationStep": "Hazırlık Adımı {{currentStep}} / {{totalSteps}}",
+      "back": "Geri",
+      "next": "Sonraki",
+      "startOver": "Baştan Göster",
+      "errorMessage": "Hata: {{error}}",
+      "errors": {
+        "serverError": "Sunucu hatası",
+        "incompleteRecipe": "Tarif verisi eksik",
+        "generalError": "Tarif oluşturulamadı."
+      }
+  },
+  "likedRecipes": {
+    "backToLanding": "← Geri Dön",
+    "title": "💚 Harika Lezzetler Listesi",
+    "searchPlaceholder": "Tarif veya malzeme ara...",
+    "filters": {
+      "all": "Tümü",
+      "thermomix": "Thermomix",
+      "thermogusto": "ThermoGusto",
+      "unknownDevice": "Cihaz Bilinmiyor"
+    },
+    "ingredients": "Malzemeler:",
+    "totalSteps": "Toplam adım sayısı: {{count}}",
+    "stepTitle": "Adım {{currentStep}}:",
+    "previous": "Önceki",
+    "startPreparation": "Hazırlık Adımlarına Geç",
+    "next": "Sonraki",
+    "back": "← Geri"
+  },
+  "about": {
+    "title": "Hakkımızda",
+    "paragraph1": "Birleşik Arap Emirlikleri merkezli charge.consulting şirketi tarafından 2025 yılında hayata geçirilmiş, mutfak teknolojilerine yapay zeka desteği getirmeyi hedefleyen bir projedir. Amacımız, ev kullanıcılarının mutfakta geçirdiği zamanı verimli hale getirmek ve eldeki malzemelerle yaratıcı tarifler üretmektir.",
+    "paragraph2": "Uygulamamız, Thermomix ve ThermoGusto cihazları ile uyumlu tarifler oluşturur. Tarifler, sizin belirlediğiniz malzemelere göre, adım adım kolayca uygulanabilecek şekilde oluşturulur.",
+    "paragraph3": "Geri bildirimlerinizi bizimle paylaşarak, ThermoChefAI'nin gelişimine katkıda bulunabilirsiniz."
+  } ,
+  "contact": {
+    "title": "İletişim",
+    "paragraph1": "Sorularınız, önerileriniz ya da iş birlikleri için bizimle iletişime geçebilirsiniz:",
+    "emailLabel": "E-posta",
+    "instagramLabel": "Instagram",
+    "addressLabel": "Adres",
+    "paragraph2": "Size en kısa sürede geri dönüş yapmaya çalışacağız. İlginiz için teşekkür ederiz."
+  },
+  "profile": {
+    "loginPrompt": "Lütfen giriş yapınız.",
+    "title": "Profilim",
+    "name": "Ad",
+    "unnamed": "İsimsiz Kullanıcı",
+    "email": "Email",
+    "recipeCount": "Oluşturulan Tarif Sayısı",
+    "limitReached": "5 tarif sınırına ulaştınız. Devam etmek için üyelik gereklidir.",
+    "startMembership": "Üyelik Başlat",
+    "canCreate": "Tarif oluşturabilirsiniz.",
+    "backHome": "Ana Sayfa"
+  },
+  "recipe": {
+    "loading": "Tarif yükleniyor...",
+    "error": "Tarif oluşturulamadı.",
+    "fetchError": "Tarif alınırken hata oluştu:",
+    "ingredients": "Malzemeler",
+    "startSteps": "Adımlara Başla"
+  },
+  "userPage": {
+    "deleteConfirm": "Bu işlem geri alınamaz. Hesabınızı ve tariflerinizi silmek istediğinize emin misiniz?",
+    "deleteError": "Hesap silinirken bir hata oluştu.",
+    "noUser": "Kullanıcı bilgisi alınamadı. Lütfen giriş yapın.",
+    "anonUser": "Kullanıcı",
+    "joinDate": "Üyelik Tarihi",
+    "remainingCredits": "Kalan Tarif Hakkınız",
+    "yourRecipes": "Tarifleriniz",
+    "noRecipes": "Henüz tarif beğenmediniz.",
+    "back": "Geri Dön",
+    "deleteAccount": "Bilgilerimi Sil"
+  },
+  "emptyIngredients": "Malzeme listesi boş olamaz.",
+  "invalidDevice": "Geçersiz cihaz markası.",
+  "parseError": "AI'den geçersiz JSON yanıtı alındı.",
+  "serverError": "Sunucu hatası:",
+  "extraInstruction": ""
 }

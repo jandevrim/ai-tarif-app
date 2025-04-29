@@ -1,19 +1,14 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { getAuth, deleteUser, signOut } from "firebase/auth";
-import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  deleteDoc,
-  Timestamp,
-} from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs, deleteDoc, Timestamp } from "firebase/firestore";
 import { db } from "../utils/firebaseconfig";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
 export default function UserPage() {
+  const { t } = useTranslation();
   const [user, setUser] = useState<any>(null);
   const [credits, setCredits] = useState<number | null>(null);
   const [createdAt, setCreatedAt] = useState<string>("...");
@@ -28,7 +23,6 @@ export default function UserPage() {
     const fetchData = async () => {
       if (!currentUser) return;
 
-      // Kullanıcı bilgileri
       const docRef = doc(db, "users", currentUser.uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
@@ -39,7 +33,6 @@ export default function UserPage() {
         }
       }
 
-      // Kullanıcının tarifleri
       const q = query(collection(db, "likedRecipes"), where("userId", "==", currentUser.uid));
       const snapshot = await getDocs(q);
       const recipes = snapshot.docs.map((doc) => ({
@@ -53,9 +46,7 @@ export default function UserPage() {
   }, []);
 
   const handleDeleteAccount = async () => {
-    const confirmDelete = confirm(
-      "Bu işlem geri alınamaz. Hesabınızı ve tariflerinizi silmek istediğinize emin misiniz?"
-    );
+    const confirmDelete = confirm(t("userPage.deleteConfirm"));
     if (!confirmDelete || !user) return;
 
     try {
@@ -68,7 +59,7 @@ export default function UserPage() {
       await signOut(getAuth());
       router.push("/landing");
     } catch (error) {
-      alert("Hesap silinirken bir hata oluştu.");
+      alert(t("userPage.deleteError"));
       console.error(error);
     }
   };
@@ -76,27 +67,27 @@ export default function UserPage() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Kullanıcı bilgisi alınamadı. Giriş yapın.</p>
+        <p className="text-gray-600">{t("userPage.noUser")}</p>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-white text-gray-800 flex flex-col items-center justify-start pt-16 px-4 font-sans">
-      <h1 className="text-2xl font-bold mb-4">👤 {user.displayName || "Kullanıcı"}</h1>
+      <h1 className="text-2xl font-bold mb-4">👤 {user.displayName || t("userPage.anonUser")}</h1>
 
       <div className="bg-gray-50 border p-6 rounded-xl shadow-md w-full max-w-md text-center">
         <p className="text-sm text-gray-500 mb-1">{user.email}</p>
-        <p className="text-sm text-gray-500 mb-4">Üyelik Tarihi: {createdAt}</p>
+        <p className="text-sm text-gray-500 mb-4">{t("userPage.joinDate")}: {createdAt}</p>
         <div className="bg-green-100 text-green-800 font-medium py-2 px-4 rounded-full inline-block shadow">
-          Kalan Tarif Hakkınız: {credits ?? "..."} / 5
+          {t("userPage.remainingCredits")}: {credits ?? "..."} / 5
         </div>
       </div>
 
       <div className="w-full max-w-md mt-8">
-        <h2 className="text-lg font-bold mb-2">📚 Tarifleriniz</h2>
+        <h2 className="text-lg font-bold mb-2">📚 {t("userPage.yourRecipes")}</h2>
         {userRecipes.length === 0 ? (
-          <p className="text-sm text-gray-500">Henüz tarif beğenmediniz.</p>
+          <p className="text-sm text-gray-500">{t("userPage.noRecipes")}</p>
         ) : (
           <ul className="space-y-2">
             {userRecipes.map((recipe) => (
@@ -118,14 +109,14 @@ export default function UserPage() {
           onClick={() => router.back()}
           className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-6 py-2 rounded-full shadow-md transition duration-300"
         >
-          ← Geri Dön
+          ← {t("userPage.back")}
         </button>
 
         <button
           onClick={handleDeleteAccount}
           className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-full shadow-md transition duration-300"
         >
-          🚫 Bilgilerimi Sil
+          🚫 {t("userPage.deleteAccount")}
         </button>
       </div>
     </div>

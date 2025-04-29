@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useTranslation } from "react-i18next";
-
+import i18n from "i18next";
 interface HeroSectionProps {
   onStart: () => void;
 }
@@ -29,6 +29,26 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
       </div>
 
       <div className="text-center space-y-5">
+      <div className="flex justify-center gap-3 mt-4">
+  <button
+    onClick={() => {
+      i18n.changeLanguage("tr");
+      localStorage.setItem("lang", "tr");
+    }}
+    className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1 rounded-full text-sm"
+  >
+    🇹🇷 Türkçe
+  </button>
+  <button
+    onClick={() => {
+      i18n.changeLanguage("en");
+      localStorage.setItem("lang", "en");
+    }}
+    className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1 rounded-full text-sm"
+  >
+    🇬🇧 English
+  </button>
+</div>
         <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900">
           {t("landing.title")}
         </h1>
