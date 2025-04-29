@@ -56,12 +56,13 @@
     "likeSuccess": "Beğendiğinize Sevindik! 🎉",
     "saveError": "Kaydetme sırasında hata oluştu.",
     "likeButton": "👍 Beğendim",
-    "ingredientSelectorToggleShow": "Malzeme Ekle/Göster",
+    "showIngredientSelector": "Malzeme Ekle/Göster",
     "ingredientSelectorToggleHide": "Malzeme Seçiciyi Gizle",
     "likeWithoutLogin": "Giriş yapmadan beğenemezsiniz.",
     "createYourRecipe": "Kendi Tarifini Oluştur",
       "addIngredient": "Malzeme Ekle",
       "generateRecipe": "Tarif Oluştur",
+      "createRecipe": "Tarif Oluştur",
       "creating": "Oluşturuluyor...",
       "ingredientsList": "Malzemeler:",
       "viewSteps": "Adımları Gör",
@@ -70,6 +71,7 @@
       "noSummary": "Özet yok",
       "noDuration": "Belirtilmemiş",
       "preparationStep": "Hazırlık Adımı {{currentStep}} / {{totalSteps}}",
+      "selectedIngredients":"Seçilen Malzemeler:",
       "back": "Geri",
       "next": "Sonraki",
       "startOver": "Baştan Göster",
@@ -131,6 +133,9 @@
     "ingredients": "Malzemeler",
     "startSteps": "Adımlara Başla"
   },
+  "ingredient": {
+    "close": "Kapat"
+  },
   "userPage": {
     "deleteConfirm": "Bu işlem geri alınamaz. Hesabınızı ve tariflerinizi silmek istediğinize emin misiniz?",
     "deleteError": "Hesap silinirken bir hata oluştu.",
@@ -142,6 +147,28 @@
     "noRecipes": "Henüz tarif beğenmediniz.",
     "back": "Geri Dön",
     "deleteAccount": "Bilgilerimi Sil"
+  },
+  
+    "stepPage": {
+      "step": "Adım",
+      "back": "Geri",
+      "next": "İleri"
+    },
+    "authFooter": {
+    "welcome": "👋 Hoş geldin, {{name}}",
+    "defaultUser": "Kullanıcı",
+    "logout": "Çıkış Yap",
+    "loginWithGoogle": "Google ile Giriş Yap"
+  },
+  "feedback": {
+    "savedSuccessfully": "Beğendiğinize Sevindik! 🎉",
+    "saveError": "Kaydetme sırasında hata oluştu.",
+    "likeButton": "Beğendim"
+  },
+  "recipeSteps": {
+    "step": "Tarif Adımı",
+    "back": "Geri",
+    "next": "İleri"
   },
   "emptyIngredients": "Malzeme listesi boş olamaz.",
   "invalidDevice": "Geçersiz cihaz markası.",

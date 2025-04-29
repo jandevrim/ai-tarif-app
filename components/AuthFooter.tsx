@@ -1,10 +1,13 @@
-// components/AuthFooter.tsx
+"use client";
+
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth, provider } from "../utils/firebaseconfig";
 import type { User } from "firebase/auth";
+import { useTranslation } from "react-i18next";
 
 export default function AuthFooter() {
+  const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -35,9 +38,9 @@ export default function AuthFooter() {
     <div className="mt-10 text-center text-sm text-gray-700">
       {user ? (
         <>
-          <p>👋 Hoş geldin, {user.displayName || "Kullanıcı"}</p>
+          <p>👋 {t("authFooter.welcome", { name: user.displayName || t("authFooter.defaultUser") })}</p>
           <button onClick={handleLogout} className="text-blue-600 underline mt-1">
-            Çıkış Yap
+            {t("authFooter.logout")}
           </button>
         </>
       ) : (
@@ -46,7 +49,7 @@ export default function AuthFooter() {
           className="bg-white text-gray-800 font-semibold px-6 py-2 mt-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md flex items-center gap-2 mx-auto"
         >
           <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
-          Google ile Giriş Yap
+          {t("authFooter.loginWithGoogle")}
         </button>
       )}
     </div>
