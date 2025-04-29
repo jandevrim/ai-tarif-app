@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 import OpenAI from "openai";
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
+import path from "path";
+import { promises as fs } from "fs";
 
 // --- Firebase Setup ---
 const firebaseConfig = {
@@ -16,28 +18,27 @@ const firebaseConfig = {
 const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const storage = getStorage(firebaseApp);
 
-export const runtime = "edge";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
-// --- Helper to Load Locale Texts ---
+// --- Locale Loader ---
 async function loadLocale(locale: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ""}/locales/${locale}.json`);
-    if (!res.ok) throw new Error(`Dil dosyası yüklenemedi: ${locale}`);
-    return await res.json();
+    const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
+    const content = await fs.readFile(filePath, "utf8");
+    return JSON.parse(content);
   } catch (error) {
-    console.error(error);
-    const fallbackRes = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ""}/locales/tr.json`);
-    return await fallbackRes.json();
+    console.error(`Dil dosyası (${locale}) yüklenemedi, Türkçe yedeğe geçiliyor.`);
+    const fallbackPath = path.resolve(process.cwd(), "public/locales/tr.json");
+    const fallbackContent = await fs.readFile(fallbackPath, "utf8");
+    return JSON.parse(fallbackContent);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    // --- Locale Detection ---
     const url = new URL(req.url);
-    const localeFromQuery = url.searchParams.get('lang');
-    const localeFromHeader = req.headers.get('accept-language')?.split(",")[0]?.slice(0, 2)?.toLowerCase();
+    const localeFromQuery = url.searchParams.get("lang");
+    const localeFromHeader = req.headers.get("accept-language")?.split(",")[0]?.slice(0, 2)?.toLowerCase();
     const locale = localeFromQuery || localeFromHeader || "tr";
 
     const texts = await loadLocale(locale);
