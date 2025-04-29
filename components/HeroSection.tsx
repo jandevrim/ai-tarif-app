@@ -9,7 +9,10 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
   const { t } = useTranslation();
-
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+  };
   return (
     <div className="flex flex-col items-center px-6 py-10 pt-16 flex-1">
       <div className="relative w-full max-w-xs mb-8">
