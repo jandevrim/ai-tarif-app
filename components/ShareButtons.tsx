@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface ShareButtonsProps {
   title: string;
@@ -8,12 +9,14 @@ interface ShareButtonsProps {
 }
 
 const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
+  const { t } = useTranslation();
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`${title}\n\n${recipeText}`);
-      console.log("Tarif panoya kopyalandı ✅");
+      console.log(t("share.copiedSuccess"));
     } catch (err) {
-      console.error("Kopyalama işlemi başarısız:", err);
+      console.error(t("share.copyFailed"), err);
     }
   };
 
@@ -21,9 +24,9 @@ const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
     if ('share' in navigator) {
       try {
         await navigator.share({ title: `Tarif: ${title}`, text: recipeText });
-        console.log("Paylaşım başarılı.");
+        console.log(t("share.sharedSuccess"));
       } catch (err) {
-        console.warn("Paylaşım iptal edildi veya başarısız:", err);
+        console.warn(t("share.shareFailed"), err);
       }
     }
   };
@@ -34,17 +37,17 @@ const ShareButtons: React.FC<ShareButtonsProps> = ({ title, recipeText }) => {
         onClick={handleCopy}
         className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
       >
-        📋 Kopyala
+        📋 {t("share.copy")}
       </button>
       {'share' in navigator ? (
         <button
           onClick={handleShare}
           className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-full shadow-md transition duration-300"
         >
-          📤 Paylaş
+          📤 {t("share.share")}
         </button>
       ) : (
-        <p className="text-sm text-gray-500">Paylaşım desteklenmiyor, lütfen kopyalayın.</p>
+        <p className="text-sm text-gray-500">{t("share.notSupported")}</p>
       )}
     </div>
   );
