@@ -1,10 +1,184 @@
 {
-  "welcome": "Welcome to ThermoChefAI!",
-  "start_recipe": "Create New Recipe 🚀",
-  "logo_alt": "ThermoChefAI  Logo",
-  "logo_error": "Could not load: /logo.png",
-  "device_thermomix": "Thermomix",
-  "device_thermogusto": "ThermoGusto",
-  "liked_recipes": "{{count}} Recipes from ThermoChef AI!",
-  "loading_recipes": "Loading Recipes..."
+  "landing": {
+    "title": "Discover Cooking with AI 🍳",
+    "startRecipeButton": "Create Recipe 🚀",
+    "selectIngredients": "Select Your Ingredients",
+    "generateRecipe": "Let AI Generate Recipe",
+    "stepByStepCooking": "Cook Step by Step",
+    "readyRecipes": "{{count}} Ready Recipes!",
+    "loadingRecipes": "Loading Recipes...",
+    "welcomeUser": "Welcome, {{name}}",
+    "logout": "Logout",
+    "loginWithGoogle": "Login with Google",
+    "aboutUs": "About Us",
+    "contact": "Contact",
+    "footerCopyright": "© 2025 ThermoChefAI. All rights reserved."
+  },
+  "custom": {
+    "pageTitle": "Create Your Own Recipe",
+    "selectedIngredients": "Selected Ingredients:",
+    "startWithAddingIngredients": "Start by adding ingredients.",
+    "addIngredientButton": "Add/Show Ingredients",
+    "hideIngredientSelectorButton": "Hide Ingredient Selector",
+    "generateRecipeButton": "Generate Recipe",
+    "errorLoadingIngredients": "Failed to load ingredients.",
+    "errorGeneratingRecipe": "An error occurred while generating the recipe.",
+    "ingredientsNeeded": "Required Ingredients:",
+    "startCooking": "Start Cooking →",
+    "step": "Preparation Step {{current}} / {{total}}",
+    "done": "Done →",
+    "recipeCompletedQuestion": "Did you like the recipe?",
+    "likeRecipe": "👍 I Liked It",
+    "copyRecipe": "📋 Copy",
+    "shareRecipe": "📤 Share",
+    "newRecipeButton": "Create New Recipe",
+    "backButton": "← Back"
+  },
+  "share": {
+    "copySuccess": "Recipe copied to clipboard ✅",
+    "copyFailed": "Copy failed.",
+    "shareNotSupported": "Sharing is not supported, please copy."
+  },
+  "loading": {
+    "loadingRecipe": "Your recipe is being prepared...",
+    "loading.message": "Your recipe is being prepared..."
+  },
+  "errors": {
+    "generalError": "Oops! An Error Occurred.",
+    "retryLater": "Please check the browser console or try again later.",
+    "ingredientsFetchFailed": "Failed to load ingredients."
+  },
+  "customRecipe": {
+    "errorWhileCreatingRecipe": "An error occurred while creating the recipe.",
+    "requiredIngredients": "Required Ingredients:",
+    "noIngredients": "No ingredients",
+    "startPreparation": "Start Preparation →",
+    "backOrSummary": "Summary",
+    "summary": "Back to Summary",
+    "likeSuccess": "Glad you liked it! 🎉",
+    "saveError": "An error occurred while saving.",
+    "like": "👍 I Liked It",
+    "copy": "📋 Copy",
+    "share": "📤 Share",
+    "showIngredientSelector": "Add/Show Ingredients",
+    "hideIngredientSelector": "Hide Ingredient Selector",
+    "ingredientSelectorToggleHide": "Hide Ingredient Selector",
+    "likeWithoutLogin": "You cannot like without logging in.",
+    "createyourownrecipe": "Create Your Own Recipe",
+    "createNewRecipe": "Create New Recipe",
+    "stepstext": "Recipe Step ",
+    "addIngredient": "Add Ingredient",
+    "generateRecipe": "Generate Recipe",
+    "createRecipe": "Create Recipe",
+    "creating": "Creating...",
+    "ingredientsList": "Ingredients:",
+    "viewSteps": "View Steps",
+    "duration": "Duration",
+    "noTitle": "No Title",
+    "noSummary": "No Summary",
+    "noDuration": "Not Specified",
+    "preparationStep": "Preparation Step {{currentStep}} / {{totalSteps}}",
+    "selectedIngredients": "Selected Ingredients:",
+    "back": "Back",
+    "next": "Next",
+    "startOver": "Start Over",
+    "errorMessage": "Error: {{error}}",
+    "errors": {
+      "serverError": "Server error",
+      "incompleteRecipe": "Incomplete recipe data",
+      "generalError": "Recipe could not be created."
+    }
+  },
+  "likedRecipes": {
+    "backToLanding": "← Back to Landing",
+    "title": "💚 Amazing Recipe List",
+    "searchPlaceholder": "Search for a recipe or ingredient...",
+    "filters": {
+      "tumu": "All",
+      "thermomix": "Thermomix",
+      "thermogusto": "ThermoGusto",
+      "unknownDevice": "Unknown Device"
+    },
+    "ingredients": "Ingredients:",
+    "totalSteps": "Total steps: {{count}}",
+    "stepTitle": "Step {{currentStep}}:",
+    "previous": "Previous",
+    "startPreparation": "Start Preparation Steps",
+    "next": "Next",
+    "back": "← Back"
+  },
+  "about": {
+    "title": "About Us",
+    "paragraph1": "Launched in 2025 by charge.consulting, a UAE-based company, ThermoChefAI aims to bring AI support to kitchen technologies. Our goal is to make time spent in the kitchen efficient and create innovative recipes with available ingredients.",
+    "paragraph2": "Our app creates recipes compatible with Thermomix and ThermoGusto devices. Recipes are generated step-by-step based on the ingredients you select.",
+    "paragraph3": "You can contribute to the development of ThermoChefAI by sharing your feedback with us."
+  },
+  "contact": {
+    "title": "Contact",
+    "paragraph1": "For questions, suggestions, or collaborations, feel free to contact us:",
+    "emailLabel": "Email",
+    "instagramLabel": "Instagram",
+    "addressLabel": "Address",
+    "paragraph2": "We will try to get back to you as soon as possible. Thank you for your interest."
+  },
+  "profile": {
+    "loginPrompt": "Please log in.",
+    "title": "My Profile",
+    "name": "Name",
+    "unnamed": "Unnamed User",
+    "email": "Email",
+    "recipeCount": "Number of Recipes Created",
+    "limitReached": "You have reached the limit of 5 recipes. Membership is required to continue.",
+    "startMembership": "Start Membership",
+    "canCreate": "You can create recipes.",
+    "backHome": "Home"
+  },
+  "recipe": {
+    "loading": "Loading recipe...",
+    "error": "Recipe could not be created.",
+    "fetchError": "An error occurred while fetching the recipe:",
+    "ingredients": "Ingredients",
+    "startSteps": "Start Steps"
+  },
+  "ingredient": {
+    "close": "Close"
+  },
+  "userPage": {
+    "deleteConfirm": "This action cannot be undone. Are you sure you want to delete your account and recipes?",
+    "deleteError": "An error occurred while deleting the account.",
+    "noUser": "User information could not be retrieved. Please log in.",
+    "anonUser": "User",
+    "joinDate": "Join Date",
+    "remainingCredits": "Remaining Recipe Credits",
+    "yourRecipes": "Your Recipes",
+    "noRecipes": "You haven't liked any recipes yet.",
+    "back": "Back",
+    "deleteAccount": "Delete My Information"
+  },
+  "stepPage": {
+    "step": "Step",
+    "back": "Back",
+    "next": "Next"
+  },
+  "authFooter": {
+    "welcome": "👋 Welcome, {{name}}",
+    "defaultUser": "User",
+    "logout": "Logout",
+    "loginWithGoogle": "Login with Google"
+  },
+  "feedback": {
+    "savedSuccessfully": "Glad you liked it! 🎉",
+    "saveError": "An error occurred while saving.",
+    "likeButton": "I Liked It"
+  },
+  "recipeSteps": {
+    "step": "Recipe Step",
+    "back": "Back",
+    "next": "Next"
+  },
+  "emptyIngredients": "Ingredient list cannot be empty.",
+  "invalidDevice": "Invalid device brand.",
+  "parseError": "Invalid JSON response received from AI.",
+  "serverError": "Server error:",
+  "extraInstruction": ""
 }

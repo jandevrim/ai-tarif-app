@@ -40,7 +40,8 @@
     "shareNotSupported": "Paylaşım desteklenmiyor, lütfen kopyalayın."
   },
   "loading": {
-    "loadingRecipe": "Tarifiniz hazırlanıyor..."
+    "loadingRecipe": "Tarifiniz hazırlanıyor...",
+    "loading.message": "Tarifiniz hazırlanıyor..."
   },
   "errors": {
     "generalError": "Oops! Bir Hata Oluştu.",
@@ -53,14 +54,19 @@
     "noIngredients": "Malzeme yok",
     "startPreparation": "Hazırlanışa Başla →",
     "backOrSummary": "Özet",
+    "summary": "Özet'e Dön",
     "likeSuccess": "Beğendiğinize Sevindik! 🎉",
     "saveError": "Kaydetme sırasında hata oluştu.",
-    "likeButton": "👍 Beğendim",
+    "like": "👍 Beğendim",
+    "copy": "📋 Kopyala",
+    "share": "📤 Paylaş",
     "showIngredientSelector": "Malzeme Ekle/Göster",
     "hideIngredientSelector": "Malzeme Seçiciyi Gizle",
     "ingredientSelectorToggleHide": "Malzeme Seçiciyi Gizle",
     "likeWithoutLogin": "Giriş yapmadan beğenemezsiniz.",
     "createyourownrecipe": "Kendi Tarifini Oluştur",
+    "createNewRecipe": "Yeni Tarif Oluştur",
+    "stepstext": "Tarif Adımı ",
       "addIngredient": "Malzeme Ekle",
       "generateRecipe": "Tarif Oluştur",
       "createRecipe": "Tarif Oluştur",
@@ -88,7 +94,7 @@
     "title": "💚 Harika Lezzetler Listesi",
     "searchPlaceholder": "Tarif veya malzeme ara...",
     "filters": {
-      "all": "Tümü",
+      "tumu": "Tümü",
       "thermomix": "Thermomix",
       "thermogusto": "ThermoGusto",
       "unknownDevice": "Cihaz Bilinmiyor"
