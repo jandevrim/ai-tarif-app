@@ -13,7 +13,8 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import HeroSection from "../components/HeroSection";
 import DeviceSelector from "../components/DeviceSelector";
-
+import CategoryButtons from "../components/CategoryButtons";
+import LikedRecipesButton from "../components/LikedRecipesButton";
 
 const db = getFirestore(app);
 interface Ingredient {
@@ -322,30 +323,10 @@ const fetchRecipeCount = async () => {
             selectedDevice={selectedDevice}
             onSelectDevice={setSelectedDevice}
             />
-          <button
-  onClick={() => onNavigate("/liked-recipes")}
-  className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-medium px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
->
-  💚 {recipeCount !== null
-    ? `ThermoChef AI'dan ${recipeCount} Hazır Tarif!`
-   : "Tarifler Yükleniyor..."}
-</button>  
+          <LikedRecipesButton recipeCount={recipeCount} onClick={() => onNavigate("/liked-recipes")} />
         </div>
 
-        <div className="grid grid-cols-3 gap-2 mt-8 w-full max-w-sm">
-          <button className="category-btn flex flex-col items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 rounded-lg shadow-sm text-center space-y-1 transition duration-200 ease-in-out">
-            <span className="text-2xl">🍲</span>
-            <span className="text-xs font-medium text-gray-700 text-center">Malzemelerini Seç</span>
-          </button>
-          <button className="category-btn flex flex-col items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 rounded-lg shadow-sm text-center space-y-1 transition duration-200 ease-in-out">
-            <span className="text-2xl">🍹</span>
-            <span className="text-xs font-medium text-gray-700 text-center">AI Tarif Oluştursun</span>
-          </button>
-          <button className="category-btn flex flex-col items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 rounded-lg shadow-sm text-center space-y-1 transition duration-200 ease-in-out">
-            <span className="text-2xl">🍰</span>
-            <span className="text-xs font-medium text-gray-700 text-center">Adım Adım Pişir</span>
-          </button>
-        </div>
+        <CategoryButtons />
 
         <div className="mt-12 text-center">
           {user ? (
