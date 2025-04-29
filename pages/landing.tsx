@@ -12,6 +12,7 @@ import { getUserCredits, decrementCredits } from "../utils/userCredits";
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import HeroSection from "../components/HeroSection";
+import DeviceSelector from "../components/DeviceSelector";
 
 
 const db = getFirestore(app);
@@ -317,24 +318,10 @@ const fetchRecipeCount = async () => {
         <div className="text-center space-y-5">
          
          <HeroSection onStart={handleStart} />
-          <div className="flex justify-center gap-4 mb-4">
-            <button
-              onClick={() => setSelectedDevice("thermomix")}
-              className={`px-4 py-2 rounded-full shadow ${
-                selectedDevice === "thermomix" ? "bg-green-600 text-white" : "bg-gray-200"
-              }`}
-            >
-              Thermomix
-            </button>
-            <button
-              onClick={() => setSelectedDevice("thermogusto")}
-              className={`px-4 py-2 rounded-full shadow ${
-                selectedDevice === "thermogusto" ? "bg-green-600 text-white" : "bg-gray-200"
-              }`}
-            >
-              ThermoGusto
-            </button>
-          </div>
+         <DeviceSelector
+            selectedDevice={selectedDevice}
+            onSelectDevice={setSelectedDevice}
+            />
           <button
   onClick={() => onNavigate("/liked-recipes")}
   className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-medium px-8 py-3 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
