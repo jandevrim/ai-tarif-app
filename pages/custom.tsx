@@ -7,6 +7,8 @@ import { getDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { app } from "../utils/firebaseconfig";
 import { useTranslation } from "react-i18next";
+const { i18n } = useTranslation();
+const lang = i18n.language || 'tr';
 
 const db = getFirestore(app);
 
@@ -95,12 +97,13 @@ export default function CustomRecipePage() {
       <div className="flex flex-wrap gap-2 mb-4 max-h-24 overflow-y-auto">
         {selectedIngredients.map((i) => (
           <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center">
-            {i.emoji} {i.name.tr}
+            {i.emoji} <span>{i.name[lang]}</span>
+            aria-label={`Remove ${i.name[lang]}`}
             <button
               onClick={() => setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))}
               className="ml-2 text-red-600"
             >
-              ✕
+              
             </button>
           </span>
         ))}
