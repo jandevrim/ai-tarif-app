@@ -7,12 +7,13 @@ import { getDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { app } from "../utils/firebaseconfig";
 import { useTranslation } from "react-i18next";
-const { i18n } = useTranslation();
-const lang: 'tr' | 'en' = (i18n.language as 'tr' | 'en') || 'tr';
 
 const db = getFirestore(app);
 
 export default function CustomRecipePage() {
+  const { t, i18n } = useTranslation();
+  const lang: "tr" | "en" = (i18n.language as "tr" | "en") || "tr";
+
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
   const [showSelector, setShowSelector] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +22,6 @@ export default function CustomRecipePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
   const [recipeCredits, setRecipeCredits] = useState<number | null>(null);
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -97,13 +97,13 @@ export default function CustomRecipePage() {
       <div className="flex flex-wrap gap-2 mb-4 max-h-24 overflow-y-auto">
         {selectedIngredients.map((i) => (
           <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center">
-            {i.emoji} <span>{i.name[lang]}</span>
-            aria-label={`Remove ${i.name[lang]}`}
+            {i.emoji} <span className="ml-1">{i.name[lang]}</span>
             <button
+              aria-label={`Remove ${i.name[lang]}`}
               onClick={() => setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))}
               className="ml-2 text-red-600"
             >
-              
+              ✕
             </button>
           </span>
         ))}
@@ -121,6 +121,7 @@ export default function CustomRecipePage() {
           selected={selectedIngredients}
           onSelect={handleSelectIngredient}
           onClose={() => setShowSelector(false)}
+          //lang={lang} // opsiyonel olarak IngredientSelector'a da dil geçilebilir
         />
       )}
 
