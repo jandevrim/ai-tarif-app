@@ -12,7 +12,9 @@ const db = getFirestore(app);
 
 export default function CustomRecipePage() {
   const { t, i18n } = useTranslation();
-  const lang: "tr" | "en" = (i18n.language as "tr" | "en") || "tr";
+  const rawLang = i18n.language;
+  const lang: "tr" | "en" = rawLang.startsWith("en") ? "en" : "tr";
+  console.log("Aktif dil:", rawLang); // Aktif dili logla
 
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
   const [showSelector, setShowSelector] = useState(true);
@@ -121,7 +123,7 @@ export default function CustomRecipePage() {
           selected={selectedIngredients}
           onSelect={handleSelectIngredient}
           onClose={() => setShowSelector(false)}
-          //lang={lang} // opsiyonel olarak IngredientSelector'a da dil geçilebilir
+          lang={lang} // opsiyonel: IngredientSelector'da kullanmak için
         />
       )}
 

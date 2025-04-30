@@ -14,9 +14,10 @@ interface Props {
   selected: Ingredient[];
   onSelect: (ingredient: Ingredient) => void;
   onClose: () => void;
+  lang?: "tr" | "en";
 }
 
-export default function IngredientSelector({ selected, onSelect }: Props) {
+export default function IngredientSelector({ selected, onSelect, onClose, lang = "tr" }: Props) {
   const [term, setTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filtered, setFiltered] = useState<Ingredient[]>([]);
@@ -38,7 +39,7 @@ export default function IngredientSelector({ selected, onSelect }: Props) {
     setIsLoading(true);
     const timeout = setTimeout(() => {
       const result = ingredients.filter((i) => {
-        const name = i.name?.tr?.toLowerCase() ?? "";
+        const name = i.name?.[lang]?.toLowerCase() ?? "";
         const categoryValue = i.category?.toLowerCase() ?? "";
         const selected = selectedCategory?.toLowerCase() ?? null;
         return (
@@ -50,7 +51,7 @@ export default function IngredientSelector({ selected, onSelect }: Props) {
       setIsLoading(false);
     }, 200);
     return () => clearTimeout(timeout);
-  }, [term, selectedCategory, ingredients]);
+  }, [term, selectedCategory, ingredients, lang]);
 
   const categories = Array.from(new Set(ingredients.map((i) => i.category)));
 
@@ -65,10 +66,10 @@ export default function IngredientSelector({ selected, onSelect }: Props) {
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-gray-500 bg-opacity-75">
       <div className="bg-white rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto p-4">
-        <h2 className="text-xl font-bold mb-2">Malzeme Seç</h2>
+        <h2 className="text-xl font-bold mb-2">{lang === "en" ? "Select Ingredient" : "Malzeme Seç"}</h2>
         <input
           type="text"
-          placeholder="Ara..."
+          placeholder={lang === "en" ? "Search..." : "Ara..."}
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           className="border px-2 py-1 w-full mb-2"
@@ -80,7 +81,7 @@ export default function IngredientSelector({ selected, onSelect }: Props) {
               !selectedCategory ? "bg-gray-800 text-white" : "bg-gray-100"
             }`}
           >
-            Tüm Kategoriler
+            {lang === "en" ? "All Categories" : "Tüm Kategoriler"}
           </button>
           {categories.map((cat) => (
             <button
@@ -95,7 +96,7 @@ export default function IngredientSelector({ selected, onSelect }: Props) {
           ))}
         </div>
         {isLoading ? (
-          <div className="text-center py-4">Yükleniyor...</div>
+          <div className="text-center py-4">{lang === "en" ? "Loading..." : "Yükleniyor..."}</div>
         ) : (
           <ul className="space-y-1">
             {filtered.map((i) => (
@@ -111,7 +112,7 @@ export default function IngredientSelector({ selected, onSelect }: Props) {
                 }`}
               >
                 {i.emoji && <span style={{ marginRight: "0.5rem" }}>{i.emoji}</span>}
-                {i.name.tr}
+                {i.name?.[lang] || i.name.tr}
               </li>
             ))}
           </ul>
