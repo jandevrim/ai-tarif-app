@@ -8,7 +8,7 @@ import { getAuth } from "firebase/auth";
 import { app } from "../utils/firebaseconfig";
 import { useTranslation } from "react-i18next";
 const { i18n } = useTranslation();
-const lang = i18n.language || 'tr';
+const lang: 'tr' | 'en' = (i18n.language as 'tr' | 'en') || 'tr';
 
 const db = getFirestore(app);
 
