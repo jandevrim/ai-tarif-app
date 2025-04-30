@@ -141,7 +141,9 @@
     "startSteps": "Adımlara Başla"
   },
   "ingredient": {
-    "close": "Kapat"
+    "close": "Kapat",
+     "list": "Malzeme Listesi",
+      "notFound": "Malzeme bulunamadı."
   },
   "userPage": {
     "deleteConfirm": "Bu işlem geri alınamaz. Hesabınızı ve tariflerinizi silmek istediğinize emin misiniz?",
@@ -177,6 +179,7 @@
     "back": "Geri",
     "next": "İleri"
   },
+  
   "emptyIngredients": "Malzeme listesi boş olamaz.",
   "invalidDevice": "Geçersiz cihaz markası.",
   "parseError": "AI'den geçersiz JSON yanıtı alındı.",
