@@ -404,7 +404,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     
       return (
         <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in text-center">
-          <h2 className="text-2xl font-bold mb-6">Tarifi Beğendiniz mi?</h2>
+          <h2 className="text-2xl font-bold mb-6">{t('customRecipe.didyoulikeit')}</h2>
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={handleLike}

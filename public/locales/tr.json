@@ -51,6 +51,7 @@
   "customRecipe": {
     "errorWhileCreatingRecipe": "Tarif oluşturulurken bir hata oluştu.",
     "requiredIngredients": "Gereken Malzemeler:",
+    "didyoulikeit": "Tarifi Beğendiniz mi?",
     "noIngredients": "Malzeme yok",
     "startPreparation": "Hazırlanışa Başla →",
     "backOrSummary": "Özet",

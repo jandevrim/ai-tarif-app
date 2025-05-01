@@ -10,14 +10,16 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
   const { t } = useTranslation();
+  const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
+
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
     localStorage.setItem("lang", lang);
   };
 
   return (
-    <div className="flex flex-col items-center px-4 py-2"> {/* py-4 azaltıldı, flex-1 kaldırıldı */}
-      <div className="relative w-full max-w-xs mb-2"> {/* Alt boşluk azaltıldı */}
+    <div className="flex flex-col items-center px-4 py-2">
+      <div className="relative w-full max-w-xs mb-2">
         <img
           src="/logo.png"
           alt="ThermoChefAI Ana Logo"
@@ -32,23 +34,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
           }}
         />
       </div>
-      <div className="text-center space-y-3"> {/* Boşluk azaltıldı */}
-        <div className="flex justify-center gap-2 mt-1"> {/* Üst boşluk azaltıldı */}
+      <div className="text-center space-y-3">
+        <div className="flex justify-center gap-2 mt-1">
           <button
-            onClick={() => {
-              i18n.changeLanguage("tr");
-              localStorage.setItem("lang", "tr");
-            }}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm"
+            onClick={() => handleLanguageChange("tr")}
+            className={`px-3 py-1 rounded-full text-sm shadow-sm transition ${
+              currentLang === "tr"
+                ? "bg-green-600 text-white"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+            }`}
           >
             🇹🇷 Türkçe
           </button>
           <button
-            onClick={() => {
-              i18n.changeLanguage("en");
-              localStorage.setItem("lang", "en");
-            }}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-sm"
+            onClick={() => handleLanguageChange("en")}
+            className={`px-3 py-1 rounded-full text-sm shadow-sm transition ${
+              currentLang === "en"
+                ? "bg-green-600 text-white"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+            }`}
           >
             🇬🇧 English
           </button>

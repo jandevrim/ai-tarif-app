@@ -50,6 +50,7 @@
   },
   "customRecipe": {
     "errorWhileCreatingRecipe": "An error occurred while creating the recipe.",
+    "didyoulikeit": "Did You Like It?",
     "requiredIngredients": "Required Ingredients:",
     "noIngredients": "No ingredients",
     "startPreparation": "Start Preparation →",

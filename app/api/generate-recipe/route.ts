@@ -25,12 +25,23 @@ async function loadLocale(locale: string) {
   try {
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
     const content = await fs.readFile(filePath, "utf8");
-    return JSON.parse(content);
+    const data = JSON.parse(content);
+
+    // Ek: İngilizce için özel instruction ekle
+    if (locale.startsWith("en")) {
+      data.extraInstruction = "Please prepare the recipe in English.";
+    } else {
+      data.extraInstruction = ""; // Türkçe ya da diğer dillerde boş
+    }
+
+    return data;
   } catch (error) {
     console.error(`Dil dosyası (${locale}) yüklenemedi, Türkçe yedeğe geçiliyor.`);
     const fallbackPath = path.resolve(process.cwd(), "public/locales/tr.json");
     const fallbackContent = await fs.readFile(fallbackPath, "utf8");
-    return JSON.parse(fallbackContent);
+    const fallbackData = JSON.parse(fallbackContent);
+    fallbackData.extraInstruction = ""; // fallback Türkçe'de de boş olsun
+    return fallbackData;
   }
 }
 
