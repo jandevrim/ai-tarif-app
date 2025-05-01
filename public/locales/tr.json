@@ -82,6 +82,7 @@
       "selectedIngredients":"Seçilen Malzemeler:",
       "back": "Geri",
       "next": "Sonraki",
+      "finish": "Tamamla",
       "startOver": "Baştan Göster",
       "errorMessage": "Hata: {{error}}",
       "errors": {
@@ -157,6 +158,9 @@
     "noRecipes": "Henüz tarif beğenmediniz.",
     "back": "Geri Dön",
     "deleteAccount": "Bilgilerimi Sil"
+  },
+  "loading": {
+    "message": "Nefis bir tarif hazırlıyoruz..."
   },
   
     "stepPage": {

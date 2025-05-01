@@ -21,6 +21,7 @@ import ShareButtons from "../components/ShareButtons";
 import LoadingIndicator from "../components/LoadingIndicator";
 import ErrorBoundary from "../components/ErrorBoundary";
 import MockIngredientSelector from "../components/MockIngredientSelector";
+import i18n from '../utils/i18n';
 
 
 const db = getFirestore(app);
@@ -266,9 +267,11 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     if (!recipe) return null;
   
     const extractDeviceCommandLocal = (text: string): string | null => {
-      const regex = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
+      const regexTR = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
+      const regexEN = /(kneading mode|turbo(?:\s*\d*\s*(?:s|sec|seconds))?|reverse|[\d\.]+\s*(?:s|sec|seconds|min|minutes)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|(?:speed|rpm)\s*[\d\.-]+)/i; 
+      const regex = i18n.language === "en" ? regexEN : regexTR;
       const match = text.match(regex);
-      return match ? match[0].replace(/\s+/g, ' ').trim() : null;
+  return match ? match[0].replace(/\s+/g, ' ').trim() : null;
     };
   
     if (currentStep === 0) {
@@ -277,7 +280,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         <div className="bg-white p-6 rounded-lg shadow-xl animate-fade-in">
           <h2 className="text-xl font-bold mb-2 text-center"> 📋 {recipe.title || "Başlık yok"} </h2>
           <p className="italic text-sm mb-2 text-gray-600 text-center">{recipe.summary || "Özet yok"}</p>
-          <p className="text-center mb-4"> <strong>Süre:</strong> {recipe.duration || "Belirtilmemiş"} </p>
+          <p className="text-center mb-4"> {recipe.duration || "Belirtilmemiş"} </p>
           <div className="mb-4 p-3 border rounded bg-gray-50 max-h-32 overflow-y-auto">
           <h3 className="font-semibold mb-1">{t('customRecipe.requiredIngredients')}</h3>
             <ul className="list-disc list-inside text-sm">

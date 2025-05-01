@@ -82,6 +82,7 @@
     "selectedIngredients": "Selected Ingredients:",
     "back": "Back",
     "next": "Next",
+    "finish": "Finish",
     "startOver": "Start Over",
     "errorMessage": "Error: {{error}}",
     "errors": {
@@ -179,6 +180,9 @@
     "list": "Ingredients",
     "notFound": "No ingredients found.",
     "close": "Close"
+  },
+  "loading": {
+    "message": "Creating a delish recipe for you..."
   },
   "emptyIngredients": "Ingredient list cannot be empty.",
   "invalidDevice": "Invalid device brand.",
