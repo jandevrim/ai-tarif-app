@@ -22,6 +22,7 @@ import LoadingIndicator from "../components/LoadingIndicator";
 import ErrorBoundary from "../components/ErrorBoundary";
 import MockIngredientSelector from "../components/MockIngredientSelector";
 import i18n from '../utils/i18n';
+import { query, where } from "firebase/firestore";
 
 
 const db = getFirestore(app);
@@ -87,14 +88,19 @@ useEffect(() => {
   return () => unsubscribe();
 }, []);
 const fetchRecipeCount = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "likedRecipes"));
-        setRecipeCount(snapshot.size);
-      } catch (error) {
-        console.error("Tarif sayısı alınamadı:", error);
-      }
-    };
+  try {
+    const currentLang: "tr" | "en" = i18n.language.startsWith("en") ? "en" : "tr";
+    const recipeQuery = query(
+      collection(db, "likedRecipes"),
 
+      where("tarifDili", "==", currentLang)
+    );
+    const snapshot = await getDocs(recipeQuery);
+    setRecipeCount(snapshot.size);
+  } catch (error) {
+    console.error("Tarif sayısı alınamadı:", error);
+  }
+};
     fetchRecipeCount();
   const handleLogin = async () => {
     try {

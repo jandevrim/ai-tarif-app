@@ -81,6 +81,7 @@ export default function IngredientSelector({
   };
 
   const handleSelect = (ingredient: Ingredient) => {
+    console.log(lang)
     const normalizedName = typeof ingredient.name === "string"
       ? { tr: ingredient.name, en: ingredient.name }
       : {
