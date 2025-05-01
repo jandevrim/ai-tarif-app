@@ -48,6 +48,12 @@
     "retryLater": "Please check the browser console or try again later.",
     "ingredientsFetchFailed": "Failed to load ingredients."
   },
+  "errorBoundary": {
+    "title": "Oops! An Error Occurred.",
+    "description": "Please check the browser console or try again later.",
+    "details": "Error details:"
+  },
+  
   "customRecipe": {
     "errorWhileCreatingRecipe": "An error occurred while creating the recipe.",
     "didyoulikeit": "Did You Like It?",

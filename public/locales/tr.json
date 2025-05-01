@@ -14,6 +14,12 @@
     "contact": "İletişim",
     "footerCopyright": "© 2025 ThermoChefAI. Tüm hakları saklıdır."
   },
+  "errorBoundary": {
+    "title": "Oops! Bir Hata Oluştu.",
+    "description": "Lütfen tarayıcı konsolunu kontrol edin veya daha sonra tekrar deneyin.",
+    "details": "Hata Detayı:"
+  },
+
   "custom": {
     "pageTitle": "Kendi Tarifini Oluştur",
     "selectedIngredients": "Seçilen Malzemeler:",
