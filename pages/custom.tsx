@@ -14,7 +14,6 @@ export default function CustomRecipePage() {
   const { t, i18n } = useTranslation();
   const rawLang = i18n.language;
   const lang: "tr" | "en" = rawLang.startsWith("en") ? "en" : "tr";
-
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
   const [showSelector, setShowSelector] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +22,13 @@ export default function CustomRecipePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
   const [recipeCredits, setRecipeCredits] = useState<number | null>(null);
+  
+  
+  useEffect(() => {
+    const [lang, setLang] = useState<"tr" | "en">("tr");
+    const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
+    setLang(currentLang);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -33,7 +39,8 @@ export default function CustomRecipePage() {
         setCihazMarkasi("tumu");
       }
     }
-
+    const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
+  
     const fetchCredits = async () => {
       const currentUser = getAuth().currentUser;
       if (!currentUser) return;
