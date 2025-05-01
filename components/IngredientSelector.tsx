@@ -81,14 +81,20 @@ export default function IngredientSelector({
   };
 
   const handleSelect = (ingredient: Ingredient) => {
-    // Normalize name before passing to parent
-    onSelect({
+    const normalizedName = typeof ingredient.name === "string"
+      ? { tr: ingredient.name, en: ingredient.name }
+      : {
+          tr: ingredient.name?.tr || ingredient.name?.en || "",
+          en: ingredient.name?.en || ingredient.name?.tr || "",
+        };
+  
+    const selected: Ingredient = {
       ...ingredient,
-      name: {
-        tr: ingredient.name?.tr || "",
-        en: ingredient.name?.en || ingredient.name?.tr || "",
-      },
-    });
+      name: normalizedName,
+    };
+  
+    console.log("✅ Selected Ingredient:", selected, "| lang:", lang);
+    onSelect(selected);
   };
 
   return (
