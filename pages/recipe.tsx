@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 export default function Recipe() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [recipe, setRecipe] = useState<{ title: string; steps: string[] } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,13 +16,16 @@ export default function Recipe() {
       if (!ingredients) return;
 
       const ingredientList = JSON.parse(ingredients as string);
+      const rawLang = i18n.language;
+      const lang: "tr" | "en" = rawLang.startsWith("en") ? "en" : "tr";
 
       try {
         const response = await fetch("/api/generate-recipe", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ingredients: ingredientList }),
+          body: JSON.stringify({ ingredients: ingredientList, lang }),
         });
+
         const data = await response.json();
         if (response.ok) {
           setRecipe(data);
@@ -37,7 +40,7 @@ export default function Recipe() {
     }
 
     if (router.isReady) fetchRecipe();
-  }, [router.isReady, router.query, t]);
+  }, [router.isReady, router.query, i18n.language]);
 
   if (loading) return <div className="min-h-screen p-6">{t("recipe.loading")}</div>;
   if (!recipe) return <div className="min-h-screen p-6">{t("recipe.error")}</div>;
@@ -46,9 +49,10 @@ export default function Recipe() {
     <div className="min-h-screen bg-white p-6">
       <h1 className="text-2xl font-bold mb-4">{recipe.title}</h1>
       <p className="mb-4">
-        {t("recipe.ingredients")}:
-        {" "}
-        {router.query.ingredients ? JSON.parse(router.query.ingredients as string).join(", ") : ""}
+        {t("recipe.ingredients")}:{" "}
+        {router.query.ingredients
+          ? JSON.parse(router.query.ingredients as string).join(", ")
+          : ""}
       </p>
       <button
         onClick={() => router.push(`/recipe/step/1`)}

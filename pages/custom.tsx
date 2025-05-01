@@ -14,7 +14,6 @@ export default function CustomRecipePage() {
   const { t, i18n } = useTranslation();
   const rawLang = i18n.language;
   const lang: "tr" | "en" = rawLang.startsWith("en") ? "en" : "tr";
-  console.log("Aktif dil:", rawLang); // Aktif dili logla
 
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
   const [showSelector, setShowSelector] = useState(true);
@@ -99,10 +98,13 @@ export default function CustomRecipePage() {
       <div className="flex flex-wrap gap-2 mb-4 max-h-24 overflow-y-auto">
         {selectedIngredients.map((i) => (
           <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center">
-            {i.emoji} <span className="ml-1">{i.name[lang]}</span>
+            {i.emoji && <span className="mr-1">{i.emoji}</span>}
+            <span>{i.name[lang] || i.name.tr}</span>
             <button
-              aria-label={`Remove ${i.name[lang]}`}
-              onClick={() => setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))}
+              aria-label={`Remove ${i.name[lang] || i.name.tr}`}
+              onClick={() =>
+                setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))
+              }
               className="ml-2 text-red-600"
             >
               ✕
@@ -123,7 +125,7 @@ export default function CustomRecipePage() {
           selected={selectedIngredients}
           onSelect={handleSelectIngredient}
           onClose={() => setShowSelector(false)}
-          lang={lang} // opsiyonel: IngredientSelector'da kullanmak için
+          lang={lang}
         />
       )}
 
