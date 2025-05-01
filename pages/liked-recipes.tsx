@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import AuthFooter from "../components/AuthFooter"; // dizin yapına göre ayarlarsın
+import AuthFooter from "../components/AuthFooter";
 import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { app } from "../utils/firebaseconfig";
 import { useTranslation } from "react-i18next";
@@ -29,7 +29,9 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
   const [search, setSearch] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
 
   const fetchRecipes = async () => {
     try {
@@ -77,11 +79,12 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   }, []);
 
   const filteredRecipes = recipes.filter((r) => {
+    const matchesLang = r.tarifDili === currentLang;
     const matchesFilter = filter === "tumu" || r.cihazMarkasi === filter;
     const matchesSearch =
       r.title.toLowerCase().includes(search.toLowerCase()) ||
       r.ingredients.some((ing) => ing.toLowerCase().includes(search.toLowerCase()));
-    return matchesFilter && matchesSearch;
+    return matchesLang && matchesFilter && matchesSearch;
   });
 
   const selectedRecipe = recipes.find((r) => r.id === expanded);
