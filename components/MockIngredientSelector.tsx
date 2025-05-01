@@ -32,7 +32,10 @@ const MockIngredientSelector: React.FC<Props> = ({
 
   const categories = React.useMemo(() => {
     const unique = new Set(ingredients.map((i) => i.category));
-    const order = ["sebze", "meyveler", "et ürünleri", "süt ürünleri", "bakliyat", "baharatlar", "sıvılar", "diğer"];
+    const order = [
+      "sebze", "meyveler", "et ürünleri", "süt ürünleri", "bakliyat",
+      "baharatlar", "sıvılar", "diğer"
+    ];
     return Array.from(unique).sort((a, b) => {
       const ai = order.indexOf(a.toLowerCase());
       const bi = order.indexOf(b.toLowerCase());
@@ -49,25 +52,30 @@ const MockIngredientSelector: React.FC<Props> = ({
     }
   }, [categories, activeCategory]);
 
-  // Basit kategori çeviri eşlemesi
-  const categoryTranslations: Record<string, { tr: string; en: string }> = {
-    "sebze": { tr: "Sebze", en: "Vegetables" },
-    "meyve": { tr: "Meyveler", en: "Fruits" },
-    "et/tavuk/balık": { tr: "Et/Tavuk/Balık Ürünleri", en: "Meat/Chicken/Fish Products" },
-    "süt ürünü": { tr: "Süt Ürünleri", en: "Dairy" },
-    "bakliyat": { tr: "Bakliyat", en: "Legumes" },
-    "baharat/ot": { tr: "Baharatlar", en: "Spices" },
-    "sıvılar": { tr: "Sıvılar", en: "Liquids" },
-    "diğer": { tr: "Diğer", en: "Other" },
-    "içecek": { tr: "İçecek", en: "Drinks" },
-    "kuruyemiş/tohum": { tr: "Kuruyemiş/Tohum", en: "Nuts and Seeds" },
-    "tahıl/un/nişasta": { tr: "Unlar", en: "Flours" },
-    "yağ/sirke": { tr: "Yağ ve Sirke", en: "Oils" },
-    "tatlı/şekerleme": { tr: "Şeker/Tatlı", en: "Sugars/Desserts" }
+  const getCategoryLabel = (key: string) => {
+    const translations: Record<string, { tr: string; en: string }> = {
+      "sebze": { tr: "Sebze", en: "Vegetables" },
+      "meyveler": { tr: "Meyveler", en: "Fruits" },
+      "et ürünleri": { tr: "Et Ürünleri", en: "Meat Products" },
+      "süt ürünleri": { tr: "Süt Ürünleri", en: "Dairy" },
+      "bakliyat": { tr: "Bakliyat", en: "Legumes" },
+      "baharatlar": { tr: "Baharatlar", en: "Spices" },
+      "sıvılar": { tr: "Sıvılar", en: "Liquids" },
+      "diğer": { tr: "Diğer", en: "Other" }
+    };
+    return translations[key]?.[lang] || key;
   };
 
-  const getCategoryLabel = (key: string) =>
-    categoryTranslations[key]?.[lang] || key;
+  const handleSelect = (ingredient: Ingredient) => {
+    const normalized: Ingredient = {
+      ...ingredient,
+      name: {
+        tr: ingredient.name?.tr || ingredient.name?.en || "",
+        en: ingredient.name?.en || ingredient.name?.tr || ""
+      }
+    };
+    onSelect(normalized);
+  };
 
   return (
     <div className="p-4 border rounded-lg bg-white shadow-md mb-4">
@@ -99,7 +107,7 @@ const MockIngredientSelector: React.FC<Props> = ({
           return (
             <button
               key={ing.id}
-              onClick={() => onSelect(ing)}
+              onClick={() => !isSelected && handleSelect(ing)}
               disabled={isSelected}
               className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition shadow-sm ${
                 isSelected
@@ -108,7 +116,7 @@ const MockIngredientSelector: React.FC<Props> = ({
               }`}
             >
               {ing.emoji && <span>{ing.emoji}</span>}
-              <span>{ing.name[lang]}</span>
+              <span>{ing.name?.[lang] || ing.name.tr || ing.name.en || "?"}</span>
             </button>
           );
         })}
