@@ -380,7 +380,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             ingredients: recipe.ingredients,
             steps: recipe.steps,
             cihazMarkasi: cihazMarkasiLocal,
-            tarifDili: "tr",
+            tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
             kullaniciTarifi: false,
             begeniSayisi: 1,
             userId: user.uid,

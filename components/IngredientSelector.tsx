@@ -17,7 +17,12 @@ interface Props {
   lang?: "tr" | "en";
 }
 
-export default function IngredientSelector({ selected, onSelect, onClose, lang = "tr" }: Props) {
+export default function IngredientSelector({
+  selected,
+  onSelect,
+  onClose,
+  lang = "tr",
+}: Props) {
   const [term, setTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filtered, setFiltered] = useState<Ingredient[]>([]);
@@ -29,7 +34,19 @@ export default function IngredientSelector({ selected, onSelect, onClose, lang =
   useEffect(() => {
     const fetchIngredients = async () => {
       const snapshot = await getDocs(collection(db, "ingredients"));
-      const fetched = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Ingredient[];
+      const fetched = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: {
+            tr: data.name?.tr || data.name || "",
+            en: data.name?.en || data.name?.tr || data.name || "",
+          },
+          category: data.category || "",
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          emoji: data.emoji || "",
+        };
+      });
       setIngredients(fetched);
     };
     fetchIngredients();
@@ -58,15 +75,28 @@ export default function IngredientSelector({ selected, onSelect, onClose, lang =
   const handleKeyDown = (e: React.KeyboardEvent, ingredient: Ingredient) => {
     if (e.key === "Enter" || e.key === " ") {
       if (!selected.some((s) => s.id === ingredient.id)) {
-        onSelect(ingredient);
+        handleSelect(ingredient);
       }
     }
+  };
+
+  const handleSelect = (ingredient: Ingredient) => {
+    // Normalize name before passing to parent
+    onSelect({
+      ...ingredient,
+      name: {
+        tr: ingredient.name?.tr || "",
+        en: ingredient.name?.en || ingredient.name?.tr || "",
+      },
+    });
   };
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-gray-500 bg-opacity-75">
       <div className="bg-white rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto p-4">
-        <h2 className="text-xl font-bold mb-2">{lang === "en" ? "Select Ingredient" : "Malzeme Seç"}</h2>
+        <h2 className="text-xl font-bold mb-2">
+          {lang === "en" ? "Select Ingredient" : "Malzeme Seç"}
+        </h2>
         <input
           type="text"
           placeholder={lang === "en" ? "Search..." : "Ara..."}
@@ -88,7 +118,9 @@ export default function IngredientSelector({ selected, onSelect, onClose, lang =
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1 rounded ${
-                selectedCategory === cat ? "bg-gray-800 text-white" : "bg-gray-100"
+                selectedCategory === cat
+                  ? "bg-gray-800 text-white"
+                  : "bg-gray-100"
               }`}
             >
               {cat}
@@ -96,13 +128,15 @@ export default function IngredientSelector({ selected, onSelect, onClose, lang =
           ))}
         </div>
         {isLoading ? (
-          <div className="text-center py-4">{lang === "en" ? "Loading..." : "Yükleniyor..."}</div>
+          <div className="text-center py-4">
+            {lang === "en" ? "Loading..." : "Yükleniyor..."}
+          </div>
         ) : (
           <ul className="space-y-1">
             {filtered.map((i) => (
               <li
                 key={i.id}
-                onClick={() => !selected.some((s) => s.id === i.id) && onSelect(i)}
+                onClick={() => !selected.some((s) => s.id === i.id) && handleSelect(i)}
                 onKeyDown={(e) => handleKeyDown(e, i)}
                 tabIndex={0}
                 className={`cursor-pointer p-1 ${
@@ -117,6 +151,14 @@ export default function IngredientSelector({ selected, onSelect, onClose, lang =
             ))}
           </ul>
         )}
+        <div className="text-right mt-4">
+          <button
+            onClick={onClose}
+            className="text-sm text-gray-600 underline hover:text-gray-800"
+          >
+            {lang === "en" ? "Close" : "Kapat"}
+          </button>
+        </div>
       </div>
     </div>
   );
