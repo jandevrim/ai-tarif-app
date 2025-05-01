@@ -52,13 +52,18 @@ const MockIngredientSelector: React.FC<Props> = ({
   // Basit kategori çeviri eşlemesi
   const categoryTranslations: Record<string, { tr: string; en: string }> = {
     "sebze": { tr: "Sebze", en: "Vegetables" },
-    "meyveler": { tr: "Meyveler", en: "Fruits" },
-    "et ürünleri": { tr: "Et Ürünleri", en: "Meat Products" },
-    "süt ürünleri": { tr: "Süt Ürünleri", en: "Dairy" },
+    "meyve": { tr: "Meyveler", en: "Fruits" },
+    "et/tavuk/balık": { tr: "Et/Tavuk/Balık Ürünleri", en: "Meat/Chicken/Fish Products" },
+    "süt ürünü": { tr: "Süt Ürünleri", en: "Dairy" },
     "bakliyat": { tr: "Bakliyat", en: "Legumes" },
-    "baharatlar": { tr: "Baharatlar", en: "Spices" },
+    "baharat/ot": { tr: "Baharatlar", en: "Spices" },
     "sıvılar": { tr: "Sıvılar", en: "Liquids" },
     "diğer": { tr: "Diğer", en: "Other" },
+    "içecek": { tr: "İçecek", en: "Drinks" },
+    "kuruyemiş/tohum": { tr: "Kuruyemiş/Tohum", en: "Nuts and Seeds" },
+    "tahıl/un/nişasta": { tr: "Unlar", en: "Flours" },
+    "yağ/sirke": { tr: "Yağ ve Sirke", en: "Oils" },
+    "tatlı/şekerleme": { tr: "Şeker/Tatlı", en: "Sugars/Desserts" }
   };
 
   const getCategoryLabel = (key: string) =>
