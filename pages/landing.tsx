@@ -398,9 +398,9 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         if ('share' in navigator) {
           try {
             await navigator.share({ title: `Tarif: ${recipe.title}`, text: recipe.steps.join('\n') });
-            console.log("Paylaşım başarılı.");
+            
           } catch (err) {
-            console.warn("Paylaşım iptal edildi veya başarısız:", err);
+            
           }
         }
       };

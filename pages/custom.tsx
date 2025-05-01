@@ -12,8 +12,8 @@ const db = getFirestore(app);
 
 export default function CustomRecipePage() {
   const { t, i18n } = useTranslation();
-  const rawLang = i18n.language;
-  const lang: "tr" | "en" = rawLang.startsWith("en") ? "en" : "tr";
+
+  const [lang, setLang] = useState<"tr" | "en">("tr"); // ✅ buraya taşındı
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
   const [showSelector, setShowSelector] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,12 +22,11 @@ export default function CustomRecipePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cihazMarkasi, setCihazMarkasi] = useState<"thermomix" | "thermogusto" | "tumu">("tumu");
   const [recipeCredits, setRecipeCredits] = useState<number | null>(null);
-  
-  
+
   useEffect(() => {
-    const [lang, setLang] = useState<"tr" | "en">("tr");
     const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
     setLang(currentLang);
+    console.log("🌍 Aktif dil:", currentLang);
   }, [i18n.language]);
 
   useEffect(() => {
@@ -39,8 +38,7 @@ export default function CustomRecipePage() {
         setCihazMarkasi("tumu");
       }
     }
-    const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
-  
+
     const fetchCredits = async () => {
       const currentUser = getAuth().currentUser;
       if (!currentUser) return;
@@ -103,21 +101,23 @@ export default function CustomRecipePage() {
       <h1 className="text-2xl font-bold mb-4">{t("customRecipe.createYourRecipe")}</h1>
 
       <div className="flex flex-wrap gap-2 mb-4 max-h-24 overflow-y-auto">
-        {selectedIngredients.map((i) => (
-          <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center">
-            {i.emoji && <span className="mr-1">{i.emoji}</span>}
-            <span>{i.name[lang] || i.name.tr}</span>
-            <button
-              aria-label={`Remove ${i.name[lang] || i.name.tr}`}
-              onClick={() =>
-                setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))
-              }
-              className="ml-2 text-red-600"
-            >
-              ✕
-            </button>
-          </span>
-        ))}
+        {selectedIngredients.map((i) => {
+          const displayName = i.name?.[lang] || i.name?.tr || i.name?.en || i.id;
+          console.log("🧂 Malzeme:", displayName, "| Dil:", lang);
+          return (
+            <span key={i.id} className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center">
+              {i.emoji && <span className="mr-1">{i.emoji}</span>}
+              <span>{displayName}</span>
+              <button
+                aria-label={`Remove ${displayName}`}
+                onClick={() => setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))}
+                className="ml-2 text-red-600"
+              >
+                ✕
+              </button>
+            </span>
+          );
+        })}
       </div>
 
       <button
