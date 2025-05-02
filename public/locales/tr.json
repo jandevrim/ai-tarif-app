@@ -19,7 +19,19 @@
     "description": "Lütfen tarayıcı konsolunu kontrol edin veya daha sonra tekrar deneyin.",
     "details": "Hata Detayı:"
   },
-
+"contact": {
+    "title": "📬 Bize Ulaşın",
+    "namePlaceholder": "Adınız",
+    "emailPlaceholder": "E-posta",
+    "messagePlaceholder": "Mesajınız",
+    "sendButton": "Gönder",
+    "successMessage": "Mesajınız gönderildi. Teşekkürler!",
+    "paragraph1": "Sorularınız, önerileriniz ya da iş birlikleri için bizimle iletişime geçebilirsiniz:",
+    "emailLabel": "E-posta",
+    "instagramLabel": "Instagram",
+    "addressLabel": "Adres",
+    "paragraph2": "Size en kısa sürede geri dönüş yapmaya çalışacağız. İlginiz için teşekkür ederiz."
+  },
   "custom": {
     "pageTitle": "Kendi Tarifini Oluştur",
     "selectedIngredients": "Seçilen Malzemeler:",
@@ -47,7 +59,7 @@
   },
   "loading": {
     "loadingRecipe": "Tarifiniz hazırlanıyor...",
-    "loading.message": "Tarifiniz hazırlanıyor..."
+    "message": "Nefis bir tarif hazırlıyoruz..."
   },
   "errors": {
     "generalError": "Oops! Bir Hata Oluştu.",
@@ -121,14 +133,7 @@
     "paragraph2": "Uygulamamız, Thermomix ve ThermoGusto cihazları ile uyumlu tarifler oluşturur. Tarifler, sizin belirlediğiniz malzemelere göre, adım adım kolayca uygulanabilecek şekilde oluşturulur.",
     "paragraph3": "Geri bildirimlerinizi bizimle paylaşarak, ThermoChefAI'nin gelişimine katkıda bulunabilirsiniz."
   } ,
-  "contact": {
-    "title": "İletişim",
-    "paragraph1": "Sorularınız, önerileriniz ya da iş birlikleri için bizimle iletişime geçebilirsiniz:",
-    "emailLabel": "E-posta",
-    "instagramLabel": "Instagram",
-    "addressLabel": "Adres",
-    "paragraph2": "Size en kısa sürede geri dönüş yapmaya çalışacağız. İlginiz için teşekkür ederiz."
-  },
+
   "profile": {
     "loginPrompt": "Lütfen giriş yapınız.",
     "title": "Profilim",
@@ -165,9 +170,7 @@
     "back": "Geri Dön",
     "deleteAccount": "Bilgilerimi Sil"
   },
-  "loading": {
-    "message": "Nefis bir tarif hazırlıyoruz..."
-  },
+
   
     "stepPage": {
       "step": "Adım",

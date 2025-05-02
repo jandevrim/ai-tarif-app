@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import ContactForm from "../components/ContactForm";
 
 export default function Hakkimizda() {
   const { t } = useTranslation();
@@ -20,6 +21,10 @@ export default function Hakkimizda() {
           {t("about.paragraph3")}
         </p>
       </div>
+      <ContactForm />
     </div>
+
   );
 }
+
+

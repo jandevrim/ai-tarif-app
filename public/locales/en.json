@@ -41,19 +41,15 @@
   },
   "loading": {
     "loadingRecipe": "Your recipe is being prepared...",
-    "loading.message": "Your recipe is being prepared..."
+     "message": "Creating a delish recipe for you..."
   },
   "errors": {
     "generalError": "Oops! An Error Occurred.",
     "retryLater": "Please check the browser console or try again later.",
     "ingredientsFetchFailed": "Failed to load ingredients."
   },
-  "errorBoundary": {
-    "title": "Oops! An Error Occurred.",
-    "description": "Please check the browser console or try again later.",
-    "details": "Error details:"
-  },
   
+   
   "customRecipe": {
     "errorWhileCreatingRecipe": "An error occurred while creating the recipe.",
     "didyoulikeit": "Did You Like It?",
@@ -186,9 +182,6 @@
     "list": "Ingredients",
     "notFound": "No ingredients found.",
     "close": "Close"
-  },
-  "loading": {
-    "message": "Creating a delish recipe for you..."
   },
   "emptyIngredients": "Ingredient list cannot be empty.",
   "invalidDevice": "Invalid device brand.",
