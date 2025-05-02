@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await resend.emails.send({
-      from: "ThermoChefAI <jandevrim@gmail.com>", // doğrulanmış domain olmalı
+      from: "ThermoChefAI <contact@thermochefai.com>", // doğrulanmış domain olmalı
       to: "jandevrim@gmail.com", // mesajları alacağın adres
       subject: `📨 Yeni İletişim Formu: ${name}`,
       html: `
