@@ -21,7 +21,7 @@ export default function Hakkimizda() {
           {t("about.paragraph3")}
         </p>
       </div>
-      <ContactForm />
+     
     </div>
 
   );

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import ContactForm from "../components/ContactForm";
 
 export default function Iletisim() {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ export default function Iletisim() {
           <li><strong>{t("contact.addressLabel")}:</strong> </li>
         </ul>
         <p>{t("contact.paragraph2")}</p>
+         <ContactForm />
       </div>
     </div>
   );
