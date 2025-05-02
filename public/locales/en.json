@@ -117,6 +117,14 @@
     "paragraph2": "Our app creates recipes compatible with Thermomix and ThermoGusto devices. Recipes are generated step-by-step based on the ingredients you select.",
     "paragraph3": "You can contribute to the development of ThermoChefAI by sharing your feedback with us."
   },
+  "payment": {
+  "successTitle": "Payment Successful!",
+  "successMessage": "Your payment was successful. You can now create more recipes.",
+  "goHome": "Go to Home",
+  "errorTitle": "Payment Failed",
+  "errorMessage": "An error occurred during payment. Please try again.",
+  "retry": "Retry Payment"
+},
   "contact": {
     "title": "Contact",
     "paragraph1": "For questions, suggestions, or collaborations, feel free to contact us:",
@@ -193,5 +201,5 @@
   "credit.description": "You can buy recipe credits to create more recipes. Each recipe costs 1 credit.",
   "credit.success": "Recipe credits purchased successfully!",
   "credit.error": "An error occurred while purchasing recipe credits.",
-  "credit.limitReached": "You have reached the limit of 5 recipes. Membership is required to continue." 
-}
+  "credit.limitReached": "You have reached the limit of 5 recipes. Membership is required to continue."
+  }

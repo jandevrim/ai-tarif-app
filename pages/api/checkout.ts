@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/odeme-basarili`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/kredi`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/odeme-hatali`,
     });
 
     res.status(200).json({ url: session.url });

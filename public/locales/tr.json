@@ -194,7 +194,14 @@
     "next": "İleri"
   },
 
-  
+  "payment": {
+  "successTitle": "Ödeme Başarılı!",
+  "successMessage": "Kredileriniz hesabınıza tanımlandı. Teşekkür ederiz.",
+  "goHome": "Anasayfaya Dön",
+  "errorTitle": "Ödeme Başarısız!",
+  "errorMessage": "Bir sorun oluştu. Lütfen tekrar deneyin veya bizimle iletişime geçin.",
+  "retry": "Tekrar Dene"
+},
   "emptyIngredients": "Malzeme listesi boş olamaz.",
   "invalidDevice": "Geçersiz cihaz markası.",
   "parseError": "AI'den geçersiz JSON yanıtı alındı.",
