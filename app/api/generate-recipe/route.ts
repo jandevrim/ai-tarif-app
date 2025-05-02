@@ -16,49 +16,45 @@ const firebaseConfig = {
 };
 
 const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const storage = getStorage(firebaseApp);
+getStorage(firebaseApp);
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 // --- Locale Loader ---
-async function loadLocale(locale: string, req: NextRequest) {
+async function loadLocale(locale: string, lang: "tr" | "en") {
   try {
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
     const content = await fs.readFile(filePath, "utf8");
     const data = JSON.parse(content);
 
-    // Ek: İngilizce için özel instruction ekle
-    const { ingredients, cihazMarkasi = "tumu", lang = "tr" } = await req.json();
-
-    let extraInstruction = "";
-    if (lang === "en") {
-      extraInstruction = "Please prepare the recipe in English.";
-    }
-    
-    data.extraInstruction = extraInstruction;
-
+    data.extraInstruction = lang === "en" ? "Please prepare the recipe in English." : "";
     return data;
+
   } catch (error) {
     console.error(`Dil dosyası (${locale}) yüklenemedi, Türkçe yedeğe geçiliyor.`);
     const fallbackPath = path.resolve(process.cwd(), "public/locales/tr.json");
     const fallbackContent = await fs.readFile(fallbackPath, "utf8");
     const fallbackData = JSON.parse(fallbackContent);
-    fallbackData.extraInstruction = ""; // fallback Türkçe'de de boş olsun
+    fallbackData.extraInstruction = "";
     return fallbackData;
   }
 }
 
+// --- Main Handler ---
 export async function POST(req: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const localeFromQuery = url.searchParams.get("lang");
-    const localeFromHeader = req.headers.get("accept-language")?.split(",")[0]?.slice(0, 2)?.toLowerCase();
-    const locale = localeFromQuery || localeFromHeader || "tr";
+    // 1. Body yalnızca bir kez okunur
+    const body = await req.json();
+    const { ingredients, cihazMarkasi = "tumu", lang = "tr" } = body;
 
-    const texts = await loadLocale(locale, req);
+    // 2. Locale belirlenir
+    const localeFromQuery = new URL(req.url).searchParams.get("lang");
+    const locale = localeFromQuery || lang || "tr";
 
-    const { ingredients, cihazMarkasi = "tumu" } = await req.json();
+    // 3. Dil dosyası yüklenir
+    const texts = await loadLocale(locale, lang);
 
+    // 4. Geçersiz istekler kontrol edilir
     if (!ingredients || ingredients.length === 0) {
       return new Response(JSON.stringify({ error: texts.emptyIngredients }), { status: 400 });
     }
@@ -72,6 +68,7 @@ export async function POST(req: NextRequest) {
       typeof i === "string" ? i : i?.name?.tr || i?.name
     ).filter(Boolean);
 
+    // 5. Uygun sistem prompt'u seçilir
     let baseSystemPrompt = process.env.SYSTEM_PROMPT || "";
     if (cihazMarkasi === "thermomix") {
       baseSystemPrompt = process.env.SYSTEM_PROMPT_THERMOMIX || baseSystemPrompt;
@@ -96,6 +93,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
 }
 `;
 
+    // 6. OpenAI çağrısı yapılır
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -105,10 +103,11 @@ Yanıtı aşağıdaki JSON formatında döndür:
       temperature: 0.7,
     });
 
+    // 7. Yanıt işlenir
     const rawText = response.choices[0]?.message?.content?.trim() || "";
     const cleanJson = rawText.replace(/^```json|```$/g, "").trim();
-    let recipe;
 
+    let recipe;
     try {
       recipe = JSON.parse(cleanJson);
     } catch (parseError) {
