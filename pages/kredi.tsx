@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { getAuth } from "firebase/auth";
+const user = getAuth().currentUser;
 
 const creditOptions = [
     {
@@ -36,7 +37,7 @@ const creditOptions = [
   
     const handleSelect = async (option: any) => {
       setLoading(true);
-      const user = getAuth().currentUser;
+      
       try {
         const res = await fetch("/api/checkout", {
           method: "POST",
