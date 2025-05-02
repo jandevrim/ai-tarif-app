@@ -187,5 +187,11 @@
   "invalidDevice": "Invalid device brand.",
   "parseError": "Invalid JSON response received from AI.",
   "serverError": "Server error:",
-  "extraInstruction": ""
+  "extraInstruction": "",
+  "credit.buyButton": "Buy Recipe Credits",
+  "credit.title": "Recipe Credits",
+  "credit.description": "You can buy recipe credits to create more recipes. Each recipe costs 1 credit.",
+  "credit.success": "Recipe credits purchased successfully!",
+  "credit.error": "An error occurred while purchasing recipe credits.",
+  "credit.limitReached": "You have reached the limit of 5 recipes. Membership is required to continue." 
 }

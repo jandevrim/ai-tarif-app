@@ -10,21 +10,21 @@ const creditOptions = [
       amount: 20,
       price: 3.99,
       label: "🍳",
-      stripePriceId: "prod_SEleKjN92JaFhj" // Stripe Price ID burada tanımlanacak
+      stripePriceId: "price_1RKIW3S8FEqkrKCh7YYRLRfo" // Stripe Price ID burada tanımlanacak
     },
     {
       id: "standard",
       amount: 50,
       price: 7.99,
       label: "🍳🍳🍳",
-      stripePriceId: "prod_SElfvbj5NkuTIe"
+      stripePriceId: "price_1RKIWiS8FEqkrKChEfwiMBZB"
     },
     {
       id: "pro",
       amount: 100,
       price: 13.99,
       label: "🥚🥚🥚🥚🥚🥚🥚 ",
-      stripePriceId: "prod_SElgmMocGVVCTa"
+      stripePriceId: "price_1RKIXGS8FEqkrKChkWOGsH4l"
     },
   ];
   export default function KrediYuklePage() {

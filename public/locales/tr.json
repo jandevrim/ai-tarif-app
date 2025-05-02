@@ -193,10 +193,17 @@
     "back": "Geri",
     "next": "İleri"
   },
+
   
   "emptyIngredients": "Malzeme listesi boş olamaz.",
   "invalidDevice": "Geçersiz cihaz markası.",
   "parseError": "AI'den geçersiz JSON yanıtı alındı.",
   "serverError": "Sunucu hatası:",
-  "extraInstruction": ""
+  "extraInstruction": "",
+  "credit.buyButton": "Tarif Kredisi Satın Al",
+  "credit.title": "Tarif Kredileri",
+  "credit.description": "Tarif kredisi satın alarak daha fazla tarif oluşturabilirsiniz. Her tarif 1 kredi gerektirir.",
+  "credit.success": "Tarif kredisi başarıyla satın alındı!",
+  "credit.error": "Satın alma sırasında hata oluştu.",
+  "credit.limitReached": "10 tarif sınırına ulaştınız. Devam etmek için üyelik gereklidir." 
 }
