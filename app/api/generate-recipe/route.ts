@@ -21,18 +21,21 @@ const storage = getStorage(firebaseApp);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 // --- Locale Loader ---
-async function loadLocale(locale: string) {
+async function loadLocale(locale: string, req: NextRequest) {
   try {
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
     const content = await fs.readFile(filePath, "utf8");
     const data = JSON.parse(content);
 
     // Ek: İngilizce için özel instruction ekle
-    if (locale.startsWith("en")) {
-      data.extraInstruction = "Please prepare the recipe in English.";
-    } else {
-      data.extraInstruction = ""; // Türkçe ya da diğer dillerde boş
+    const { ingredients, cihazMarkasi = "tumu", lang = "tr" } = await req.json();
+
+    let extraInstruction = "";
+    if (lang === "en") {
+      extraInstruction = "Please prepare the recipe in English.";
     }
+    
+    data.extraInstruction = extraInstruction;
 
     return data;
   } catch (error) {
@@ -52,7 +55,7 @@ export async function POST(req: NextRequest) {
     const localeFromHeader = req.headers.get("accept-language")?.split(",")[0]?.slice(0, 2)?.toLowerCase();
     const locale = localeFromQuery || localeFromHeader || "tr";
 
-    const texts = await loadLocale(locale);
+    const texts = await loadLocale(locale, req);
 
     const { ingredients, cihazMarkasi = "tumu" } = await req.json();
 
