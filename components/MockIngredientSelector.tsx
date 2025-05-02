@@ -55,13 +55,26 @@ const MockIngredientSelector: React.FC<Props> = ({
   const getCategoryLabel = (key: string) => {
     const translations: Record<string, { tr: string; en: string }> = {
       "sebze": { tr: "Sebze", en: "Vegetables" },
-      "meyveler": { tr: "Meyveler", en: "Fruits" },
-      "et ürünleri": { tr: "Et Ürünleri", en: "Meat Products" },
-      "süt ürünleri": { tr: "Süt Ürünleri", en: "Dairy" },
+      "meyve": { tr: "Meyveler", en: "Fruits" },
+      "et/tavuk/balık": { tr: "Et/Tavuk/Balık Ürünleri", en: "Meat/Chicken/Fish Products" },
+      "süt ürünü": { tr: "Süt Ürünleri", en: "Dairy" },
       "bakliyat": { tr: "Bakliyat", en: "Legumes" },
-      "baharatlar": { tr: "Baharatlar", en: "Spices" },
+      "baharat/ot ": { tr: "Baharatlar", en: "Spices" },
       "sıvılar": { tr: "Sıvılar", en: "Liquids" },
-      "diğer": { tr: "Diğer", en: "Other" }
+      "diğer": { tr: "Diğer", en: "Other" },
+      "yağ/sirke": { tr: "Soslar", en: "Sauces" },
+      "tahıl/un/nişasta": { tr: "Unlar", en: "Flours" },
+      "yağlar": { tr: "Yağlar", en: "Oils" },
+      "şekerler": { tr: "Şekerler", en: "Sugars" },
+      "kuruyemiş/tohum": { tr: "Kuruyemişler", en: "Nuts" },
+      "tahıllar": { tr: "Tahıllar", en: "Grains" },
+      "konserve": { tr: "Konserve", en: "Canned" },
+      "dondurulmuş": { tr: "Dondurulmuş", en: "Frozen" },
+      "atıştırmalıklar": { tr: "Atıştırmalıklar", en: "Snacks" },
+      "içecek": { tr: "İçecekler", en: "Beverages" },
+      "tatlı/şekerleme": { tr: "Şekerleme", en: "Confectionery" },
+      "bisküvi": { tr: "Bisküvi", en: "Biscuits" },
+      "çikolata": { tr: "Çikolata", en: "Chocolate" },
     };
     return translations[key]?.[lang] || key;
   };
