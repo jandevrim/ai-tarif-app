@@ -271,14 +271,25 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
 
   const renderCurrentCard = () => {
     if (!recipe) return null;
-  
-    const extractDeviceCommandLocal = (text: string): string | null => {
-      const regexTR = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
-      const regexEN = /(kneading mode|turbo(?:\s*\d*\s*(?:s|sec|seconds))?|reverse|[\d\.]+\s*(?:s|sec|seconds|min|minutes)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|(?:speed|rpm)\s*[\d\.-]+)/i; 
-      const regex = i18n.language === "en" ? regexEN : regexTR;
-      const match = text.match(regex);
-  return match ? match[0].replace(/\s+/g, ' ').trim() : null;
+     const extractDeviceCommandLocal = (text: string): string | null => {
+      const regexTR = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|varoma|buharda pişirme|rendeleme|doğrama|yavaş pişirme|kaynatma|otomatik temizleme|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
+    
+      const regexEN = /(kneading mode|turbo(?:\s*\d*\s*(?:s|sec|seconds))?|reverse|varoma|steaming|steam cooking|chopping|slow cooking|grating|boiling|self-cleaning|auto clean|[\d\.]+\s*(?:s|sec|seconds|min|minutes)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|(?:speed|rpm)\s*[\d\.-]+)/i;
+    
+      const regex = i18n.language.startsWith("en") ? regexEN : regexTR;
+    
+      const slicedText = text.slice(2); // Adım başındaki "1." gibi kısımları at
+      const match = slicedText.match(regex);
+    
+      return match ? match[0].replace(/\s+/g, " ").trim() : null;
     };
+  //  const extractDeviceCommandLocal = (text: string): string | null => {
+  //    const regexTR = /(yoğurma modu|turbo(?:\s*\d*\s*(?:sn|saniye))?|ters dönüş|[\d\.]+\s*(?:sn|saniye|dk|dakika)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:hız|devir)\s*[\d\.-]+)?|(?:hız|devir)\s*[\d\.-]+)/i;
+  //    const regexEN = /(kneading mode|turbo(?:\s*\d*\s*(?:s|sec|seconds))?|reverse|[\d\.]+\s*(?:s|sec|seconds|min|minutes)(?:\s*\/\s*\d+°C)?(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|\d+°C(?:\s*\/\s*(?:speed|rpm)\s*[\d\.-]+)?|(?:speed|rpm)\s*[\d\.-]+)/i; 
+  //    const regex = i18n.language === "en" ? regexEN : regexTR;
+  //    const match = text.match(regex);
+  //return match ? match[0].replace(/\s+/g, ' ').trim() : null;
+  //  };
   
     if (currentStep === 0) {
       // Başlangıç kartı
