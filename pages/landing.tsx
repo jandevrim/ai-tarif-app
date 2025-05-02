@@ -493,11 +493,11 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
                     className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center shadow-sm"
                   >
                     {i.emoji && <span className="mr-1">{i.emoji}</span>}
-                    <span>{i.name.tr}</span>
+                    <span>{i.name?.[i18n.language as "tr" | "en"] || i.name.tr || i.name.en || "?"}</span>
                     <button
                       onClick={() => setSelectedIngredients(selectedIngredients.filter((item) => item.id !== i.id))}
                       className="ml-2 text-red-500 hover:text-red-700 font-bold"
-                      aria-label={`Remove ${i.name.tr}`}
+                      aria-label={`Remove ${i.name?.[i18n.language as "tr" | "en"] || i.name.tr || i.name.en || "?"}`}
                     >
                       ✕
                     </button>
