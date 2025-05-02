@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { getAuth } from "firebase/auth";
 
 const creditOptions = [
     {
@@ -31,14 +32,19 @@ const creditOptions = [
     const { t } = useTranslation();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    
   
     const handleSelect = async (option: any) => {
       setLoading(true);
+      const user = getAuth().currentUser;
       try {
         const res = await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ priceId: option.stripePriceId }),
+          body: JSON.stringify({
+            priceId: option.stripePriceId,
+            email: user?.email 
+          }),
         });
   
         const data = await res.json();

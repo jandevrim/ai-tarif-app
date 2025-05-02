@@ -3,13 +3,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-04-30.basil",
+  apiVersion: "2025-04-30.basil", // ⚠️ Güncellenmiş versiyon
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).end();
 
-  const { priceId } = req.body;
+  const { priceId, email } = req.body; // ✅ Buraya taşındı
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -18,6 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/odeme-basarili`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/odeme-hatali`,
+      customer_email: email || undefined, // ✅ email burada kullanılabilir
+      metadata: {
+        priceId, // ✅ Webhook için gerekli
+      },
     });
 
     res.status(200).json({ url: session.url });
