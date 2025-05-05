@@ -1,8 +1,22 @@
+// 🔁 Değişiklik yapılmış tam bileşen
+
 "use client";
 
 import React, { useEffect, useState } from "react";
 import AuthFooter from "../components/AuthFooter";
-import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  updateDoc,
+  doc,
+  QueryDocumentSnapshot,
+  DocumentData,
+} from "firebase/firestore";
 import { app } from "../utils/firebaseconfig";
 import { useTranslation } from "react-i18next";
 
@@ -29,39 +43,52 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
   const [search, setSearch] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const { t, i18n } = useTranslation();
+  const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [loading, setLoading] = useState(false);
 
+  const { t, i18n } = useTranslation();
   const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
 
-  const fetchRecipes = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, "likedRecipes"));
-      const data = snapshot.docs.map((docSnap) => {
-        const raw = docSnap.data();
-        const processedSteps = Array.isArray(raw.steps)
-          ? raw.steps
-          : typeof raw.steps === "string"
-          ? raw.steps.split(/\d+\.\s/).filter(Boolean).map((s: string) => s.trim())
-          : [];
-        return {
-          id: docSnap.id,
-          title: raw.title,
-          summary: raw.summary,
-          duration: raw.duration,
-          ingredients: raw.ingredients || [],
-          steps: processedSteps,
-          cihazMarkasi: raw.cihazMarkasi,
-          tarifDili: raw.tarifDili,
-          kullaniciTarifi: raw.kullaniciTarifi,
-          begeniSayisi: raw.begeniSayisi,
-          imageUrl: raw.imageUrl,
-          image: raw.image,
-        };
-      });
-      setRecipes(data);
-    } catch (error) {
-      console.error("Tarifler çekilirken hata oluştu:", error);
-    }
+  const fetchRecipes = async (isNextPage = false) => {
+    setLoading(true);
+
+    const pageSize = 10;
+    const baseQuery = collection(db, "likedRecipes");
+
+    const q = isNextPage && lastDoc
+      ? query(baseQuery, orderBy("title"), startAfter(lastDoc), limit(pageSize))
+      : query(baseQuery, orderBy("title"), limit(pageSize));
+
+    const snapshot = await getDocs(q);
+    const docs = snapshot.docs;
+
+    const data = docs.map((docSnap) => {
+      const raw = docSnap.data();
+      const processedSteps = Array.isArray(raw.steps)
+        ? raw.steps
+        : typeof raw.steps === "string"
+        ? raw.steps.split(/\d+\.\s/).filter(Boolean).map((s: string) => s.trim())
+        : [];
+
+      return {
+        id: docSnap.id,
+        title: raw.title,
+        summary: raw.summary,
+        duration: raw.duration,
+        ingredients: raw.ingredients || [],
+        steps: processedSteps,
+        cihazMarkasi: raw.cihazMarkasi,
+        tarifDili: raw.tarifDili,
+        kullaniciTarifi: raw.kullaniciTarifi,
+        begeniSayisi: raw.begeniSayisi,
+        imageUrl: raw.imageUrl,
+        image: raw.image,
+      };
+    });
+
+    setRecipes((prev) => isNextPage ? [...prev, ...data] : data);
+    setLastDoc(docs[docs.length - 1]);
+    setLoading(false);
   };
 
   const handleLike = async (id: string, currentCount: number = 0) => {
@@ -75,7 +102,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
   };
 
   useEffect(() => {
-    fetchRecipes();
+    fetchRecipes(); // ilk yükleme
   }, []);
 
   const filteredRecipes = recipes.filter((r) => {
@@ -124,6 +151,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
       </div>
 
       {expanded && selectedRecipe ? (
+        // detay görünüm
         <div className="bg-white p-6 rounded-xl shadow-lg">
           {imageSrc && (
             <img
@@ -132,7 +160,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               className="w-full max-w-md mx-auto mb-4 rounded-lg border border-gray-200"
             />
           )}
-
           <h2 className="text-2xl font-bold mb-2 text-center">{selectedRecipe.title}</h2>
           <p className="text-sm text-gray-500 mb-1 text-center">
             {selectedRecipe.cihazMarkasi
@@ -140,7 +167,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
               : t("likedRecipes.filters.unknownDevice")}
             {selectedRecipe.duration ? ` • ${selectedRecipe.duration}` : ""}
           </p>
-
           {currentStep === 0 ? (
             <div>
               <h3 className="font-semibold mt-4 mb-2">{t("likedRecipes.ingredients")}</h3>
@@ -155,11 +181,12 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
             </div>
           ) : (
             <div className="mt-4">
-              <h3 className="font-semibold mb-1">{t("likedRecipes.stepTitle", { currentStep })}</h3>
+              <h3 className="font-semibold mb-1">
+                {t("likedRecipes.stepTitle", { currentStep })}
+              </h3>
               <p className="text-sm">{selectedRecipe.steps?.[currentStep - 1]}</p>
             </div>
           )}
-
           <div className="flex justify-between items-center mt-6">
             <button
               onClick={() => setExpanded(null)}
@@ -190,35 +217,48 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
           </div>
         </div>
       ) : (
-        <ul className="space-y-4">
-          {filteredRecipes.map((recipe) => (
-            <li
-              key={recipe.id}
-              className="bg-white p-4 rounded-xl shadow-md cursor-pointer flex items-center gap-4"
-              onClick={() => {
-                setExpanded(recipe.id);
-                setCurrentStep(0);
-              }}
-            >
-              {recipe.imageUrl && (
-                <img
-                  src={recipe.imageUrl}
-                  alt={recipe.title}
-                  className="w-16 h-16 object-cover rounded-md border border-gray-200"
-                />
-              )}
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold">{recipe.title}</h2>
-                <span className="text-xs text-gray-600">
-                  {recipe.cihazMarkasi
-                    ? t(`likedRecipes.filters.${recipe.cihazMarkasi}`)
-                    : t("likedRecipes.filters.unknownDevice")}
-                  {recipe.duration ? ` • ${recipe.duration}` : ""}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div>
+          <ul className="space-y-4">
+            {filteredRecipes.map((recipe) => (
+              <li
+                key={recipe.id}
+                className="bg-white p-4 rounded-xl shadow-md cursor-pointer flex items-center gap-4"
+                onClick={() => {
+                  setExpanded(recipe.id);
+                  setCurrentStep(0);
+                }}
+              >
+                {recipe.imageUrl && (
+                  <img
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    className="w-16 h-16 object-cover rounded-md border border-gray-200"
+                  />
+                )}
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold">{recipe.title}</h2>
+                  <span className="text-xs text-gray-600">
+                    {recipe.cihazMarkasi
+                      ? t(`likedRecipes.filters.${recipe.cihazMarkasi}`)
+                      : t("likedRecipes.filters.unknownDevice")}
+                    {recipe.duration ? ` • ${recipe.duration}` : ""}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {lastDoc && (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => fetchRecipes(true)}
+                disabled={loading}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
+              >
+                {loading ? "Yükleniyor..." : "Daha fazla göster"}
+              </button>
+            </div>
+          )}
+        </div>
       )}
       <AuthFooter />
     </div>

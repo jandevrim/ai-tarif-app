@@ -130,6 +130,10 @@
 },
   "contact": {
     "title": "Contact",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "Email",
+    "messagePlaceholder": "Message",
+    "sendButton": "Send",
     "paragraph1": "For questions, suggestions, or collaborations, feel free to contact us:",
     "emailLabel": "Email",
     "instagramLabel": "Instagram",
@@ -204,6 +208,7 @@
   "serverError": "Server error:",
   "extraInstruction": "",
   "credit.buyButton": "Buy Recipe Credits",
+  "credit.backButton": "← Back",
   "credit.title": "Recipe Credits",
   "credit.description": "You can buy recipe credits to create more recipes. Each recipe costs 1 credit.",
   "credit.success": "Recipe credits purchased successfully!",

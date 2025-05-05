@@ -213,6 +213,7 @@
   "serverError": "Sunucu hatası:",
   "extraInstruction": "",
   "credit.buyButton": "Tarif Kredisi Satın Al",
+  "credit.backButton": "← Geri",
   "credit.title": "Tarif Kredileri",
   "credit.description": "Tarif kredisi satın alarak daha fazla tarif oluşturabilirsiniz. Her tarif 1 kredi gerektirir.",
   "credit.success": "Tarif kredisi başarıyla satın alındı!",
