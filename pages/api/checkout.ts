@@ -1,7 +1,14 @@
 // pages/api/checkout.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
+import { auth } from "../../utils/firebaseconfig";
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import { app } from "../../utils/firebaseconfig";
+import { useTranslation } from "react-i18next";
 
+
+const user = auth.currentUser;
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil", // ⚠️ Güncellenmiş versiyon
