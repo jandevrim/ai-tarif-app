@@ -13,7 +13,8 @@
     "aboutUs": "Hakkımızda",
     "buyCredits": "Buy Credits",
     "contact": "İletişim",
-    "footerCopyright": "© 2025 ThermoChefAI. Tüm hakları saklıdır."
+    "footerCopyright": "© 2025 ThermoChefAI. Tüm hakları saklıdır.",
+    "credit": "Kredi"
   },
   "errorBoundary": {
     "title": "Oops! Bir Hata Oluştu.",
