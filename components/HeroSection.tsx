@@ -3,6 +3,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import CreditSticker from "./creditsticker";
+import { auth } from "../utils/firebaseconfig";
+import { useRouter } from "next/navigation";
 
 interface HeroSectionProps {
   onStart: () => void;
@@ -11,6 +14,7 @@ interface HeroSectionProps {
 const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
   const { t } = useTranslation();
   const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
+  const router = useRouter();
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -19,6 +23,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
 
   return (
     <div className="flex flex-col items-center px-4 py-2">
+      <CreditSticker />
       <div className="relative w-full max-w-xs mb-2">
         <img
           src="/logo.png"
@@ -34,6 +39,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
           }}
         />
       </div>
+
       <div className="text-center space-y-3">
         <div className="flex justify-center gap-2 mt-1">
           <button
@@ -57,15 +63,33 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
             🇬🇧 English
           </button>
         </div>
+
         <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-gray-900">
           {t("landing.title")}
         </h1>
-        <button
-          onClick={onStart}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
-        >
-          {t("landing.startRecipeButton")}
-        </button>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
+          <button
+            onClick={onStart}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            {t("landing.startRecipeButton")}
+          </button>
+
+          <button
+            onClick={() => {
+              const currentUser = auth.currentUser;
+              if (!currentUser) {
+                alert(t("auth.loginRequired", "Önce giriş yapmalısınız."));
+              } else {
+                router.push("/kredi");
+              }
+            }}
+            className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-full shadow-md w-full sm:w-auto transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            💳 {t("landing.buyCredits", "Kredi Al")}
+          </button>
+        </div>
       </div>
     </div>
   );

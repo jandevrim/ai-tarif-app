@@ -37,9 +37,18 @@ export default function KrediYuklePage() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+      if (!firebaseUser) {
+        alert(t("auth.loginRequired", "Önce giriş yapmalısınız."));
+        router.push("/");
+      } else {
+        setUser(firebaseUser);
+      }
     });
     return () => unsubscribe();
+    //const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    //  setUser(firebaseUser);
+    //});
+    //return () => unsubscribe();
   }, []);
 
   const handleSelect = async (option: any) => {

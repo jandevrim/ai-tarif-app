@@ -12,8 +12,10 @@
     "loginWithGoogle": "Login with Google",
     "aboutUs": "About Us",
     "contact": "Contact",
-    "footerCopyright": "© 2025 ThermoChefAI. All rights reserved."
+    "footerCopyright": "© 2025 ThermoChefAI. All rights reserved.",
+    "buyCredits": "Buy Credits"
   },
+ 
   "custom": {
     "pageTitle": "Create Your Own Recipe",
     "selectedIngredients": "Selected Ingredients:",
@@ -181,6 +183,10 @@
     "saveError": "An error occurred while saving.",
     "likeButton": "I Liked It"
   },
+  "auth": {
+  "loginRequired": "You must log in first."
+  
+},
   "recipeSteps": {
     "step": "Recipe Step",
     "back": "Back",

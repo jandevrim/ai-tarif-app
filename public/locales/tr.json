@@ -11,6 +11,7 @@
     "logout": "Çıkış Yap",
     "loginWithGoogle": "Google ile Giriş Yap",
     "aboutUs": "Hakkımızda",
+    "buyCredits": "Buy Credits",
     "contact": "İletişim",
     "footerCopyright": "© 2025 ThermoChefAI. Tüm hakları saklıdır."
   },
@@ -188,6 +189,9 @@
     "saveError": "Kaydetme sırasında hata oluştu.",
     "likeButton": "Beğendim"
   },
+  "auth": {
+  "loginRequired": "Önce giriş yapmalısınız."
+},
   "recipeSteps": {
     "step": "Tarif Adımı",
     "back": "Geri",
