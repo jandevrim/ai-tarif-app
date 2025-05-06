@@ -15,23 +15,19 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-
-// Initialize Firebase app and storage
-
-
 const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 getStorage(firebaseApp);
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 // --- Locale Loader ---
-async function loadLocale(locale: string, lang: "tr" | "en") {
+async function loadLocale(locale: string) {
   try {
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
     const content = await fs.readFile(filePath, "utf8");
     const data = JSON.parse(content);
 
-    data.extraInstruction = lang === "en" ? "Please prepare the recipe in English." : "";
+    data.extraInstruction = locale === "en" ? "Please prepare the recipe in English." : "";
     return data;
 
   } catch (error) {
@@ -47,18 +43,18 @@ async function loadLocale(locale: string, lang: "tr" | "en") {
 // --- Main Handler ---
 export async function POST(req: NextRequest) {
   try {
-    // 1. Body yalnızca bir kez okunur
+    // 1. Request Body
     const body = await req.json();
     const { ingredients, cihazMarkasi = "tumu", lang = "tr" } = body;
 
-    // 2. Locale belirlenir
-    const localeFromQuery = new URL(req.url).searchParams.get("lang");
-    const locale = localeFromQuery || lang || "tr";
+    // 2. Effective Language
+    const queryLang = new URL(req.url).searchParams.get("lang");
+    const effectiveLang = queryLang || lang || "tr";
 
-    // 3. Dil dosyası yüklenir
-    const texts = await loadLocale(locale, lang);
+    // 3. Load Texts
+    const texts = await loadLocale(effectiveLang);
 
-    // 4. Geçersiz istekler kontrol edilir
+    // 4. Validate Inputs
     if (!ingredients || ingredients.length === 0) {
       return new Response(JSON.stringify({ error: texts.emptyIngredients }), { status: 400 });
     }
@@ -72,7 +68,7 @@ export async function POST(req: NextRequest) {
       typeof i === "string" ? i : i?.name?.tr || i?.name
     ).filter(Boolean);
 
-    // 5. Uygun sistem prompt'u seçilir
+    // 5. Select Prompt
     let baseSystemPrompt = process.env.SYSTEM_PROMPT || "";
     if (cihazMarkasi === "thermomix") {
       baseSystemPrompt = process.env.SYSTEM_PROMPT_THERMOMIX || baseSystemPrompt;
@@ -84,7 +80,7 @@ export async function POST(req: NextRequest) {
 
 Seçilen malzemeler: ${selectedNames.join(", ")}
 
-${texts.extraInstruction || ""}
+${texts.extraInstruction}
 
 Yanıtı aşağıdaki JSON formatında döndür:
 
@@ -97,7 +93,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
 }
 `;
 
-    // 6. OpenAI çağrısı yapılır
+    // 6. OpenAI Call
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -107,7 +103,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
       temperature: 0.7,
     });
 
-    // 7. Yanıt işlenir
+    // 7. Parse Response
     const rawText = response.choices[0]?.message?.content?.trim() || "";
     const cleanJson = rawText.replace(/^```json|```$/g, "").trim();
 
