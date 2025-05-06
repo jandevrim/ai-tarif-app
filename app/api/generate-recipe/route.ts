@@ -21,15 +21,8 @@ getStorage(firebaseApp);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 // --- Locale Loader ---
-async function loadLocale(locale: string, req: NextRequest) {
+async function loadLocale(locale: string) {
   try {
-
-const queryLang = new URL(req.url).searchParams.get("lang");
-const body = await req.json();
-const { ingredients, cihazMarkasi = "tumu", lang: bodyLang } = body;
-const effectiveLang = queryLang ?? bodyLang ?? "tr";
-console.log(`🌐 Detected language: "${effectiveLang}"`);
-
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
     console.log(`📁 Locale dosyası okunuyor: ${filePath}`);
     const content = await fs.readFile(filePath, "utf8");
@@ -54,25 +47,20 @@ console.log(`🌐 Detected language: "${effectiveLang}"`);
 // --- Main Handler ---
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { ingredients, cihazMarkasi = "tumu", lang = "tr" } = body;
-
-    // Lang kontrolü ve log
     const queryLang = new URL(req.url).searchParams.get("lang");
-    const effectiveLang = queryLang || lang || "tr";
+    const body = await req.json();
+    const { ingredients, cihazMarkasi = "tumu", lang: bodyLang } = body;
+    const effectiveLang = queryLang ?? bodyLang ?? "tr";
     console.log(`🌐 Detected language: "${effectiveLang}"`);
 
-    const texts = await loadLocale(effectiveLang, req);
+    const texts = await loadLocale(effectiveLang);
 
-    // Validasyon
     if (!ingredients || ingredients.length === 0) {
-      console.warn("⚠️ ingredients boş!");
       return new Response(JSON.stringify({ error: texts.emptyIngredients }), { status: 400 });
     }
 
     const validCihazMarkasi = ["thermomix", "thermogusto", "tumu"];
     if (!validCihazMarkasi.includes(cihazMarkasi)) {
-      console.warn(`⚠️ Geçersiz cihaz markası: ${cihazMarkasi}`);
       return new Response(JSON.stringify({ error: texts.invalidDevice }), { status: 400 });
     }
 
