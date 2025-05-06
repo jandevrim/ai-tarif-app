@@ -24,14 +24,18 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 async function loadLocale(locale: string) {
   try {
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
+    console.log(`📁 Locale dosyası okunuyor: ${filePath}`);
     const content = await fs.readFile(filePath, "utf8");
     const data = JSON.parse(content);
+    console.log(`✅ Locale yüklendi: ${locale}`);
 
     data.extraInstruction = locale === "en" ? "Please prepare the recipe in English." : "";
+    console.log(`📌 extraInstruction: "${data.extraInstruction}"`);
+
     return data;
 
   } catch (error) {
-    console.error(`Dil dosyası (${locale}) yüklenemedi, Türkçe yedeğe geçiliyor.`);
+    console.error(`❌ Dil dosyası (${locale}) yüklenemedi: ${error}. Türkçe yedeğe geçiliyor.`);
     const fallbackPath = path.resolve(process.cwd(), "public/locales/tr.json");
     const fallbackContent = await fs.readFile(fallbackPath, "utf8");
     const fallbackData = JSON.parse(fallbackContent);
@@ -43,24 +47,25 @@ async function loadLocale(locale: string) {
 // --- Main Handler ---
 export async function POST(req: NextRequest) {
   try {
-    // 1. Request Body
     const body = await req.json();
     const { ingredients, cihazMarkasi = "tumu", lang = "tr" } = body;
 
-    // 2. Effective Language
+    // Lang kontrolü ve log
     const queryLang = new URL(req.url).searchParams.get("lang");
     const effectiveLang = queryLang || lang || "tr";
+    console.log(`🌐 Detected language: "${effectiveLang}"`);
 
-    // 3. Load Texts
     const texts = await loadLocale(effectiveLang);
 
-    // 4. Validate Inputs
+    // Validasyon
     if (!ingredients || ingredients.length === 0) {
+      console.warn("⚠️ ingredients boş!");
       return new Response(JSON.stringify({ error: texts.emptyIngredients }), { status: 400 });
     }
 
     const validCihazMarkasi = ["thermomix", "thermogusto", "tumu"];
     if (!validCihazMarkasi.includes(cihazMarkasi)) {
+      console.warn(`⚠️ Geçersiz cihaz markası: ${cihazMarkasi}`);
       return new Response(JSON.stringify({ error: texts.invalidDevice }), { status: 400 });
     }
 
@@ -68,7 +73,8 @@ export async function POST(req: NextRequest) {
       typeof i === "string" ? i : i?.name?.tr || i?.name
     ).filter(Boolean);
 
-    // 5. Select Prompt
+    console.log("🧂 Seçilen malzemeler:", selectedNames);
+
     let baseSystemPrompt = process.env.SYSTEM_PROMPT || "";
     if (cihazMarkasi === "thermomix") {
       baseSystemPrompt = process.env.SYSTEM_PROMPT_THERMOMIX || baseSystemPrompt;
@@ -93,7 +99,8 @@ Yanıtı aşağıdaki JSON formatında döndür:
 }
 `;
 
-    // 6. OpenAI Call
+    console.log("🧠 Final Prompt:\n", finalPrompt);
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -103,7 +110,6 @@ Yanıtı aşağıdaki JSON formatında döndür:
       temperature: 0.7,
     });
 
-    // 7. Parse Response
     const rawText = response.choices[0]?.message?.content?.trim() || "";
     const cleanJson = rawText.replace(/^```json|```$/g, "").trim();
 
@@ -111,7 +117,8 @@ Yanıtı aşağıdaki JSON formatında döndür:
     try {
       recipe = JSON.parse(cleanJson);
     } catch (parseError) {
-      console.error("JSON parse error:", parseError);
+      console.error("❌ JSON parse hatası:", parseError);
+      console.log("🧾 Ham yanıt:", rawText);
       return new Response(JSON.stringify({ error: texts.parseError, raw: rawText }), { status: 500 });
     }
 
@@ -121,7 +128,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
     });
 
   } catch (error: any) {
-    console.error("Tarif oluşturulamadı:", error);
+    console.error("❌ Tarif oluşturulamadı:", error);
     return new Response(JSON.stringify({ error: `Sunucu hatası: ${error.message}` }), {
       status: 500,
     });
