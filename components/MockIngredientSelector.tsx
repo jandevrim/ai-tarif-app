@@ -59,7 +59,7 @@ const MockIngredientSelector: React.FC<Props> = ({
       "et/tavuk/balık": { tr: "Et/Tavuk/Balık Ürünleri", en: "Meat/Chicken/Fish Products" },
       "süt ürünü": { tr: "Süt Ürünleri", en: "Dairy" },
       "bakliyat": { tr: "Bakliyat", en: "Legumes" },
-      "baharat/ot ": { tr: "Baharatlar", en: "Spices" },
+      "baharat/ot": { tr: "Baharatlar", en: "Spices" },
       "sıvılar": { tr: "Sıvılar", en: "Liquids" },
       "diğer": { tr: "Diğer", en: "Other" },
       "yağ/sirke": { tr: "Soslar", en: "Sauces" },
