@@ -21,8 +21,15 @@ getStorage(firebaseApp);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 // --- Locale Loader ---
-async function loadLocale(locale: string) {
+async function loadLocale(locale: string, req: NextRequest) {
   try {
+
+    const queryLang = new URL(req.url).searchParams.get("lang");
+    const body = await req.json();
+    const { ingredients, cihazMarkasi = "tumu" } = body;
+    const langFromBody = body.lang;
+    const effectiveLang = queryLang || langFromBody || "tr";
+
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
     console.log(`📁 Locale dosyası okunuyor: ${filePath}`);
     const content = await fs.readFile(filePath, "utf8");
@@ -55,7 +62,7 @@ export async function POST(req: NextRequest) {
     const effectiveLang = queryLang || lang || "tr";
     console.log(`🌐 Detected language: "${effectiveLang}"`);
 
-    const texts = await loadLocale(effectiveLang);
+    const texts = await loadLocale(effectiveLang, req);
 
     // Validasyon
     if (!ingredients || ingredients.length === 0) {
