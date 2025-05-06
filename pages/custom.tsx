@@ -70,6 +70,7 @@ export default function CustomRecipePage() {
     }
 
     try {
+      console.log("dil:", lang);
       const response = await fetch("/api/generate-recipe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

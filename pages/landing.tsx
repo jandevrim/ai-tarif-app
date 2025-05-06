@@ -224,8 +224,9 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     const payload = {
       ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })),
       cihazMarkasi, // Cihaz markasını payload'a ekle
+      lang: i18n.language.startsWith("en") ? "en" : "tr",
     };
-
+    console.log("API'ye gönderilen veri:", payload);
     try {
       const response = await fetch("/api/generate-recipe", {
         method: "POST",
