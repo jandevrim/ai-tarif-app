@@ -24,11 +24,11 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 async function loadLocale(locale: string, req: NextRequest) {
   try {
 
-    const queryLang = new URL(req.url).searchParams.get("lang");
-    const body = await req.json();
-    const { ingredients, cihazMarkasi = "tumu" } = body;
-    const langFromBody = body.lang;
-    const effectiveLang = queryLang || langFromBody || "tr";
+const queryLang = new URL(req.url).searchParams.get("lang");
+const body = await req.json();
+const { ingredients, cihazMarkasi = "tumu", lang: bodyLang } = body;
+const effectiveLang = queryLang ?? bodyLang ?? "tr";
+console.log(`🌐 Detected language: "${effectiveLang}"`);
 
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
     console.log(`📁 Locale dosyası okunuyor: ${filePath}`);
