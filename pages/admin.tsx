@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 const AdminPanel = () => {
   const [user, setUser] = useState<null | User>(null);
   const [recipes, setRecipes] = useState<{ id: string; [key: string]: any }[]>([]);
-  const [gatewayApprovals, setGatewayApprovals] = useState<{ id: string; [key: string]: any }[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -57,18 +56,32 @@ const AdminPanel = () => {
         <h1 className="text-xl font-bold">Admin Panel</h1>
         <button onClick={handleSignOut} className="px-4 py-2 bg-red-500 text-white rounded-lg">Çıkış Yap</button>
       </div>
-      <div className="grid grid-cols-1 gap-4">
-        {recipes.map((recipe) => (
-          <div key={recipe.id} className="p-4 border rounded-lg shadow">
-            <h2 className="text-lg font-semibold">{recipe.title}</h2>
-            <p>Cihaz Markası: {recipe.cihazMarkasi}</p>
-            <p>Oluşturulma Tarihi: {new Date(recipe.createdAt.seconds * 1000).toLocaleString()}</p>
-            <p>Kullanıcı Tarifi: {recipe.kullaniciTarifi ? 'Evet' : 'Hayır'}</p>
-            <p>Tarif Dili: {recipe.tarifDili}</p>
-            <button onClick={() => handleDelete(recipe.id)} className="px-4 py-2 mt-2 bg-red-500 text-white rounded-lg">Sil</button>
-          </div>
-        ))}
-      </div>
+      <table className="min-w-full border-collapse border border-gray-200">
+        <thead>
+          <tr>
+            <th className="border border-gray-200 p-2">Title</th>
+            <th className="border border-gray-200 p-2">Cihaz Markası</th>
+            <th className="border border-gray-200 p-2">Oluşturulma Tarihi</th>
+            <th className="border border-gray-200 p-2">Kullanıcı Tarifi</th>
+            <th className="border border-gray-200 p-2">Tarif Dili</th>
+            <th className="border border-gray-200 p-2">İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recipes.map((recipe) => (
+            <tr key={recipe.id}>
+              <td className="border border-gray-200 p-2">{recipe.title}</td>
+              <td className="border border-gray-200 p-2">{recipe.cihazMarkasi}</td>
+              <td className="border border-gray-200 p-2">{new Date(recipe.createdAt.seconds * 1000).toLocaleString()}</td>
+              <td className="border border-gray-200 p-2">{recipe.kullaniciTarifi ? 'Evet' : 'Hayır'}</td>
+              <td className="border border-gray-200 p-2">{recipe.tarifDili}</td>
+              <td className="border border-gray-200 p-2">
+                <button onClick={() => handleDelete(recipe.id)} className="px-2 py-1 bg-red-500 text-white rounded">Sil</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
