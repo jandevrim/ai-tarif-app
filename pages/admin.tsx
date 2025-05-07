@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { auth, db } from '../utils/firebaseconfig';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 
@@ -8,8 +9,8 @@ const AdminPanel = () => {
   const [recipes, setRecipes] = useState<{ id: string; [key: string]: any }[]>([]);
   const [gatewayApprovals, setGatewayApprovals] = useState<{ id: string; [key: string]: any }[]>([]);
   const router = useRouter();
-  const auth = getAuth();
-  const db = getFirestore();
+  
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
