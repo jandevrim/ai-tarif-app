@@ -31,8 +31,8 @@ const AdminPanel = () => {
 
   const fetchData = async () => {
     try {
-      const recipesSnapshot = await getDocs(collection(db, 'recipes'));
-      const gatewaySnapshot = await getDocs(collection(db, 'gatewayApprovals'));
+      const recipesSnapshot = await getDocs(collection(db, 'likedRecipes'));
+      const gatewaySnapshot = await getDocs(collection(db, 'users'));
 
       setRecipes(recipesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       setGatewayApprovals(gatewaySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -57,7 +57,7 @@ const AdminPanel = () => {
           <p>{recipes.length}</p>
         </div>
         <div className="p-4 border rounded-lg shadow">
-          <h2 className="text-lg font-semibold">Onay Bekleyen Gateway İşlemleri</h2>
+          <h2 className="text-lg font-semibold">Kullanıcılar</h2>
           <p>{gatewayApprovals.length}</p>
         </div>
       </div>
