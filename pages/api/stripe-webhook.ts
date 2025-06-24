@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("📡 DEBUG – email:", email, "| priceId:", priceId, "| creditsToAdd:", creditsToAdd);
     if (email && creditsToAdd > 0) {
       const userSnapshot = await db.collection("users").where("email", "==", email).get();
-      console.log("💡 LOG – email:", email, "priceId:", priceId, "credits:", creditsToAdd);
+      console.error("💡 LOG – email:", email, "priceId:", priceId, "credits:", creditsToAdd);
       if (!userSnapshot.empty) {
         const userDoc = userSnapshot.docs[0];
         const userId = userDoc.id;
