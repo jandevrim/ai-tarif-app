@@ -207,6 +207,7 @@
   "parseError": "Invalid JSON response received from AI.",
   "serverError": "Server error:",
   "extraInstruction": "",
+  "credit.unit": "Credits",
   "credit.buyButton": "Buy Recipe Credits",
   "credit.backButton": "← Back",
   "credit.title": "Recipe Credits",

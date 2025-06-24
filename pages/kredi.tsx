@@ -53,7 +53,7 @@ export default function KrediYuklePage() {
 
   const handleSelect = async (option: any) => {
     if (!user) {
-      alert("Önce giriş yapmalısınız.");
+      alert(t("auth.loginRequired", "Önce giriş yapmalısınız."));
       return;
     }
 

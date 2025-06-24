@@ -212,6 +212,7 @@
   "parseError": "AI'den geçersiz JSON yanıtı alındı.",
   "serverError": "Sunucu hatası:",
   "extraInstruction": "",
+  "credit.unit": "Kredi",
   "credit.buyButton": "Tarif Kredisi Satın Al",
   "credit.backButton": "← Geri",
   "credit.title": "Tarif Kredileri",
