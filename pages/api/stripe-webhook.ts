@@ -47,9 +47,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Stripe fiyat ID'sine göre kredi sayısı
     const creditMap: Record<string, number> = {
-      "price_1RKIW3S8FEqkrKCh7YYRLRfo": 20,
-      "price_1RKIWiS8FEqkrKChEfwiMBZB": 50,
-      "price_1RKIXGS8FEqkrKChkWOGsH4l": 100,
+      "price_0RKI7IvafFXLIFZkLLt1OA2H": 20,
+      "price_0RKI88vafFXLIFZk9Xxpf1ai": 50,
+      "price_0RKI9MvafFXLIFZkgjOev9IP": 100,
     };
 
     const creditsToAdd = creditMap[priceId ?? ""] ?? 0;
