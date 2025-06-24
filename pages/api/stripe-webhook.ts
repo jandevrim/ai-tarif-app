@@ -2,12 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { buffer } from "micro";
 import Stripe from "stripe";
 import admin from "firebase-admin";
-
 // Stripe başlat
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil", // stabilize edilmiş versiyon
 });
-
 // Firebase init (tek seferlik)
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -15,7 +13,6 @@ if (!admin.apps.length) {
   });
 }
 const db = admin.firestore();
-
 // Stripe Webhook yapılandırması
 export const config = {
   api: {
