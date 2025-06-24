@@ -11,21 +11,21 @@ const creditOptions = [
     amount: 20,
     price: 3.99,
     label: "🍳",
-    stripePriceId: "price_1RKIW3S8FEqkrKCh7YYRLRfo",
+    stripePriceId: "price_0RKI7IvafFXLIFZkLLt1OA2H",
   },
   {
     id: "standard",
     amount: 50,
     price: 7.99,
     label: "🍳🍳🍳",
-    stripePriceId: "price_1RKIWiS8FEqkrKChEfwiMBZB",
+    stripePriceId: "price_0RKI88vafFXLIFZk9Xxpf1ai",
   },
   {
     id: "pro",
     amount: 100,
     price: 13.99,
     label: "🥚🥚🥚🥚🥚🥚🥚",
-    stripePriceId: "price_1RKIXGS8FEqkrKChkWOGsH4l",
+    stripePriceId: "price_0RKI9MvafFXLIFZkgjOev9IP",
   },
 ];
 
