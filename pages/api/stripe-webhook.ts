@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     const creditsToAdd = creditMap[priceId ?? ""] ?? 0;
-
+    console.log("📡 DEBUG – email:", email, "| priceId:", priceId, "| creditsToAdd:", creditsToAdd);
     if (email && creditsToAdd > 0) {
       const userSnapshot = await db.collection("users").where("email", "==", email).get();
       console.log("💡 LOG – email:", email, "priceId:", priceId, "credits:", creditsToAdd);
