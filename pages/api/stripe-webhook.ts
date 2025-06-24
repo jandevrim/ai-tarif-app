@@ -2,18 +2,23 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { buffer } from "micro";
 import Stripe from "stripe";
 import admin from "firebase-admin";
+
 // Stripe başlat
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-04-30.basil", // stabilize edilmiş versiyon
+  apiVersion: "2025-04-30.basil",
 });
+
 // Firebase init (tek seferlik)
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)),
+    credential: admin.credential.cert(
+      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)
+    ),
   });
 }
 const db = admin.firestore();
-// Stripe Webhook yapılandırması
+
+// ✅ Webhook yapılandırması
 export const config = {
   api: {
     bodyParser: false,
@@ -25,6 +30,7 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).end();
 
+  // ✅ buffer sadece burada kullanılmalı
   const rawBody = await buffer(req);
   const sig = req.headers["stripe-signature"] as string;
 
@@ -41,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const session = event.data.object as Stripe.Checkout.Session;
     const email = session.customer_email ?? session.metadata?.email;
     const priceId = session.metadata?.priceId || session.metadata?.packageId;
-    // Stripe fiyat ID'sine göre kredi sayısı
+
     const creditMap: Record<string, number> = {
       "price_0RKI7IvafFXLIFZkLLt1OA2H": 20,
       "price_0RKI88vafFXLIFZk9Xxpf1ai": 50,
@@ -50,19 +56,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const creditsToAdd = creditMap[priceId ?? ""] ?? 0;
     console.log("📡 DEBUG – email:", email, "| priceId:", priceId, "| creditsToAdd:", creditsToAdd);
+
     if (email && creditsToAdd > 0) {
       const userSnapshot = await db.collection("users").where("email", "==", email).get();
       console.error("💡 LOG – email:", email, "priceId:", priceId, "credits:", creditsToAdd);
+
       if (!userSnapshot.empty) {
         const userDoc = userSnapshot.docs[0];
         const userId = userDoc.id;
 
-        // 🔼 recipeCredits alanına ekleme
         await db.doc(`users/${userId}`).update({
           recipeCredits: admin.firestore.FieldValue.increment(creditsToAdd),
         });
 
-        // 📄 İşlem geçmişi
         await db.collection("creditPurchases").add({
           userId,
           email,
