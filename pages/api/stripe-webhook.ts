@@ -42,9 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const email = session.customer_email;
+    const email = session.customer_email ?? session.metadata?.email;
     const priceId = session.metadata?.priceId || session.metadata?.packageId;
-
     // Stripe fiyat ID'sine göre kredi sayısı
     const creditMap: Record<string, number> = {
       "price_0RKI7IvafFXLIFZkLLt1OA2H": 20,

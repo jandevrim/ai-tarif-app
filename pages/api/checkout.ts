@@ -29,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       customer_email: email || undefined, // ✅ email burada kullanılabilir
       metadata: {
         priceId, // ✅ Webhook için gerekli
+        email 
       },
     });
 
