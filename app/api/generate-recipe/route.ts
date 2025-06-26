@@ -24,24 +24,36 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 async function loadLocale(locale: string) {
   try {
     const filePath = path.resolve(process.cwd(), `public/locales/${locale}.json`);
-    console.log(`📁 Locale dosyası okunuyor: ${filePath}`);
     const content = await fs.readFile(filePath, "utf8");
-    const data = JSON.parse(content);
-    console.log(`✅ Locale yüklendi: ${locale}`);
-
-  //data.extraInstruction = locale === "en" ? "Please prepare the recipe in English." : "";
-   // console.log(`📌 extraInstruction: "${data.extraInstruction}"`);
-
-    return data;
-
-  } catch (error) {
-    console.error(`❌ Dil dosyası (${locale}) yüklenemedi: ${error}. Türkçe yedeğe geçiliyor.`);
+    return JSON.parse(content);
+  } catch {
     const fallbackPath = path.resolve(process.cwd(), "public/locales/tr.json");
     const fallbackContent = await fs.readFile(fallbackPath, "utf8");
-    const fallbackData = JSON.parse(fallbackContent);
-    fallbackData.extraInstruction = "";
-    return fallbackData;
+    return JSON.parse(fallbackContent);
   }
+}
+
+// --- System Prompt Seçici ---
+function getSystemPrompt(cihaz: string, lang: string) {
+  const suffix = cihaz === "thermomix"
+    ? "THERMOMIX"
+    : cihaz === "thermogusto"
+    ? "THERMOGUSTO"
+    : "";
+
+  const envKey = `SYSTEM_PROMPT_${suffix}${lang === "en" ? "_EN" : ""}`;
+  return process.env[envKey] || process.env.SYSTEM_PROMPT || "";
+}
+
+// --- Final Prompt Oluşturucu ---
+function buildPrompt(basePrompt: string, ingredients: string[], lang: string) {
+  const list = ingredients.join(", ");
+  const label = lang === "en" ? "Selected ingredients" : "Seçilen malzemeler";
+  const instruction = lang === "en"
+    ? `Please respond in the following JSON format:\n\n{\n  "title": "...",\n  "summary": "...",\n  "duration": "...",\n  "ingredients": ["...", "..."],\n  "steps": ["...", "..."]\n}`
+    : `Yanıtı aşağıdaki JSON formatında döndür:\n\n{\n  "title": "...",\n  "summary": "...",\n  "duration": "...",\n  "ingredients": ["...", "..."],\n  "steps": ["...", "..."]\n}`;
+
+  return `${basePrompt}\n\n${label}: ${list}\n\n${instruction}`;
 }
 
 // --- Main Handler ---
@@ -51,7 +63,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { ingredients, cihazMarkasi = "tumu", lang: bodyLang } = body;
     const effectiveLang = queryLang ?? bodyLang ?? "tr";
-    
+
     const texts = await loadLocale(effectiveLang);
 
     if (!ingredients || ingredients.length === 0) {
@@ -67,45 +79,8 @@ export async function POST(req: NextRequest) {
       typeof i === "string" ? i : i?.name?.tr || i?.name
     ).filter(Boolean);
 
-    let baseSystemPrompt = process.env.SYSTEM_PROMPT || "";
-    if (cihazMarkasi === "thermomix") {
-      baseSystemPrompt = process.env.SYSTEM_PROMPT_THERMOMIX || baseSystemPrompt;
-    } else if (cihazMarkasi === "thermogusto") {
-      baseSystemPrompt = process.env.SYSTEM_PROMPT_THERMOGUSTO || baseSystemPrompt;
-    }
-
-   const ingredientsList = selectedNames.join(", ");
-
-const finalPrompt =
-  effectiveLang === "en"
-    ? `${baseSystemPrompt}
-
-Selected ingredients: ${ingredientsList}
-
-Please respond in the following JSON format:
-
-{
-  "title": "...",
-  "summary": "...",
-  "duration": "...",
-  "ingredients": ["...", "..."],
-  "steps": ["...", "..."]
-}
-`
-    : `${baseSystemPrompt}
-
-Seçilen malzemeler: ${ingredientsList}
-
-Yanıtı aşağıdaki JSON formatında döndür:
-
-{
-  "title": "...",
-  "summary": "...",
-  "duration": "...",
-  "ingredients": ["...", "..."],
-  "steps": ["...", "..."]
-}
-`;
+    const baseSystemPrompt = getSystemPrompt(cihazMarkasi, effectiveLang);
+    const finalPrompt = buildPrompt(baseSystemPrompt, selectedNames, effectiveLang);
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -122,7 +97,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
     let recipe;
     try {
       recipe = JSON.parse(cleanJson);
-    } catch (parseError) {
+    } catch {
       return new Response(JSON.stringify({ error: texts.parseError, raw: rawText }), { status: 500 });
     }
 
@@ -130,9 +105,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-
   } catch (error: any) {
- 
     return new Response(JSON.stringify({ error: `Sunucu hatası: ${error.message}` }), {
       status: 500,
     });
