@@ -210,6 +210,43 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       setSelectedIngredients([...selectedIngredients, ingredient]);
     }
   };
+const saveRecipeToLikedRecipes = async (
+  recipe: {
+    title: string;
+    summary?: string;
+    ingredients: string[];
+    steps: string[];
+  },
+  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu"
+): Promise<boolean> => {
+  try {
+    const user = getAuth().currentUser;
+    if (!user) {
+      alert(t("customRecipe.mustLoginToLike"));
+      return false;
+    }
+
+    await addDoc(collection(db, "likedRecipes"), {
+      title: recipe.title,
+      summary: recipe.summary,
+      ingredients: recipe.ingredients,
+      steps: recipe.steps,
+      cihazMarkasi: cihazMarkasi,
+      tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
+      kullaniciTarifi: true,
+      begeniSayisi: 1,
+      userId: user.uid,
+      createdAt: new Date(),
+      recipeText: recipe.steps.join("\n"),
+    });
+
+    return true;
+  } catch (err) {
+    console.error("likedRecipes'a kayıt hatası:", err);
+    alert(t("customRecipe.saveError"));
+    return false;
+  }
+};
 
   const handleGenerateRecipe = async () => {
     setIsLoading(true);
@@ -257,43 +294,6 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
   };
 //Yeni Save Fonksiyonu
 
-const saveRecipeToLikedRecipes = async (
-  recipe: {
-    title: string;
-    summary?: string;
-    ingredients: string[];
-    steps: string[];
-  },
-  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu"
-): Promise<boolean> => {
-  try {
-    const user = getAuth().currentUser;
-    if (!user) {
-      alert(t("customRecipe.mustLoginToLike"));
-      return false;
-    }
-
-    await addDoc(collection(db, "likedRecipes"), {
-      title: recipe.title,
-      summary: recipe.summary,
-      ingredients: recipe.ingredients,
-      steps: recipe.steps,
-      cihazMarkasi: cihazMarkasi,
-      tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
-      kullaniciTarifi: true,
-      begeniSayisi: 1,
-      userId: user.uid,
-      createdAt: new Date(),
-      recipeText: recipe.steps.join("\n"),
-    });
-
-    return true;
-  } catch (err) {
-    console.error("likedRecipes'a kayıt hatası:", err);
-    alert(t("customRecipe.saveError"));
-    return false;
-  }
-};
 
 
   const handleStartOver = () => {
