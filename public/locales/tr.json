@@ -219,5 +219,6 @@
   "credit.description": "Tarif kredisi satın alarak daha fazla tarif oluşturabilirsiniz. Her tarif 1 kredi gerektirir.",
   "credit.success": "Tarif kredisi başarıyla satın alındı!",
   "credit.error": "Satın alma sırasında hata oluştu.",
-  "credit.limitReached": "10 tarif sınırına ulaştınız. Devam etmek için üyelik gereklidir." 
+  "credit.limitReached": "10 tarif sınırına ulaştınız. Devam etmek için üyelik gereklidir." ,
+  "likedRecipes.steps":  "Hazırlık Adımları"
 }
