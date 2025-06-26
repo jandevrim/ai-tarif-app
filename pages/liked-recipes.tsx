@@ -1,5 +1,3 @@
-// 🔁 Değişiklik yapılmış tam bileşen
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -97,12 +95,12 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
       await updateDoc(ref, { begeniSayisi: (currentCount ?? 0) + 1 });
       fetchRecipes();
     } catch (err) {
-      console.error("Beğeni güncellenemedi", err);
+      console.error("Be\u011Feni g\u00FCncellenemedi", err);
     }
   };
 
   useEffect(() => {
-    fetchRecipes(); // ilk yükleme
+    fetchRecipes();
   }, []);
 
   const filteredRecipes = recipes.filter((r) => {
@@ -151,7 +149,6 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
       </div>
 
       {expanded && selectedRecipe ? (
-        // detay görünüm
         <div className="bg-white p-6 rounded-xl shadow-lg">
           {imageSrc && (
             <img
@@ -254,7 +251,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
                 disabled={loading}
                 className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
               >
-                {loading ? "Yükleniyor..." : "Daha fazla göster"}
+                {loading ? "Y\u00FCkleniyor..." : "Daha fazla g\u00F6ster"}
               </button>
             </div>
           )}

@@ -219,14 +219,12 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     setShowSelector(false);
 
     const cihazMarkasi = localStorage.getItem("cihazMarkasi") || "tumu"; // Cihaz markasını al
-    console.log("Cihaz markası (handleGenerateRecipe):", cihazMarkasi); // Log ekledim
-
+    //bu aşaya dil kısmını ekle TODO
     const payload = {
       ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })),
       cihazMarkasi, // Cihaz markasını payload'a ekle
       lang: i18n.language.startsWith("en") ? "en" : "tr",
     };
-    console.log("API'ye gönderilen veri:", payload);
     try {
       const response = await fetch("/api/generate-recipe", {
         method: "POST",
@@ -241,19 +239,16 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
 
       const data = await response.json();
       if (!data || typeof data !== 'object' || !data.steps || !data.ingredients || typeof data.title !== 'string') {
-        console.error("Invalid recipe data structure received from API:", data);
         throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
       }
 
       setRecipe({ ...data, cihazMarkasi }); // Cihaz markasını recipe'ye ekle
-      console.log("API'den dönen veri:", data);
-
       const user = getAuth().currentUser;
       if (user) {
         await decrementRecipeCredit(user.uid);
+        const success = await saveRecipeToLikedRecipes(recipe, cihazMarkasi);
       }
     } catch (err: any) {
-      console.error("API call failed:", err);
       setError(err.message || t('customRecipe.errorCreatingRecipe'));
       setRecipe(null);
     } finally {
@@ -379,9 +374,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         <ShareButtons title={recipe.title} recipeText={recipe.steps.join('\n')} />
         try {
           await navigator.clipboard.writeText(`${recipe.title}\n\n${recipe.steps.join('\n')}`);
-          console.log("Tarif panoya kopyalandı ✅");
         } catch (err) {
-          console.error("Kopyalama işlemi başarısız:", err);
         }
       };
       const handleLike = async () => {
@@ -412,6 +405,42 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
           console.error(err);
         }
       };
+     const saveRecipeToLikedRecipes = async (
+  recipe: {
+    title: string;
+    summary?: string;
+    ingredients: string[];
+    steps: string[];
+  },
+  cihazMarkasi?: "thermomix" | "thermogusto" | "tumu"
+): Promise<boolean> => {
+  try {
+    const user = getAuth().currentUser;
+    if (!user) {
+      alert(t("customRecipe.mustLoginToLike"));
+      return false;
+    }
+
+    await addDoc(collection(db, "likedRecipes"), {
+      title: recipe.title,
+      summary: recipe.summary,
+      ingredients: recipe.ingredients,
+      steps: recipe.steps,
+      cihazMarkasi: cihazMarkasi,
+      tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
+      kullaniciTarifi: true,
+      begeniSayisi: 1,
+      userId: user.uid,
+      createdAt: new Date(),
+      recipeText: recipe.steps.join("\n"),
+    });
+
+    return true;
+  } catch (err) {
+    alert(t("customRecipe.saveError"));
+    return false;
+  }
+};
       const handleShare = async () => {
         if ('share' in navigator) {
           try {
@@ -452,7 +481,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
           </div>
         </div>
       );
-    }
+    };
     const handleStartOver = () => {
       setSelectedIngredients([]);
       setShowSelector(false);
@@ -589,4 +618,8 @@ export default function App() {
       </div>
     </ErrorBoundary>
   );
+}
+
+function saveRecipeToLikedRecipes(recipe: any, cihazMarkasiLocal: any) {
+  throw new Error('Function not implemented.');
 }
