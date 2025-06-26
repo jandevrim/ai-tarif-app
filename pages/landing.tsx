@@ -220,19 +220,19 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
             return;
           }
       
-          await addDoc(collection(db, "likedRecipes"), {
-            title: recipe.title,
-            summary: recipe.summary,
-            ingredients: recipe.ingredients,
-            steps: recipe.steps,
-            cihazMarkasi: recipe.cihazMarkasi || "tumu",
-            tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
-            kullaniciTarifi: false,
-            begeniSayisi: 1,
-            userId: user.uid,
-            createdAt: new Date(),
-            recipeText: recipe.steps.join('\n')
-          });
+         // await addDoc(collection(db, "likedRecipes"), {
+         //   title: recipe.title,
+         //   summary: recipe.summary,
+         //   ingredients: recipe.ingredients,
+         //   steps: recipe.steps,
+         //   cihazMarkasi: recipe.cihazMarkasi || "tumu",
+         //   tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
+         //   kullaniciTarifi: false,
+         //   begeniSayisi: 1,
+         //   userId: user.uid,
+         //   createdAt: new Date(),
+         //   recipeText: recipe.steps.join('\n')
+         // });
       
           alert(t('customRecipe.likeSuccess'));
         } catch (err) {

@@ -29,8 +29,8 @@ async function loadLocale(locale: string) {
     const data = JSON.parse(content);
     console.log(`✅ Locale yüklendi: ${locale}`);
 
-    data.extraInstruction = locale === "en" ? "Please prepare the recipe in English." : "";
-    console.log(`📌 extraInstruction: "${data.extraInstruction}"`);
+  //data.extraInstruction = locale === "en" ? "Please prepare the recipe in English." : "";
+   // console.log(`📌 extraInstruction: "${data.extraInstruction}"`);
 
     return data;
 
@@ -51,8 +51,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { ingredients, cihazMarkasi = "tumu", lang: bodyLang } = body;
     const effectiveLang = queryLang ?? bodyLang ?? "tr";
-    console.log(`🌐 Detected language: "${effectiveLang}"`);
-
+    
     const texts = await loadLocale(effectiveLang);
 
     if (!ingredients || ingredients.length === 0) {
@@ -68,8 +67,6 @@ export async function POST(req: NextRequest) {
       typeof i === "string" ? i : i?.name?.tr || i?.name
     ).filter(Boolean);
 
-    console.log("🧂 Seçilen malzemeler:", selectedNames);
-
     let baseSystemPrompt = process.env.SYSTEM_PROMPT || "";
     if (cihazMarkasi === "thermomix") {
       baseSystemPrompt = process.env.SYSTEM_PROMPT_THERMOMIX || baseSystemPrompt;
@@ -77,11 +74,27 @@ export async function POST(req: NextRequest) {
       baseSystemPrompt = process.env.SYSTEM_PROMPT_THERMOGUSTO || baseSystemPrompt;
     }
 
-    const finalPrompt = `${baseSystemPrompt}
+   const ingredientsList = selectedNames.join(", ");
 
-Seçilen malzemeler: ${selectedNames.join(", ")}
+const finalPrompt =
+  effectiveLang === "en"
+    ? `${baseSystemPrompt}
 
-${texts.extraInstruction}
+Selected ingredients: ${ingredientsList}
+
+Please respond in the following JSON format:
+
+{
+  "title": "...",
+  "summary": "...",
+  "duration": "...",
+  "ingredients": ["...", "..."],
+  "steps": ["...", "..."]
+}
+`
+    : `${baseSystemPrompt}
+
+Seçilen malzemeler: ${ingredientsList}
 
 Yanıtı aşağıdaki JSON formatında döndür:
 
@@ -93,8 +106,6 @@ Yanıtı aşağıdaki JSON formatında döndür:
   "steps": ["...", "..."]
 }
 `;
-
-    console.log("🧠 Final Prompt:\n", finalPrompt);
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -112,8 +123,6 @@ Yanıtı aşağıdaki JSON formatında döndür:
     try {
       recipe = JSON.parse(cleanJson);
     } catch (parseError) {
-      console.error("❌ JSON parse hatası:", parseError);
-      console.log("🧾 Ham yanıt:", rawText);
       return new Response(JSON.stringify({ error: texts.parseError, raw: rawText }), { status: 500 });
     }
 
@@ -123,7 +132,7 @@ Yanıtı aşağıdaki JSON formatında döndür:
     });
 
   } catch (error: any) {
-    console.error("❌ Tarif oluşturulamadı:", error);
+ 
     return new Response(JSON.stringify({ error: `Sunucu hatası: ${error.message}` }), {
       status: 500,
     });
