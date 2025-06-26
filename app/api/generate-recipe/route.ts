@@ -56,6 +56,22 @@ function buildPrompt(basePrompt: string, ingredients: string[], lang: string) {
   return `${basePrompt}\n\n${label}: ${list}\n\n${instruction}`;
 }
 
+// --- Step Merge Helper ---
+function mergeCookingLines(steps: string[]): string[] {
+  const merged: string[] = [];
+  for (let i = 0; i < steps.length; i++) {
+    const current = steps[i];
+    const next = steps[i + 1];
+    if (next?.trim().startsWith("→")) {
+      merged.push(`${current}\n${next}`);
+      i++; // skip next
+    } else {
+      merged.push(current);
+    }
+  }
+  return merged;
+}
+
 // --- Main Handler ---
 export async function POST(req: NextRequest) {
   try {
@@ -75,9 +91,13 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: texts.invalidDevice }), { status: 400 });
     }
 
-    const selectedNames = ingredients.map((i: any) =>
-      typeof i === "string" ? i : i?.name?.tr || i?.name
-    ).filter(Boolean);
+    // 👇 Malzeme isimleri dile göre
+    const selectedNames = ingredients.map((i: any) => {
+      if (typeof i === "string") return i;
+      return effectiveLang === "en"
+        ? i?.name?.en || i?.name?.tr || i?.name
+        : i?.name?.tr || i?.name?.en || i?.name;
+    }).filter(Boolean);
 
     const baseSystemPrompt = getSystemPrompt(cihazMarkasi, effectiveLang);
     const finalPrompt = buildPrompt(baseSystemPrompt, selectedNames, effectiveLang);
@@ -97,6 +117,12 @@ export async function POST(req: NextRequest) {
     let recipe;
     try {
       recipe = JSON.parse(cleanJson);
+
+      // 👇 Adımları birleştir (örnek: "Add X", sonra "→ 3 dk / ...")
+      if (Array.isArray(recipe.steps)) {
+        recipe.steps = mergeCookingLines(recipe.steps);
+      }
+
     } catch {
       return new Response(JSON.stringify({ error: texts.parseError, raw: rawText }), { status: 500 });
     }
