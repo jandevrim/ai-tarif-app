@@ -3,6 +3,8 @@ import { auth, db } from '../utils/firebaseconfig';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc } from 'firebase/firestore';
+import { query, orderBy } from 'firebase/firestore';
+
 
 const AdminPanel = () => {
   const [user, setUser] = useState<null | User>(null);
@@ -29,17 +31,23 @@ const AdminPanel = () => {
     return () => unsubscribe();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const recipesSnapshot = await getDocs(collection(db, 'likedRecipes'));
-      const usersSnapshot = await getDocs(collection(db, 'users'));
+  
 
-      setRecipes(recipesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    } catch (error) {
-      console.error('Veriler alınırken hata oluştu:', error);
-    }
-  };
+const fetchData = async () => {
+  try {
+    const recipesRef = collection(db, 'likedRecipes');
+    const recipesQuery = query(recipesRef, orderBy('createdAt', 'desc')); // veya 'asc' için artan sıralama
+
+    const usersRef = collection(db, 'users');
+    const usersSnapshot = await getDocs(usersRef);
+    const recipesSnapshot = await getDocs(recipesQuery);
+
+    setRecipes(recipesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  } catch (error) {
+    console.error('Veriler alınırken hata oluştu:', error);
+  }
+};
 
   const handleSignOut = () => {
     signOut(auth).then(() => router.push('/'));
