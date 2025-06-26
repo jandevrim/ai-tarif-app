@@ -46,8 +46,8 @@ function getSystemPrompt(cihaz: string, lang: string) {
 }
 
 // --- Final Prompt Oluşturucu ---
-function buildPrompt(basePrompt: string, ingredients: string[], lang: string) {
-  const list = ingredients.join(", ");
+function buildPrompt(basePrompt: string, selectedNames: string[], lang: string) {
+  const list = selectedNames.join(", "); // 
   const label = lang === "en" ? "Selected ingredients" : "Seçilen malzemeler";
   const instruction = lang === "en"
     ? `Please respond in the following JSON format:\n\n{\n  "title": "...",\n  "summary": "...",\n  "duration": "...",\n  "ingredients": ["...", "..."],\n  "steps": ["...", "..."]\n}`
