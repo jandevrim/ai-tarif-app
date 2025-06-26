@@ -19,7 +19,7 @@ import { app } from "../utils/firebaseconfig";
 import { useTranslation } from "react-i18next";
 
 const db = getFirestore(app);
-const router = useRouter();
+
 interface Recipe {
   id: string;
   title: string;
@@ -38,7 +38,7 @@ interface Recipe {
   const [search, setSearch] = useState<string>("");
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter(); // ✅ doğru yer burası
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language.startsWith("en") ? "en" : "tr";
 
