@@ -23,6 +23,7 @@ import ErrorBoundary from "../components/ErrorBoundary";
 import MockIngredientSelector from "../components/MockIngredientSelector";
 import i18n from '../utils/i18n';
 import { query, where } from "firebase/firestore";
+import { saveRecipeToLikedRecipes } from "../utils/saveRecipeToLikedRecipes";
 
 
 const db = getFirestore(app);
@@ -276,9 +277,18 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       
       const user = getAuth().currentUser;
       if (user) {
-        await decrementRecipeCredit(user.uid);
-        await handleLike(); //
+      await decrementRecipeCredit(user.uid);
+      await saveRecipeToLikedRecipes({
+        userId: user.uid,
+        title: recipe.title,
+        summary: recipe.summary,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        cihazMarkasi: recipe.cihazMarkasi || "tumu",
+        tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
+  });
       }
+      
     } catch (err: any) {
       setError(err.message || t('customRecipe.errorCreatingRecipe'));
       setRecipe(null);
