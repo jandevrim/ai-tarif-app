@@ -246,6 +246,16 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       const user = getAuth().currentUser;
       if (user) {
         await decrementRecipeCredit(user.uid);
+        await addDoc(collection(db, "likedRecipes"), {
+            title: recipe.title,
+            ingredients: recipe.ingredients,
+            steps: recipe.steps,
+            cihazMarkasi,
+            begeniSayisi: 1,
+            userId: user.uid,
+            createdAt: new Date(),
+            recipeText: recipe.steps.join("\n"),
+          });
       }
     } catch (err: any) {
       setError(err.message || t('customRecipe.errorCreatingRecipe'));
