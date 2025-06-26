@@ -211,6 +211,36 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     }
   };
 
+   const handleLike = async () => {
+        try {
+          const user = getAuth().currentUser;
+          if (!user) {
+            alert(t('customRecipe.mustLoginToLike'));
+            return;
+          }
+      
+          await addDoc(collection(db, "likedRecipes"), {
+            title: recipe.title,
+            summary: recipe.summary,
+            ingredients: recipe.ingredients,
+            steps: recipe.steps,
+            cihazMarkasi: recipe.cihazMarkasi || "tumu",
+            tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
+            kullaniciTarifi: false,
+            begeniSayisi: 1,
+            userId: user.uid,
+            createdAt: new Date(),
+            recipeText: recipe.steps.join('\n')
+          });
+      
+          alert(t('customRecipe.likeSuccess'));
+        } catch (err) {
+          alert(t('customRecipe.saveError'));
+          console.error(err);
+        }
+      };
+
+
   const handleGenerateRecipe = async () => {
     setIsLoading(true);
     setError(null);
@@ -243,19 +273,11 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       }
 
       setRecipe({ ...data, cihazMarkasi }); // Cihaz markasını recipe'ye ekle
+      
       const user = getAuth().currentUser;
       if (user) {
         await decrementRecipeCredit(user.uid);
-        await addDoc(collection(db, "likedRecipes"), {
-            title: recipe.title,
-            ingredients: recipe.ingredients,
-            steps: recipe.steps,
-            cihazMarkasi,
-            begeniSayisi: 1,
-            userId: user.uid,
-            createdAt: new Date(),
-            recipeText: recipe.steps.join("\n"),
-          });
+        await handleLike(); //
       }
     } catch (err: any) {
       setError(err.message || t('customRecipe.errorCreatingRecipe'));
@@ -385,34 +407,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
         } catch (err) {
         }
       };
-      const handleLike = async () => {
-        try {
-          const user = getAuth().currentUser;
-          if (!user) {
-            alert(t('customRecipe.mustLoginToLike'));
-            return;
-          }
-      
-          await addDoc(collection(db, "likedRecipes"), {
-            title: recipe.title,
-            summary: recipe.summary,
-            ingredients: recipe.ingredients,
-            steps: recipe.steps,
-            cihazMarkasi: cihazMarkasiLocal,
-            tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
-            kullaniciTarifi: false,
-            begeniSayisi: 1,
-            userId: user.uid,
-            createdAt: new Date(),
-            recipeText: recipe.steps.join('\n')
-          });
-      
-          alert(t('customRecipe.likeSuccess'));
-        } catch (err) {
-          alert(t('customRecipe.saveError'));
-          console.error(err);
-        }
-      };
+     
       const handleShare = async () => {
         if ('share' in navigator) {
           try {
