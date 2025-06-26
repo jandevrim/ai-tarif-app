@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/router";
 import {
   getFirestore,
   collection,
@@ -18,7 +19,7 @@ import { app } from "../utils/firebaseconfig";
 import { useTranslation } from "react-i18next";
 
 const db = getFirestore(app);
-
+const router = useRouter();
 interface Recipe {
   id: string;
   title: string;
@@ -147,7 +148,7 @@ interface Recipe {
             <div
               key={recipe.id}
               className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
-                onClick={() => onNavigate(`/recipe/step/${recipe.id}`)}
+                 onClick={() => router.push(`/liked-recipes-grid/${recipe.id}`)}
             >
               <h2 className="text-lg font-semibold mb-1">{recipe.title}</h2>
               <p className="text-sm text-gray-600 mb-2">
