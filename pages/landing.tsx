@@ -283,7 +283,7 @@ const saveRecipeToLikedRecipes = async (
       const user = getAuth().currentUser;
       if (user) {
         await decrementRecipeCredit(user.uid);
-        const success = await saveRecipeToLikedRecipes(recipe, cihazMarkasi as "thermomix" | "thermogusto" | "tumu");
+        //const success = await saveRecipeToLikedRecipes(recipe, cihazMarkasi as "thermomix" | "thermogusto" | "tumu");
       }
     } catch (err: any) {
       setError(err.message || t('customRecipe.errorCreatingRecipe'));
