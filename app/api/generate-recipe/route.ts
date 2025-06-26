@@ -92,12 +92,13 @@ export async function POST(req: NextRequest) {
     }
 
     // 👇 Malzeme isimleri dile göre
-    const selectedNames = ingredients.map((i: any) => {
-      if (typeof i === "string") return i;
-      return effectiveLang === "en"
-        ? i?.name?.en || i?.name?.tr || i?.name
-        : i?.name?.tr || i?.name?.en || i?.name;
-    }).filter(Boolean);
+const selectedNames = ingredients.map((i: any) => {
+  if (typeof i === "string") return i; // burada hala risk var
+  const en = i?.name?.en?.trim();
+  const tr = i?.name?.tr?.trim();
+  if (effectiveLang === "en") return en || tr || i?.name;
+  return tr || en || i?.name;
+}).filter(Boolean);
 
     const baseSystemPrompt = getSystemPrompt(cihazMarkasi, effectiveLang);
     const finalPrompt = buildPrompt(baseSystemPrompt, selectedNames, effectiveLang);
