@@ -253,7 +253,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     //bu aşaya dil kısmını ekle TODO
     const payload = {
       ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })),
-      cihazMarkasi, // Cihaz markasını payload'a ekle
+      cihazMarkasi: cihazMarkasi as "tumu" | "thermomix" | "thermogusto" | undefined, // Cihaz markasını payload'a ekle
       lang: i18n.language.startsWith("en") ? "en" : "tr",
     };
     try {
@@ -272,23 +272,21 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
       if (!data || typeof data !== 'object' || !data.steps || !data.ingredients || typeof data.title !== 'string') {
         throw new Error("API'den geçersiz veya eksik tarif verisi alındı.");
       }
-
       setRecipe({ ...data, cihazMarkasi }); // Cihaz markasını recipe'ye ekle
       
       const user = getAuth().currentUser;
       if (user) {
       await decrementRecipeCredit(user.uid);
-      await saveRecipeToLikedRecipes({
-        userId: user.uid,
-        title: recipe.title,
-        summary: recipe.summary,
-        ingredients: recipe.ingredients,
-        steps: recipe.steps,
-        cihazMarkasi: recipe.cihazMarkasi || "tumu",
+     await saveRecipeToLikedRecipes({
+        title: data.title,
+        summary: data.summary,
+        ingredients: data.ingredients,
+        steps: data.steps,
+        cihazMarkasi: cihazMarkasi as "tumu" | "thermomix" | "thermogusto",
         tarifDili: i18n.language.startsWith("en") ? "en" : "tr",
-  });
+        userId: user.uid
+      });
       }
-      
     } catch (err: any) {
       setError(err.message || t('customRecipe.errorCreatingRecipe'));
       setRecipe(null);
