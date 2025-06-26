@@ -147,6 +147,7 @@ interface Recipe {
             <div
               key={recipe.id}
               className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
+              onClick={() => onNavigate(`/liked-recipes/${recipe.id}`)} // 
             >
               <h2 className="text-lg font-semibold mb-1">{recipe.title}</h2>
               <p className="text-sm text-gray-600 mb-2">
