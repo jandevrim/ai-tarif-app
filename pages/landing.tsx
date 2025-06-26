@@ -25,7 +25,6 @@ import i18n from '../utils/i18n';
 import { query, where } from "firebase/firestore";
 import { saveRecipeToLikedRecipes } from "../utils/saveRecipeToLikedRecipes";
 
-
 const db = getFirestore(app);
 interface Ingredient {
   id: string;
@@ -147,7 +146,10 @@ const fetchRecipeCount = async () => {
             selectedDevice={selectedDevice}
             onSelectDevice={setSelectedDevice}
             />
-          <LikedRecipesButton recipeCount={recipeCount} onClick={() => onNavigate("/liked-recipes")} />
+          <LikedRecipesButton
+  recipeCount={recipeCount}
+  onClick={() => onNavigate("/liked-recipes")}
+/>
         </div>
         <CategoryButtons />
         <AuthSection

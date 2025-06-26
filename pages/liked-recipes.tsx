@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import AuthFooter from "../components/AuthFooter";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   getFirestore,
   collection,
@@ -26,21 +25,16 @@ interface Recipe {
   summary?: string;
   duration?: string;
   ingredients: string[];
-  steps?: string[];
   cihazMarkasi?: "thermomix" | "thermogusto" | "tumu";
   tarifDili?: string;
-  kullaniciTarifi?: boolean;
   begeniSayisi?: number;
   imageUrl?: string;
-  image?: string;
 }
 
-const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }) => {
+  const LikedRecipes= ({ onNavigate }: { onNavigate: (path: string) => void }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [expanded, setExpanded] = useState<string | null>(null);
   const [filter, setFilter] = useState<"tumu" | "thermomix" | "thermogusto">("tumu");
   const [search, setSearch] = useState<string>("");
-  const [currentStep, setCurrentStep] = useState<number>(0);
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -49,8 +43,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
 
   const fetchRecipes = async (isNextPage = false) => {
     setLoading(true);
-
-    const pageSize = 10;
+    const pageSize = 9;
     const baseQuery = collection(db, "likedRecipes");
 
     const q = isNextPage && lastDoc
@@ -60,27 +53,18 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     const snapshot = await getDocs(q);
     const docs = snapshot.docs;
 
-    const data = docs.map((docSnap) => {
+    const data: Recipe[] = docs.map((docSnap) => {
       const raw = docSnap.data();
-      const processedSteps = Array.isArray(raw.steps)
-        ? raw.steps
-        : typeof raw.steps === "string"
-        ? raw.steps.split(/\d+\.\s/).filter(Boolean).map((s: string) => s.trim())
-        : [];
-
       return {
         id: docSnap.id,
         title: raw.title,
         summary: raw.summary,
         duration: raw.duration,
         ingredients: raw.ingredients || [],
-        steps: processedSteps,
         cihazMarkasi: raw.cihazMarkasi,
         tarifDili: raw.tarifDili,
-        kullaniciTarifi: raw.kullaniciTarifi,
         begeniSayisi: raw.begeniSayisi,
         imageUrl: raw.imageUrl,
-        image: raw.image,
       };
     });
 
@@ -93,9 +77,13 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     const ref = doc(db, "likedRecipes", id);
     try {
       await updateDoc(ref, { begeniSayisi: (currentCount ?? 0) + 1 });
-      fetchRecipes();
+      setRecipes((prev) =>
+        prev.map((r) =>
+          r.id === id ? { ...r, begeniSayisi: (currentCount ?? 0) + 1 } : r
+        )
+      );
     } catch (err) {
-      console.error("Be\u011Feni g\u00FCncellenemedi", err);
+      console.error("Beğeni güncellenemedi", err);
     }
   };
 
@@ -103,17 +91,18 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
     fetchRecipes();
   }, []);
 
-  const filteredRecipes = recipes.filter((r) => {
-    const matchesLang = r.tarifDili === currentLang;
-    const matchesFilter = filter === "tumu" || r.cihazMarkasi === filter;
-    const matchesSearch =
-      r.title.toLowerCase().includes(search.toLowerCase()) ||
-      r.ingredients.some((ing) => ing.toLowerCase().includes(search.toLowerCase()));
-    return matchesLang && matchesFilter && matchesSearch;
-  });
-
-  const selectedRecipe = recipes.find((r) => r.id === expanded);
-  const imageSrc = selectedRecipe?.imageUrl || selectedRecipe?.image || null;
+  const filteredRecipes = useMemo(() => {
+    return recipes.filter((r) => {
+      const matchesLang = r.tarifDili === currentLang;
+      const matchesFilter = filter === "tumu" || r.cihazMarkasi === filter;
+      const matchesSearch =
+        r.title.toLowerCase().includes(search.toLowerCase()) ||
+        r.ingredients.some((ing) =>
+          ing.toLowerCase().includes(search.toLowerCase())
+        );
+      return matchesLang && matchesFilter && matchesSearch;
+    });
+  }, [recipes, filter, search, currentLang]);
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-yellow-50 to-green-100 text-gray-900 font-sans">
@@ -134,7 +123,7 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         className="mb-4 px-4 py-2 border border-gray-300 rounded w-full shadow-sm"
       />
 
-      <div className="mb-4 flex gap-2">
+      <div className="mb-6 flex gap-2">
         {["tumu", "thermomix", "thermogusto"].map((c) => (
           <button
             key={c}
@@ -148,118 +137,62 @@ const LikedRecipesPage = ({ onNavigate }: { onNavigate: (path: string) => void }
         ))}
       </div>
 
-      {expanded && selectedRecipe ? (
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          {imageSrc && (
-            <img
-              src={imageSrc}
-              alt={selectedRecipe.title}
-              className="w-full max-w-md mx-auto mb-4 rounded-lg border border-gray-200"
-            />
-          )}
-          <h2 className="text-2xl font-bold mb-2 text-center">{selectedRecipe.title}</h2>
-          <p className="text-sm text-gray-500 mb-1 text-center">
-            {selectedRecipe.cihazMarkasi
-              ? t(`likedRecipes.filters.${selectedRecipe.cihazMarkasi}`)
-              : t("likedRecipes.filters.unknownDevice")}
-            {selectedRecipe.duration ? ` • ${selectedRecipe.duration}` : ""}
-          </p>
-          {currentStep === 0 ? (
-            <div>
-              <h3 className="font-semibold mt-4 mb-2">{t("likedRecipes.ingredients")}</h3>
-              <ul className="list-disc list-inside text-sm mb-4">
-                {selectedRecipe.ingredients.map((ing, i) => (
-                  <li key={i}>{ing}</li>
-                ))}
-              </ul>
-              <p className="text-sm italic text-gray-500">
-                {t("likedRecipes.totalSteps", { count: selectedRecipe.steps?.length || 0 })}
-              </p>
-            </div>
-          ) : (
-            <div className="mt-4">
-              <h3 className="font-semibold mb-1">
-                {t("likedRecipes.stepTitle", { currentStep })}
-              </h3>
-              <p className="text-sm">{selectedRecipe.steps?.[currentStep - 1]}</p>
-            </div>
-          )}
-          <div className="flex justify-between items-center mt-6">
-            <button
-              onClick={() => setExpanded(null)}
-              className="text-sm text-gray-600 underline"
-            >
-              {t("likedRecipes.back")}
-            </button>
-            <div className="space-x-2">
-              {currentStep > 0 && (
-                <button
-                  onClick={() => setCurrentStep((s) => s - 1)}
-                  className="text-sm bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
-                >
-                  {t("likedRecipes.previous")}
-                </button>
-              )}
-              {currentStep < (selectedRecipe.steps?.length || 0) && (
-                <button
-                  onClick={() => setCurrentStep((s) => s + 1)}
-                  className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
-                >
-                  {currentStep === 0
-                    ? t("likedRecipes.startPreparation")
-                    : t("likedRecipes.next")}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+      {filteredRecipes.length === 0 ? (
+        <p className="text-center text-gray-500">
+          {t("likedRecipes.noResults") || "Eşleşen tarif bulunamadı."}
+        </p>
       ) : (
-        <div>
-          <ul className="space-y-4">
-            {filteredRecipes.map((recipe) => (
-              <li
-                key={recipe.id}
-                className="bg-white p-4 rounded-xl shadow-md cursor-pointer flex items-center gap-4"
-                onClick={() => {
-                  setExpanded(recipe.id);
-                  setCurrentStep(0);
-                }}
-              >
-                {recipe.imageUrl && (
-                  <img
-                    src={recipe.imageUrl}
-                    alt={recipe.title}
-                    className="w-16 h-16 object-cover rounded-md border border-gray-200"
-                  />
-                )}
-                <div className="flex-1">
-                  <h2 className="text-lg font-semibold">{recipe.title}</h2>
-                  <span className="text-xs text-gray-600">
-                    {recipe.cihazMarkasi
-                      ? t(`likedRecipes.filters.${recipe.cihazMarkasi}`)
-                      : t("likedRecipes.filters.unknownDevice")}
-                    {recipe.duration ? ` • ${recipe.duration}` : ""}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-          {lastDoc && (
-            <div className="mt-6 flex justify-center">
-              <button
-                onClick={() => fetchRecipes(true)}
-                disabled={loading}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
-              >
-                {loading ? "Y\u00FCkleniyor..." : "Daha fazla g\u00F6ster"}
-              </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {filteredRecipes.map((recipe) => (
+            <div
+              key={recipe.id}
+              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
+            >
+              <h2 className="text-lg font-semibold mb-1">{recipe.title}</h2>
+              <p className="text-sm text-gray-600 mb-2">
+                {recipe.cihazMarkasi
+                  ? t(`likedRecipes.filters.${recipe.cihazMarkasi}`)
+                  : t("likedRecipes.filters.unknownDevice")}
+                {recipe.duration ? ` • ${recipe.duration}` : ""}
+              </p>
+              {recipe.imageUrl && (
+                <img
+                  src={recipe.imageUrl}
+                  alt={recipe.title}
+                  className="w-full h-32 object-cover rounded mb-2 border"
+                />
+              )}
+              {recipe.summary && (
+                <p className="text-sm text-gray-700 mb-2 line-clamp-2">
+                  {recipe.summary}
+                </p>
+              )}
+              <div className="flex justify-between items-center mt-2">
+                <button
+                  onClick={() => handleLike(recipe.id, recipe.begeniSayisi || 0)}
+                  className="text-xs px-2 py-1 bg-green-100 hover:bg-green-200 rounded"
+                >
+                  👍 {recipe.begeniSayisi || 0}
+                </button>
+              </div>
             </div>
-          )}
+          ))}
         </div>
       )}
-      <AuthFooter />
+
+      {lastDoc && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => fetchRecipes(true)}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow"
+          >
+            {loading ? "Yükleniyor..." : "Daha fazla göster"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default LikedRecipesPage;
+export default LikedRecipes;
