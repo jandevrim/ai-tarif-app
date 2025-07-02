@@ -127,7 +127,7 @@ const fetchRecipeCount = async () => {
 
   const credits = await getUserRecipeCredits();
   if (credits <= 0) {
-    router.push("/membership");
+    router.push("/kredi");
     return;
   }
 
@@ -252,7 +252,7 @@ function CustomRecipePage({ onNavigate }: { onNavigate: (path: string) => void }
     setShowSelector(false);
 
     const cihazMarkasi = localStorage.getItem("cihazMarkasi") || "tumu"; // Cihaz markasını al
-    //bu aşaya dil kısmını ekle TODO
+    
     const payload = {
       ingredients: selectedIngredients.map(i => ({ id: i.id, name: i.name.tr })),
       cihazMarkasi: cihazMarkasi as "tumu" | "thermomix" | "thermogusto" | undefined, // Cihaz markasını payload'a ekle
